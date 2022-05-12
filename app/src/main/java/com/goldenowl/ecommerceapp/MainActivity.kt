@@ -1,21 +1,28 @@
 package com.goldenowl.ecommerceapp
 
-import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
+import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val toolbar = supportActionBar
+        val splashScreen = installSplashScreen()
 
+        setContentView(R.layout.activity_main)
+        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        toolbar?.title = "Home"
+//        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+//        toolbar?.title = ""
+//        setSupportActionBar(toolbar)
+//        val txtNameBar = toolbar.findViewById<TextView>(R.id.txtToolBar)
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
 
