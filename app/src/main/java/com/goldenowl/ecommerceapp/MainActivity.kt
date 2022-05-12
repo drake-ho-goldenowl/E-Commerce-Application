@@ -14,15 +14,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val splashScreen = installSplashScreen()
-
+//        val splashScreen = installSplashScreen()
         setContentView(R.layout.activity_main)
         val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
         toolbar?.title = "Home"
-//        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-//        toolbar?.title = ""
-//        setSupportActionBar(toolbar)
-//        val txtNameBar = toolbar.findViewById<TextView>(R.id.txtToolBar)
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
 
