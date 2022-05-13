@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.85"
+            app:layout_constraintGuide_percent="0.9"
             />
 
         <androidx.constraintlayout.widget.Guideline
@@ -41,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.7"/>
+            app:layout_constraintGuide_percent="0.77"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/viewPagerTabs"
@@ -50,6 +50,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:tabIndicatorHeight="0dp"
+            app:tabRippleColor="@null"
             app:layout_constraintTop_toBottomOf="@+id/guideline3"
             app:tabBackground="@drawable/tab_dot_select" />
 
@@ -73,8 +74,7 @@
             android:background="@drawable/btn_custom2"
             app:layout_constraintTop_toTopOf="@id/guideline2"
             app:layout_constraintRight_toRightOf="@+id/guideline"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintLeft_toLeftOf="parent" />
         <Button
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
@@ -83,8 +83,7 @@
             app:layout_constraintTop_toTopOf="@id/guideline2"
             android:background="@drawable/btn_custom"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/guideline"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintLeft_toLeftOf="@id/guideline" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
