@@ -25,7 +25,7 @@ class SignUpFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private lateinit var binding : FragmentSignUpBinding
+    private lateinit var binding: FragmentSignUpBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -39,7 +39,7 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentSignUpBinding.inflate(inflater,container,false)
+        binding = FragmentSignUpBinding.inflate(inflater, container, false)
 //        return inflater.inflate(R.layout.fragment_sign_up, container, false)
         return binding.root
     }
@@ -48,7 +48,7 @@ class SignUpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnRegisterSignUp.setOnClickListener(
-            Navigation.createNavigateOnClickListener(R.id.action_to_login,null)
+            Navigation.createNavigateOnClickListener(R.id.action_to_login, null)
         )
     }
 
