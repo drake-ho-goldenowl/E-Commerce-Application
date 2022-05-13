@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "901780403692",
+    "project_id": "e-commerce-application-ceb40",
+    "storage_bucket": "e-commerce-application-ceb40.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901780403692:android:f2fe057702958e3ffe3cc9",
+        "android_client_info": {
+          "package_name": "com.goldenowl.ecommerceapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901780403692-ckasab453v4vbhc9al27s2jn6oor5l07.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goldenowl.ecommerceapp",
+            "certificate_hash": "55bba1117de1f4c4d7e3104453cc9351fea7708b"
+          }
+        },
+        {
+          "client_id": "901780403692-v39fpjhl0hj5rpur16nadpeemee34psf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEwIPzAMK-JbaiZVkwFW_3Tl2KmSd7Mf8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "901780403692-v39fpjhl0hj5rpur16nadpeemee34psf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

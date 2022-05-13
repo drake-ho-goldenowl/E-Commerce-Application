@@ -10,5 +10,4 @@ class LoginActivity : AppCompatActivity(R.layout.activity_login){
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment_log)
                 as NavHostFragment? ?: return
     }
-
 }
