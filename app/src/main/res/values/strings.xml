@@ -7,4 +7,7 @@
     <string name="bag">Bag</string>
     <string name="favorites">Favorites</string>
     <string name="profile">Profile</string>
+    <string name="facebook_app_id">5050456001727835</string>
+    <string name="fb_login_protocol_scheme">fb5050456001727835</string>
+    <string name="facebook_client_token">37260011e10b4dc12e12a58e6122b84d</string>
 </resources>

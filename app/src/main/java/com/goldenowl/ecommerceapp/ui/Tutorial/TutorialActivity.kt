@@ -1,9 +1,9 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.ui.Tutorial
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
-import com.goldenowl.ecommerceapp.adapters.TutorialPagerAdapter
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.ActivityTutorialBinding
 
 class TutorialActivity : AppCompatActivity() {

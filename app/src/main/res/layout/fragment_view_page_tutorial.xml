@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ViewPageTutorialFragment">
+    tools:context=".ui.Tutorial.ViewPageTutorialFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,34 +14,32 @@
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toTopOf="@id/guideline3"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5"
-            />
+            app:layout_constraintGuide_percent="0.5" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.9"
-            />
+            app:layout_constraintGuide_percent="0.9" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@id/guideline3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.77"/>
+            app:layout_constraintGuide_percent="0.77" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/viewPagerTabs"
@@ -49,41 +47,43 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:tabIndicatorHeight="0dp"
-            app:tabRippleColor="@null"
             app:layout_constraintTop_toBottomOf="@+id/guideline3"
-            app:tabBackground="@drawable/tab_dot_select" />
+            app:tabBackground="@drawable/tab_dot_select"
+            app:tabIndicatorHeight="0dp"
+            app:tabRippleColor="@null" />
 
         <Button
             android:id="@+id/btnGetStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/btn_custom"
             android:paddingStart="50dp"
             android:paddingEnd="50dp"
             android:text="Get Start"
-            android:background="@drawable/btn_custom"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/guideline2"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/guideline2"/>
+            app:layout_constraintRight_toRightOf="parent" />
+
         <Button
             android:id="@+id/btnSkip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/btn_custom2"
             android:text="Skip"
             android:textColor="@color/black"
-            android:background="@drawable/btn_custom2"
-            app:layout_constraintTop_toTopOf="@id/guideline2"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@+id/guideline"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/guideline2" />
+
         <Button
             android:id="@+id/btnNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Next"
-            app:layout_constraintTop_toTopOf="@id/guideline2"
             android:background="@drawable/btn_custom"
+            android:text="Next"
+            app:layout_constraintLeft_toLeftOf="@id/guideline"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/guideline" />
+            app:layout_constraintTop_toTopOf="@id/guideline2" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

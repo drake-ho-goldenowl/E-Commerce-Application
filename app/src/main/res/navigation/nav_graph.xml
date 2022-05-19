@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.goldenowl.ecommerceapp.HomeFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/shopFragment"
-        android:name="com.goldenowl.ecommerceapp.ShopFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.ShopFragment"
         android:label="fragment_shop"
         tools:layout="@layout/fragment_shop" >
         <action
@@ -29,7 +29,7 @@
     </fragment>
     <fragment
         android:id="@+id/bagFragment"
-        android:name="com.goldenowl.ecommerceapp.BagFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.BagFragment"
         android:label="fragment_bag"
         tools:layout="@layout/fragment_bag" >
         <action
@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.goldenowl.ecommerceapp.FavoritesFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.FavoritesFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_favorites" >
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.goldenowl.ecommerceapp.ProfileFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

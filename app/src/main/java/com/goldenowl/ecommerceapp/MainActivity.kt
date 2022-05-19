@@ -40,22 +40,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-//        val db = FirebaseFirestore.getInstance()
-//        val user: MutableMap<String, Any> = HashMap()
-//        user["first"] = "Ada"
-//        user["last"] = "Lovelace"
-//        user["born"] = 1815
-//        db.collection("users")
-//            .add(user)
-//            .addOnSuccessListener(OnSuccessListener<DocumentReference> { documentReference ->
-//                Log.d(
-//                    TAG,
-//                    "DocumentSnapshot added with ID: " + documentReference.id
-//                )
-//            })
-//            .addOnFailureListener(OnFailureListener { e -> Log.w(TAG, "Error adding document", e) })
     }
-
     private fun setupBottomNavMenu(navController: NavController) {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav?.setupWithNavController(navController)
