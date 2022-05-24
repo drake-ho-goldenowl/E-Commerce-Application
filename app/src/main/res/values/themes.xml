@@ -15,10 +15,29 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
 <!--        <item name="android:windowTranslucentStatus">true</item>-->
-        <item name="android:textViewStyle">@font/metrophobic</item>
-        <item name="fontFamily">@font/metrophobic</item>
+        <item name="android:textViewStyle">@font/metropolis</item>
+        <item name="fontFamily">@font/metropolis</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
 
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
+
+
     </style>
+
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ModalBottomSheetDialog</item>
+    </style>
+
+
+    <style name="ModalBottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="backgroundTint">@color/colorOnPrimary</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.MaterialComponents.LargeComponent">
+<!--        <item name="cornerFamily">cut</item>-->
+        <item name="cornerSize">50dp</item>
+    </style>
+
 </resources>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
@@ -47,7 +47,24 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.goldenowl.ecommerceapp.ui.ProfileFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Profile.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_profileNoLoginFragment"
+            app:destination="@id/profileNoLoginFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileLoginFragment"
+            app:destination="@id/profileLoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileLoginFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Profile.ProfileLoginFragment"
+        android:label="fragment_profile_login"
+        tools:layout="@layout/fragment_profile_login" />
+    <fragment
+        android:id="@+id/profileNoLoginFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Profile.ProfileNoLoginFragment"
+        android:label="fragment_profile_no_login"
+        tools:layout="@layout/fragment_profile_no_login" />
 </navigation>

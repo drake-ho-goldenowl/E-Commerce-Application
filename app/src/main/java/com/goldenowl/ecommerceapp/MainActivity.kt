@@ -5,45 +5,48 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.goldenowl.ecommerceapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val splashScreen = installSplashScreen()
-        setContentView(R.layout.activity_main)
-        val toolbar = findViewById<MaterialToolbar>(R.id.topAppBar)
-        toolbar?.title = "Home"
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        binding.topAppBar.title = "Hello"
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
 
         val navController = host.navController
+
         setupBottomNavMenu(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.homeFragment -> {
-                    toolbar?.title = "Home"
+                    binding.topAppBar.title= "Home"
                 }
                 R.id.shopFragment -> {
-                    toolbar?.title = "Shop"
+                    binding.topAppBar.title = "Shop"
                 }
                 R.id.bagFragment -> {
-                    toolbar?.title = "Bag"
+                    binding.topAppBar.title = "Bag"
                 }
                 R.id.favoritesFragment -> {
-                    toolbar?.title = "Favorites"
+                    binding.topAppBar.title = "Favorites"
                 }
                 R.id.profileFragment -> {
-                    toolbar?.title = "Profile"
+                    binding.topAppBar.title= "Profile"
                 }
             }
         }
     }
+
     private fun setupBottomNavMenu(navController: NavController) {
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNav?.setupWithNavController(navController)
+        binding.bottomNavigation.setupWithNavController(navController)
     }
 
 }
