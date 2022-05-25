@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        binding.topAppBar.title = "Hello"
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
 
@@ -24,25 +23,6 @@ class MainActivity : AppCompatActivity() {
 
         setupBottomNavMenu(navController)
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.homeFragment -> {
-                    binding.topAppBar.title= "Home"
-                }
-                R.id.shopFragment -> {
-                    binding.topAppBar.title = "Shop"
-                }
-                R.id.bagFragment -> {
-                    binding.topAppBar.title = "Bag"
-                }
-                R.id.favoritesFragment -> {
-                    binding.topAppBar.title = "Favorites"
-                }
-                R.id.profileFragment -> {
-                    binding.topAppBar.title= "Profile"
-                }
-            }
-        }
     }
 
     private fun setupBottomNavMenu(navController: NavController) {

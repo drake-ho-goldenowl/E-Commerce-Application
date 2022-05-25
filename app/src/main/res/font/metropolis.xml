@@ -1,14 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<font-family xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<font-family xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- fontWeight
+    100 Thin
+    200 Extra Light
+    300 Lighta
+    400 Normal
+    500 Medium
+    600 Semi Bold
+    700 Bold
+    800 Extra Bold
+    900 Ultra Bold -->
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="100"
+        android:font="@font/metropolis_thin"
+        />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="100"
+        android:font="@font/metropolis_thinitalic" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="200"
+        android:font="@font/metropolis_light" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="200"
+        android:font="@font/metropolis_lightitalic" />
     <font
         android:fontStyle="normal"
         android:fontWeight="400"
-        android:font="@font/metropolis_regular"
-        tools:targetApi="o" />
+        android:font="@font/metropolis_regular" />
     <font
         android:fontStyle="italic"
         android:fontWeight="400"
-        android:font="@font/metropolis_regularitalic"
-        tools:targetApi="o" />
+        android:font="@font/metropolis_regularitalic" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        android:font="@font/metropolis_medium" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="500"
+        android:font="@font/metropolis_mediumitalic" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        android:font="@font/metropolis_semibold" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="600"
+        android:font="@font/metropolis_semibolditalic" />
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        android:font="@font/metropolis_bold"/>
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="700"
+        android:font="@font/metropolis_bolditalic" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="800"
+        android:font="@font/metropolis_extrabold" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="800"
+        android:font="@font/metropolis_extrabolditalic" />
+
+    <font
+        android:fontStyle="normal"
+        android:fontWeight="900"
+        android:font="@font/metropolisblack" />
+    <font
+        android:fontStyle="italic"
+        android:fontWeight="900"
+        android:font="@font/metropolis_blackitalic" />
 </font-family>

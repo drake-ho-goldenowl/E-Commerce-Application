@@ -26,7 +26,6 @@ class SettingActivity : AppCompatActivity() {
         userManager = UserManager.getInstance(this)
         viewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
 
-        binding.actionBar.toolBar.title = "Setting"
         binding.editTextFullName.setText(userManager.getName())
         binding.editTextDateOfBirth.setText(userManager.getDOB())
 
