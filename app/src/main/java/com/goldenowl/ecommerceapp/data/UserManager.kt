@@ -1,13 +1,17 @@
-package com.goldenowl.ecommerceapp.model
+package com.goldenowl.ecommerceapp.data
 
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class UserManager(context: Context) {
     private val accountManager: AccountManager = AccountManager.get(context)
+    private val db = Firebase.firestore
 
     fun addAccount(
         name: String,
@@ -123,6 +127,17 @@ class UserManager(context: Context) {
         accountManager.setUserData(getAccount(), AVATAR, avatar)
     }
 
+    fun writeProfile(user: User) {
+        db.collection("users").document(user.token)
+            .set(user)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot added")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+    }
+
     companion object {
         const val AUTH_TOKEN_TYPE = "com.goldenowl.ecommerceapp"
         const val ACCOUNT_TYPE = "com.goldenowl.ecommerceapp"
@@ -132,7 +147,7 @@ class UserManager(context: Context) {
         const val NAME = "name"
         const val DOB = "Date_of_birth"
         const val AVATAR = "avatar"
-
+        const val TAG = "USER_MANAGER"
         @Volatile
         private var instance: UserManager? = null
 

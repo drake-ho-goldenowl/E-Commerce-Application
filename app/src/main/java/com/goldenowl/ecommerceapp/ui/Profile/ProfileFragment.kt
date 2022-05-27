@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileBinding
-import com.goldenowl.ecommerceapp.model.UserManager
 
 
 class ProfileFragment : Fragment() {

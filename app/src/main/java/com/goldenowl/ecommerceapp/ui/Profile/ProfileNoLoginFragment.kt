@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileNoLoginBinding
-import com.goldenowl.ecommerceapp.model.UserManager
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
 import com.goldenowl.ecommerceapp.utilities.REQUEST_SIGN_IN
 import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel

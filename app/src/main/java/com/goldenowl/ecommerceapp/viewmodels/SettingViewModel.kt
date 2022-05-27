@@ -3,43 +3,43 @@ package com.goldenowl.ecommerceapp.viewmodels
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.goldenowl.ecommerceapp.model.User
-import com.goldenowl.ecommerceapp.model.UserManager
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
 class SettingViewModel(application: Application) : BaseViewModel(application) {
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
-    private var userManager : UserManager = UserManager.getInstance(application)
+    private var userManager: UserManager = UserManager.getInstance(application)
     private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
 
-    fun updateName(nameText: String){
+    fun updateName(nameText: String) {
+        if(!validName(nameText)) return
         val user = userManager.getUser()
         user.name = nameText
         userManager.setName(nameText)
-        User.writeProfile(user)
+        userManager.writeProfile(user)
     }
 
-    fun updateDOB(dobText: String){
+    fun updateDOB(dobText: String) {
         val user = userManager.getUser()
         user.dob = dobText
         userManager.setDOB(dobText)
-        User.writeProfile(user)
+        userManager.writeProfile(user)
     }
 
-    fun updateAvatar(avatarURL: String){
+    private fun updateAvatar(avatarURL: String) {
         val user = userManager.getUser()
         user.avatar = avatarURL
         userManager.setAvatar(avatarURL)
-        User.writeProfile(user)
+        userManager.writeProfile(user)
     }
 
-    fun isLettersOrDigit(string: String): Boolean {
+    private fun isLettersOrDigit(string: String): Boolean {
         return string.filter { it.isLetterOrDigit() }.length == string.length
     }
 
-    fun uploadImage(filePath: Uri?,token: String){
-        if(filePath != null){
+    fun uploadImage(filePath: Uri?, token: String) {
+        if (filePath != null) {
             val ref = storageReference.child("avatar/$token")
             val uploadTask = ref.putFile(filePath)
             uploadTask.continueWithTask { task ->
@@ -58,24 +58,26 @@ class SettingViewModel(application: Application) : BaseViewModel(application) {
                     // ...
                 }
             }
-        }else{
+        } else {
             toastMessage.postValue("Please Upload an Image")
         }
     }
 
-    fun checkLoginWithFbOrGoogle(): Boolean{
-        if(userManager.getPassword() == "") return true
+    fun checkLoginWithFbOrGoogle(): Boolean {
+        if (userManager.getPassword() == "") return true
         return false
     }
 
-    fun validName(nameText: String) {
-        if(!isLettersOrDigit(nameText)){
-            validNameLiveData.postValue("Mustn't Contain Special Character")
-        }
-        else if (nameText.isBlank()) {
+    fun validName(nameText: String): Boolean {
+        return if (nameText.isBlank()) {
             validNameLiveData.postValue("Mustn't empty")
+            false
+        } else if (!isLettersOrDigit(nameText)) {
+            validNameLiveData.postValue("Mustn't Contain Special Character")
+            false
         } else {
             validNameLiveData.postValue("")
+            true
         }
     }
 }

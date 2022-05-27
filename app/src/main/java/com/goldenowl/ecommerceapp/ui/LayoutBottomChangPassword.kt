@@ -24,62 +24,57 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         viewModel = ViewModelProvider(this).get(ChangePasswordViewModel::class.java)
 
         observeSetup()
-
-        binding.btnSavePassword.setOnClickListener {
-            viewModel.checkOldPassword(binding.editTextOldPassword.text.toString())
-            viewModel.validPassword(
-                binding.editTextNewPassword.text.toString(),
-                binding.editTextOldPassword.text.toString()
-            )
-            viewModel.checkRepeatPassword(
-                binding.editTextRepeatNewPassword.text.toString(),
-                binding.editTextNewPassword.text.toString()
-            )
-            if (!binding.txtLayoutOldPassword.isErrorEnabled && !binding.txtLayoutNewPassword.isErrorEnabled &&
-                !binding.txtLayoutRepeatNewPassword.isErrorEnabled
-            ) {
-                viewModel.changePassword(
-                    binding.editTextNewPassword.toString(),
-                    binding.editTextOldPassword.text.toString()
-                )
-            }
-        }
-
-        binding.txtForgotPassword.setOnClickListener {
-            viewModel.forgotPassword()
-        }
-
-        binding.editTextOldPassword.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus) {
-                viewModel.checkOldPassword(binding.editTextOldPassword.text.toString())
-            }
-        }
-
-        binding.editTextNewPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.validPassword(
-                    binding.editTextNewPassword.text.toString(),
-                    binding.editTextOldPassword.text.toString()
-                )
-
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-
-        binding.editTextRepeatNewPassword.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus) {
-                viewModel.checkRepeatPassword(
-                    binding.editTextRepeatNewPassword.text.toString(),
-                    binding.editTextNewPassword.text.toString()
-                )
-            }
-        }
+        bind()
         return binding.root
+    }
+
+    private fun bind() {
+        binding.apply {
+            btnSavePassword.setOnClickListener {
+                viewModel.changePassword(
+                    editTextNewPassword.text.toString(),
+                    editTextRepeatNewPassword.text.toString(),
+                    editTextOldPassword.text.toString()
+                )
+            }
+
+            txtForgotPassword.setOnClickListener {
+                viewModel.forgotPassword()
+            }
+
+            editTextOldPassword.setOnFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
+                    viewModel.checkOldPassword(editTextOldPassword.text.toString())
+                }
+            }
+
+            editTextNewPassword.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    viewModel.validPassword(
+                        editTextNewPassword.text.toString(),
+                        editTextOldPassword.text.toString()
+                    )
+
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                }
+            })
+
+            editTextRepeatNewPassword.setOnFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
+                    viewModel.checkRepeatPassword(
+                        editTextRepeatNewPassword.text.toString(),
+                        editTextNewPassword.text.toString()
+                    )
+                }
+            }
+
+        }
+
     }
 
     private fun observeSetup() {
@@ -133,7 +128,6 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
             binding.txtLayoutRepeatNewPassword.isErrorEnabled = false
         }
     }
-
 
     companion object {
         const val TAG = "ModalBottomSheet"

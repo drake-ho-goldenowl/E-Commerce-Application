@@ -9,8 +9,8 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.ActivitySettingBinding
-import com.goldenowl.ecommerceapp.model.UserManager
 import com.goldenowl.ecommerceapp.ui.DatePickerFragment
 import com.goldenowl.ecommerceapp.ui.ModalBottomSheet
 import com.goldenowl.ecommerceapp.viewmodels.SettingViewModel
@@ -25,71 +25,77 @@ class SettingActivity : AppCompatActivity() {
         binding = ActivitySettingBinding.inflate(layoutInflater)
         userManager = UserManager.getInstance(this)
         viewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
-
-        binding.editTextFullName.setText(userManager.getName())
-        binding.editTextDateOfBirth.setText(userManager.getDOB())
-
-        if(viewModel.checkLoginWithFbOrGoogle()){
-            binding.txtChange.visibility = View.GONE
-        }
-        else{
-            binding.txtChange.visibility = View.VISIBLE
-        }
         Glide.with(this)
             .load(userManager.getAvatar())
             .error(R.drawable.ic_no_login)
             .into(binding.imgAvatar)
+        bind()
+        observeSetup()
+        setContentView(binding.root)
+    }
 
-        binding.editTextFullName.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+    private fun bind() {
+        binding.apply {
+            editTextFullName.setText(userManager.getName())
+            editTextDateOfBirth.setText(userManager.getDOB())
+
+            if (viewModel.checkLoginWithFbOrGoogle()) {
+                txtChange.visibility = View.GONE
+            } else {
+                txtChange.visibility = View.VISIBLE
             }
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
+            editTextFullName.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
 
-            override fun afterTextChanged(p0: Editable?) {
-                viewModel.validName(binding.editTextFullName.text.toString())
-            }
-        })
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
 
-        binding.editTextFullName.setOnFocusChangeListener { v, hasFocus ->
-            if (!hasFocus) {
-                if (!binding.txtLayoutFullName.isErrorEnabled) {
+                override fun afterTextChanged(p0: Editable?) {
+                    viewModel.validName(editTextFullName.text.toString())
+                }
+            })
+
+            editTextFullName.setOnFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
                     viewModel.updateName(
-                        binding.editTextFullName.text.toString()
+                        editTextFullName.text.toString()
                     )
                 }
             }
-        }
 
-        binding.editTextDateOfBirth.setOnClickListener {
-            val newFragment = DatePickerFragment(binding.editTextDateOfBirth, userManager.getDOB())
-            newFragment.show(supportFragmentManager, "datePicker")
-        }
-
-        binding.editTextDateOfBirth.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            editTextDateOfBirth.setOnClickListener {
+                val newFragment = DatePickerFragment(editTextDateOfBirth, userManager.getDOB())
+                newFragment.show(supportFragmentManager, "datePicker")
             }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            editTextDateOfBirth.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    viewModel.updateDOB(editTextDateOfBirth.text.toString())
+                }
+
+            })
+            txtChangeAvatar.setOnClickListener {
+                val intent = Intent(Intent.ACTION_PICK)
+                intent.type = "image/*"
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 456)
+            }
+            txtChange.setOnClickListener {
+                val modalBottomSheet = ModalBottomSheet()
+                modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
             }
 
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.updateDOB(binding.editTextDateOfBirth.text.toString())
-            }
-
-        })
-        binding.txtChangeAvatar.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(Intent.createChooser(intent, "Select Picture"), 456)
         }
-        binding.txtChange.setOnClickListener {
-            val modalBottomSheet = ModalBottomSheet()
-            modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
-        }
-        observeSetup()
-        setContentView(binding.root)
     }
 
     private fun observeSetup() {
@@ -111,12 +117,15 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun alertName(alert: String) {
-        if (!alert.isNullOrEmpty()) {
-            binding.txtLayoutFullName.isErrorEnabled = true
-            binding.txtLayoutFullName.error = alert
-        } else {
-            binding.txtLayoutFullName.isErrorEnabled = false
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutFullName.isErrorEnabled = true
+                txtLayoutFullName.error = alert
+            } else {
+                txtLayoutFullName.isErrorEnabled = false
+            }
         }
+
     }
 
     companion object {

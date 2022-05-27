@@ -11,8 +11,8 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.goldenowl.ecommerceapp.model.User
-import com.goldenowl.ecommerceapp.model.UserManager
+import com.goldenowl.ecommerceapp.data.User
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.Hash
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -54,6 +54,9 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
     }
 
     fun signUp(name: String, email: String, password: String) {
+        if (!validName(name) || !validEmail(email) || !validPassword(password)) {
+            return
+        }
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -72,7 +75,7 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
                             ""
                         )
                         userManager.addAccount(account)
-                        User.writeProfile(account)
+                        userManager.writeProfile(account)
                         toastMessage.postValue("Registration Success")
                     }
                 } else {
@@ -81,11 +84,10 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
             }
     }
 
-    fun forgotPassword(emailText: String){
-        if(emailText.isNullOrBlank()){
+    fun forgotPassword(emailText: String) {
+        if (emailText.isNullOrBlank()) {
             toastMessage.postValue("Please enter email")
-        }
-        else{
+        } else {
             firebaseAuth.sendPasswordResetEmail(emailText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -96,6 +98,9 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
     }
 
     fun logIn(email: String, password: String) {
+        if (!validEmail(email) || !validPasswordLogin(password)) {
+            return
+        }
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -107,9 +112,9 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
                             .addOnSuccessListener { documentSnapshot ->
                                 val account = documentSnapshot.toObject<User>()
                                 account?.let {
-                                    if(account.password != Hash.hashSHA256(password)){
+                                    if (account.password != Hash.hashSHA256(password)) {
                                         account.password = Hash.hashSHA256(password)
-                                        User.writeProfile(account)
+                                        userManager.writeProfile(account)
                                     }
                                     userManager.addAccount(account)
                                 }
@@ -147,26 +152,12 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
                                 userManager.addAccount(account)
                             }
                         } else {
-                            user.let {
-                                val dob = Date()
-                                val format = SimpleDateFormat("dd/MM/yyyy")
-                                val account = User(
-                                    user.displayName.toString(),
-                                    user.email.toString(),
-                                    "",
-                                    user.uid,
-                                    format.format(dob),
-                                    user.photoUrl.toString()
-                                )
-                                userManager.addAccount(account)
-                                User.writeProfile(account)
-                            }
+                            createNewUserManagerForLoginSocial(user)
                         }
                     }
                 }
             } else {
                 toastMessage.postValue("Login Fail")
-
             }
         }
     }
@@ -201,32 +192,20 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
                     Log.d(ContentValues.TAG, "signInWithCredential:success")
                     val user = firebaseAuth.currentUser
                     userLiveData.postValue(user)
-                    db.collection("users").document(user!!.uid).get().addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val documentSnapshot = task.result
-                            if (documentSnapshot.exists()) {
-                                val account = documentSnapshot.toObject<User>()
-                                account?.let {
-                                    userManager.addAccount(account)
-                                }
-                            } else {
-                                user.let {
-                                    val dob = Date()
-                                    val format = SimpleDateFormat("dd/MM/yyyy")
-                                    val account = User(
-                                        user.displayName.toString(),
-                                        user.email.toString(),
-                                        "",
-                                        user.uid,
-                                        format.format(dob),
-                                        user.photoUrl.toString()
-                                    )
-                                    userManager.addAccount(account)
-                                    User.writeProfile(account)
+                    db.collection("users").document(user!!.uid).get()
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                val documentSnapshot = task.result
+                                if (documentSnapshot.exists()) {
+                                    val account = documentSnapshot.toObject<User>()
+                                    account?.let {
+                                        userManager.addAccount(account)
+                                    }
+                                } else {
+                                    createNewUserManagerForLoginSocial(user)
                                 }
                             }
                         }
-                    }
 
 
                 } else {
@@ -237,42 +216,84 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
             }
     }
 
-    fun isLettersOrDigit(string: String): Boolean {
+
+    private fun createNewUserManagerForLoginSocial(user: FirebaseUser) {
+        val dob = Date()
+        val format = SimpleDateFormat("dd/MM/yyyy")
+        val account = User(
+            user.displayName.toString(),
+            user.email.toString(),
+            "",
+            user.uid,
+            format.format(dob),
+            user.photoUrl.toString()
+        )
+        userManager.addAccount(account)
+        userManager.writeProfile(account)
+    }
+
+    private fun isLettersOrDigit(string: String): Boolean {
         return string.filter { it.isLetterOrDigit() }.length == string.length
     }
 
-    fun validName(nameText: String) {
-        if (isLettersOrDigit(nameText)) {
-            validNameLiveData.postValue("Mustn't Contain Special Character")
-        } else if (nameText.isBlank()) {
-            validNameLiveData.postValue("Mustn't empty")
-        } else {
-            validNameLiveData.postValue("")
+    fun validName(nameText: String): Boolean {
+        return when {
+            nameText.isBlank() -> {
+                validNameLiveData.postValue("Mustn't empty")
+                false
+            }
+            !isLettersOrDigit(nameText) -> {
+                validNameLiveData.postValue("Mustn't Contain Special Character")
+                false
+            }
+            else -> {
+                validNameLiveData.postValue("")
+                true
+            }
         }
     }
 
-    fun validEmail(emailText: String) {
-        if (!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
-            validEmailLiveData.postValue("Invalid Email Address")
-        } else if (emailText.isBlank()) {
+    fun validEmail(emailText: String): Boolean {
+        return if (emailText.isBlank()) {
             validEmailLiveData.postValue("Mustn't empty")
+            false
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
+            validEmailLiveData.postValue("Invalid Email Address")
+            false
         } else {
             validEmailLiveData.postValue("")
+            true
         }
     }
 
-    fun validPassword(passwordText: String) {
+    fun validPassword(passwordText: String): Boolean {
         if (passwordText.length < 8) {
             validPasswordLiveData.postValue("Minimum 8 Character Password")
+            return false
         } else if (!passwordText.matches(".*[A-Z].*".toRegex())) {
             validPasswordLiveData.postValue("Must Contain 1 Upper-case Character")
+            return false
         } else if (!passwordText.matches(".*[a-z].*".toRegex())) {
             validPasswordLiveData.postValue("Must Contain 1 Lower-case Character")
+            return false
         }
 //        if (!passwordText.matches(".*[@#\$%^&+=].*".toRegex())) {
 //            return "Must Contain 1 Special Character (@#\$%^&+=)"
 //        }
-        else validPasswordLiveData.postValue("")
+        else {
+            validPasswordLiveData.postValue("")
+            return true
+        }
+    }
+
+    private fun validPasswordLogin(passwordText: String): Boolean {
+        return if (passwordText.isEmpty()) {
+            validPasswordLiveData.postValue("Mustn't empty")
+            false
+        } else {
+            validPasswordLiveData.postValue("")
+            true
+        }
     }
 
 }

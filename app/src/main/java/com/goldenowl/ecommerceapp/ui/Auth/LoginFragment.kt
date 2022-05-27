@@ -34,7 +34,6 @@ class LoginFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentLoginBinding.inflate(inflater, container, false)
-        binding.actionBar.toolBar.title = "Login"
 
         val factory = AuthViewModelFactory(this.requireActivity().application, object:
             OnSignInStartedListener {
@@ -44,36 +43,43 @@ class LoginFragment : Fragment() {
         })
         authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
         observeSetup()
-
-
-        binding.actionBar.toolBar.setNavigationOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
-        }
-        binding.btnLogin.setOnClickListener {
-            authViewModel.validEmail(binding.editTextEmail.text.toString())
-            authViewModel.validPassword(binding.editTextPassword.text.toString())
-            if (!binding.txtLayoutPassword.isErrorEnabled && !binding.txtLayoutEmail.isErrorEnabled) {
-                authViewModel.logIn(
-                    binding.editTextEmail.text.toString(),
-                    binding.editTextPassword.text.toString()
-                )
-            }
-        }
-        binding.btnGoogle.setOnClickListener {
-            authViewModel.signInWithGoogle()
-        }
-        binding.btnFacebook.setOnClickListener {
-            LoginManager.getInstance().logInWithReadPermissions(this.requireActivity(), listOf("email"))
-            authViewModel.loginWithFacebook()
-        }
-        binding.btnForgetPassword.setOnClickListener{
-            authViewModel.validEmail(binding.editTextEmail.text.toString())
-            if(!binding.txtLayoutEmail.isErrorEnabled){
-                authViewModel.forgotPassword(binding.editTextEmail.text.toString())
-            }
-        }
+        bind()
         return binding.root
     }
+
+
+    private fun bind(){
+        binding.apply {
+            actionBar.toolBar.title = "Login"
+
+            actionBar.toolBar.setNavigationOnClickListener {
+                findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
+            }
+
+            btnLogin.setOnClickListener {
+                authViewModel.logIn(
+                    editTextEmail.text.toString(),
+                    editTextPassword.text.toString()
+                )
+            }
+
+            btnGoogle.setOnClickListener {
+                authViewModel.signInWithGoogle()
+            }
+            btnFacebook.setOnClickListener {
+                LoginManager.getInstance().logInWithReadPermissions(requireActivity(), listOf("email"))
+                authViewModel.loginWithFacebook()
+            }
+
+            btnForgetPassword.setOnClickListener{
+                authViewModel.validEmail(editTextEmail.text.toString())
+                if(!binding.txtLayoutEmail.isErrorEnabled){
+                    authViewModel.forgotPassword(editTextEmail.text.toString())
+                }
+            }
+        }
+    }
+
     private fun observeSetup() {
         authViewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
             Toast.makeText(
@@ -92,10 +98,6 @@ class LoginFragment : Fragment() {
         authViewModel.validEmailLiveData.observe(this.viewLifecycleOwner) {
             alertEmail(it)
         }
-
-//        authViewModel.validPasswordLiveData.observe(this.viewLifecycleOwner) {
-//            alertPassword(it)
-//        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -117,24 +119,16 @@ class LoginFragment : Fragment() {
 
 
     private fun alertEmail(alert: String?) {
-        if (!alert.isNullOrEmpty()) {
-            binding.txtLayoutEmail.isErrorEnabled = true
-            binding.txtLayoutEmail.error = alert
-            binding.txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_NONE
-        } else {
-            binding.txtLayoutEmail.isErrorEnabled = false
-            binding.txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_CUSTOM
-
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutEmail.isErrorEnabled = true
+                txtLayoutEmail.error = alert
+                txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_NONE
+            } else {
+                txtLayoutEmail.isErrorEnabled = false
+                txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_CUSTOM
+            }
         }
     }
-
-//    private fun alertPassword(alert: String?) {
-//        if (!alert.isNullOrEmpty()) {
-//            binding.txtLayoutPassword.isErrorEnabled = true
-//            binding.txtLayoutPassword.error = alert
-//        } else {
-//            binding.txtLayoutPassword.isErrorEnabled = false
-//        }
-//    }
 
 }

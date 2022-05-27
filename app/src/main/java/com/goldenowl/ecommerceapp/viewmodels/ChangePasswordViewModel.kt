@@ -2,8 +2,7 @@ package com.goldenowl.ecommerceapp.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.goldenowl.ecommerceapp.model.User
-import com.goldenowl.ecommerceapp.model.UserManager
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.Hash
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
@@ -18,23 +17,34 @@ class ChangePasswordViewModel(application: Application) : BaseViewModel(applicat
     val validChangePasswordLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
 
-    fun changePassword(passwordText: String,passwordText2: String) {
+    fun changePassword(
+        newPasswordText: String,
+        repeatPasswordText: String,
+        passwordOldText: String
+    ) {
+        if (!checkOldPassword(passwordOldText)
+            || !validPassword(newPasswordText, passwordOldText)
+            || !checkRepeatPassword(repeatPasswordText, newPasswordText)
+        ) {
+            return
+        }
+
         validChangePasswordLiveData.postValue(false)
         val account = userManager.getUser()
         val user = firebaseAuth.currentUser
-        val password = Hash.hashSHA256(passwordText)
+        val password = Hash.hashSHA256(newPasswordText)
         account.password = password
 
-        val credential : AuthCredential = EmailAuthProvider.getCredential(
-            account.email,passwordText2
+        val credential: AuthCredential = EmailAuthProvider.getCredential(
+            account.email, passwordOldText
         )
 
-        user!!.reauthenticate(credential).addOnCompleteListener {task->
-            if(task.isSuccessful){
-                user.updatePassword(passwordText).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        userManager.setPassword(passwordText)
-                        User.writeProfile(account)
+        user!!.reauthenticate(credential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                user.updatePassword(newPasswordText).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        userManager.setPassword(newPasswordText)
+                        userManager.writeProfile(account)
                         toastMessage.postValue("User password updated")
                         validChangePasswordLiveData.postValue(true)
                     }
@@ -45,7 +55,7 @@ class ChangePasswordViewModel(application: Application) : BaseViewModel(applicat
         }
     }
 
-    fun forgotPassword(){
+    fun forgotPassword() {
         firebaseAuth.sendPasswordResetEmail(userManager.getEmail())
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -54,38 +64,58 @@ class ChangePasswordViewModel(application: Application) : BaseViewModel(applicat
             }
     }
 
-    fun checkOldPassword(passwordText: String) {
-        if (Hash.hashSHA256(passwordText) != userManager.getPassword()) {
-            validOldPasswordLiveData.postValue("Not the same as the old password")
-        } else {
-            validOldPasswordLiveData.postValue("")
+
+    fun checkOldPassword(passwordText: String): Boolean {
+        return when {
+            passwordText.isEmpty() -> {
+                validOldPasswordLiveData.postValue("Mustn't empty")
+                return false
+            }
+            Hash.hashSHA256(passwordText) != userManager.getPassword() -> {
+                validOldPasswordLiveData.postValue("Not the same as the old password")
+                false
+            }
+            else -> {
+                validOldPasswordLiveData.postValue("")
+                true
+            }
         }
     }
 
-    fun checkRepeatPassword(passwordText1: String, passwordText2: String) {
-        if (passwordText1 != passwordText2) {
-            validRepeatPasswordLiveData.postValue("Not the same as the new password")
-        } else {
-            validRepeatPasswordLiveData.postValue("")
+    fun checkRepeatPassword(passwordRepeatText: String, passwordNewText: String): Boolean {
+        return when {
+            passwordRepeatText.isEmpty() -> {
+                validRepeatPasswordLiveData.postValue("Mustn't empty")
+                false
+            }
+            passwordRepeatText != passwordNewText -> {
+                validRepeatPasswordLiveData.postValue("Not the same as the new password")
+                false
+            }
+            else -> {
+                validRepeatPasswordLiveData.postValue("")
+                true
+            }
         }
     }
 
-    fun validPassword(passwordText: String, passwordText2: String) {
-        if (passwordText.length < 8) {
+    fun validPassword(passwordNewText: String, passwordOldText: String): Boolean {
+        if (passwordNewText.length < 8) {
             validNewPasswordLiveData.postValue("Minimum 8 Character Password")
-        } else if (!passwordText.matches(".*[A-Z].*".toRegex())) {
+            return false
+        } else if (!passwordNewText.matches(".*[A-Z].*".toRegex())) {
             validNewPasswordLiveData.postValue("Must Contain 1 Upper-case Character")
-        } else if (!passwordText.matches(".*[a-z].*".toRegex())) {
+            return false
+        } else if (!passwordNewText.matches(".*[a-z].*".toRegex())) {
             validNewPasswordLiveData.postValue("Must Contain 1 Lower-case Character")
-        } else if (passwordText == passwordText2) {
+            return false
+        } else if (passwordNewText == passwordOldText) {
             validNewPasswordLiveData.postValue("Mustn't same as the old password")
-        } else validNewPasswordLiveData.postValue("")
-
+            return false
+        } else {
+            validNewPasswordLiveData.postValue("")
+            return true
+        }
     }
-
-    companion object {
-        const val TAG = "CHANGEPASSWORDVIEWMODEL"
-    }
-
 }
 

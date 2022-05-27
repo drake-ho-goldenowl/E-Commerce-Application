@@ -32,9 +32,7 @@ class SignUpFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
         binding = FragmentSignUpBinding.inflate(inflater, container, false)
-        binding.actionBar.toolBar.title = "Sign up"
         val factory = AuthViewModelFactory(this.requireActivity().application, object:
             OnSignInStartedListener {
             override fun onSignInStarted(client: GoogleSignInClient?) {
@@ -43,7 +41,66 @@ class SignUpFragment : Fragment() {
         })
         authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
         observeSetup()
+        bind()
         return binding.root
+    }
+
+    private fun bind(){
+        binding.apply {
+            actionBar.toolBar.title = "Sign up"
+
+            btnAlreadyHave.setOnClickListener(
+                Navigation.createNavigateOnClickListener(
+                    R.id.action_signUpFragment_to_loginFragment,
+                    null
+                )
+            )
+
+            actionBar.toolBar.setNavigationOnClickListener {
+                startActivity(Intent(activity, MainActivity::class.java))
+                activity?.finish()
+            }
+
+            btnSignUp.setOnClickListener {
+                authViewModel.signUp(
+                    editTextName.text.toString(),
+                    editTextEmail.text.toString(),
+                    editTextPassword.text.toString()
+                )
+            }
+
+            editTextName.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
+                override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+                    authViewModel.validName(editTextName.text.toString())
+                }
+                override fun afterTextChanged(p0: Editable?) {}
+            })
+
+            editTextEmail.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
+                override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+                    authViewModel.validEmail(editTextEmail.text.toString())
+                }
+                override fun afterTextChanged(p0: Editable?) {}
+            })
+
+            editTextPassword.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
+                override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+                    authViewModel.validPassword(editTextPassword.text.toString())
+                }
+                override fun afterTextChanged(p0: Editable?) {}
+            })
+
+            btnGoogle.setOnClickListener {
+                authViewModel.signInWithGoogle()
+            }
+            btnFacebook.setOnClickListener {
+                LoginManager.getInstance().logInWithReadPermissions(requireActivity(), listOf("email"))
+                authViewModel.loginWithFacebook()
+            }
+        }
     }
 
     private fun observeSetup() {
@@ -74,64 +131,6 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.btnAlreadyHave.setOnClickListener(
-            Navigation.createNavigateOnClickListener(
-                R.id.action_signUpFragment_to_loginFragment,
-                null
-            )
-        )
-
-        binding.actionBar.toolBar.setNavigationOnClickListener {
-            startActivity(Intent(activity, MainActivity::class.java))
-            activity?.finish()
-        }
-
-        binding.btnSignUp.setOnClickListener {
-            authViewModel.validName(binding.editTextName.text.toString())
-            authViewModel.validEmail(binding.editTextEmail.text.toString())
-            authViewModel.validPassword(binding.editTextPassword.text.toString())
-            if (!binding.txtLayoutPassword.isErrorEnabled && !binding.txtLayoutEmail.isErrorEnabled &&
-                !binding.txtLayoutName.isErrorEnabled
-            ) {
-                authViewModel.signUp(
-                    binding.editTextName.text.toString(),
-                    binding.editTextEmail.text.toString(),
-                    binding.editTextPassword.text.toString()
-                )
-            }
-        }
-        binding.editTextEmail.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
-            override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
-                authViewModel.validEmail(binding.editTextEmail.text.toString())
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-
-        binding.editTextPassword.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
-            override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
-                authViewModel.validPassword(binding.editTextPassword.text.toString())
-            }
-
-            override fun afterTextChanged(p0: Editable?) {
-            }
-        })
-
-        binding.btnGoogle.setOnClickListener {
-            authViewModel.signInWithGoogle()
-        }
-        binding.btnFacebook.setOnClickListener {
-            LoginManager.getInstance().logInWithReadPermissions(this.requireActivity(), listOf("email"))
-            authViewModel.loginWithFacebook()
-        }
-    }
-
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_SIGN_IN && resultCode == Activity.RESULT_OK && data != null) {
@@ -150,35 +149,40 @@ class SignUpFragment : Fragment() {
 
 
     private fun alertName(alert: String) {
-        if (!alert.isNullOrEmpty()) {
-            binding.txtLayoutName.isErrorEnabled = true
-            binding.txtLayoutName.error = alert
-            binding.txtLayoutName.endIconMode = TextInputLayout.END_ICON_NONE
-        } else {
-            binding.txtLayoutName.isErrorEnabled = false
-            binding.txtLayoutName.endIconMode = TextInputLayout.END_ICON_CUSTOM
-
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutName.isErrorEnabled = true
+                txtLayoutName.error = alert
+                txtLayoutName.endIconMode = TextInputLayout.END_ICON_NONE
+            } else {
+                txtLayoutName.isErrorEnabled = false
+                txtLayoutName.endIconMode = TextInputLayout.END_ICON_CUSTOM
+            }
         }
     }
 
     private fun alertEmail(alert: String) {
-        if (!alert.isNullOrEmpty()) {
-            binding.txtLayoutEmail.isErrorEnabled = true
-            binding.txtLayoutEmail.error = alert
-            binding.txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_NONE
-        } else {
-            binding.txtLayoutEmail.isErrorEnabled = false
-            binding.txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_CUSTOM
-
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutEmail.isErrorEnabled = true
+                txtLayoutEmail.error = alert
+                txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_NONE
+            } else {
+                txtLayoutEmail.isErrorEnabled = false
+                txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_CUSTOM
+            }
         }
+
     }
 
     private fun alertPassword(alert: String) {
-        if (!alert.isNullOrEmpty()) {
-            binding.txtLayoutPassword.isErrorEnabled = true
-            binding.txtLayoutPassword.error = alert
-        } else {
-            binding.txtLayoutPassword.isErrorEnabled = false
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutPassword.isErrorEnabled = true
+                txtLayoutPassword.error = alert
+            } else {
+                txtLayoutPassword.isErrorEnabled = false
+            }
         }
     }
 

@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.SettingActivity
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileLoginBinding
-import com.goldenowl.ecommerceapp.model.UserManager
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
 import com.goldenowl.ecommerceapp.utilities.REQUEST_SIGN_IN
 import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
