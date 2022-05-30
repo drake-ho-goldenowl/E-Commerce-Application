@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-kapt'
+
 android {
     compileSdk 32
 
@@ -20,7 +22,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding true
     }
     compileOptions {
@@ -36,7 +38,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.5'
     implementation 'com.google.firebase:firebase-firestore:24.1.2'
-    implementation 'com.google.firebase:firebase-auth:21.0.4'
+    implementation 'com.google.firebase:firebase-auth:21.0.5'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
 
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
@@ -46,12 +48,19 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.1'
     def nav_version = "2.4.2"
     def fragment_version = "1.4.1"
-    def room_version = '2.3.0'
     // Kotlin
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    implementation "androidx.room:room-ktx:$room_version"
+
+    // Room
+    implementation "androidx.room:room-runtime:2.4.2"
+    kapt "androidx.room:room-compiler:2.4.2"
+    implementation "androidx.room:room-ktx:2.4.2"
+
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
 
     implementation platform('com.google.firebase:firebase-bom:30.0.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'

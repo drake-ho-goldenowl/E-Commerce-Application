@@ -1,32 +1,68 @@
 package com.goldenowl.ecommerceapp.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.databinding.ItemCategoriesBinding
 
-class RecycleListCategories(private val mDataset: ArrayList<String>) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class RecycleListCategories(private val onItemClicked: (String) -> Unit) :
+    ListAdapter<String, RecycleListCategories.ItemViewHolder>(DiffCallback) {
+    var positionCurrent = -1
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var mTextView = itemView.findViewById<TextView>(R.id.txtBrandName)
+    class ItemViewHolder(private var binding: ItemCategoriesBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(category: String, position: Int, currentPosition: Int) {
+            binding.apply {
+                txtCategory.text = category
+//                if (currentPosition == position) {
+//                    txtCategory.setTextColor(R.color.white)
+//                    layoutItemCategory.setBackgroundResource(R.drawable.btn_custom5)
+//                } else {
+//                    txtCategory.setTextColor(R.color.white)
+//                    layoutItemCategory.setBackgroundResource(R.drawable.btn_custom4)
+//                }
+            }
+
+        }
     }
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(
-            R.layout.item_categories, parent, false)
-        return ViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+        return ItemViewHolder(
+            ItemCategoriesBinding.inflate(
+                LayoutInflater.from(
+                    parent.context
+                ),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        val current = getItem(position)
+        holder.itemView.setOnClickListener {
+            onItemClicked(current.toString())
+            positionCurrent = position
+            println(positionCurrent)
+        }
 
+        holder.bind(current, position, positionCurrent)
     }
 
-    override fun getItemCount(): Int {
-        return mDataset.size
+    companion object {
+        private val DiffCallback = object : DiffUtil.ItemCallback<String>() {
+            override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
+
 
 }

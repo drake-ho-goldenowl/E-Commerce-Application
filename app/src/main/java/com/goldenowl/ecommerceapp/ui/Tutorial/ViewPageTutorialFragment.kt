@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
+import com.goldenowl.ecommerceapp.MainActivity
 import com.goldenowl.ecommerceapp.adapters.TutorialPagerAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentViewPageTutorialBinding
-import com.goldenowl.ecommerceapp.MainActivity
 import com.google.android.material.tabs.TabLayoutMediator
 
 class ViewPageTutorialFragment : Fragment() {
@@ -20,58 +20,59 @@ class ViewPageTutorialFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentViewPageTutorialBinding.inflate(inflater, container, false)
-
         binding.viewPager.adapter = TutorialPagerAdapter(this)
-
-        TabLayoutMediator(binding.viewPagerTabs, binding.viewPager) { _, _ -> }.attach()
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                when (position) {
-                    0 -> {
-                        binding.btnNext.visibility = View.VISIBLE
-                        binding.btnSkip.visibility = View.VISIBLE
-                        binding.btnGetStart.visibility = View.GONE
-                        currentPage = 0
+        binding.apply {
+            TabLayoutMediator(viewPagerTabs, viewPager) { _, _ -> }.attach()
+            viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    when (position) {
+                        0 -> {
+                            btnNext.visibility = View.VISIBLE
+                            btnSkip.visibility = View.VISIBLE
+                            btnGetStart.visibility = View.GONE
+                            currentPage = 0
+                        }
+                        1 -> {
+                            btnNext.visibility = View.VISIBLE
+                            btnSkip.visibility = View.VISIBLE
+                            btnGetStart.visibility = View.GONE
+                            currentPage = 1
+                        }
+                        2 -> {
+                            btnNext.visibility = View.VISIBLE
+                            btnSkip.visibility = View.VISIBLE
+                            btnGetStart.visibility = View.GONE
+                            currentPage = 2
+                        }
+                        3 -> {
+                            btnNext.visibility = View.GONE
+                            btnSkip.visibility = View.GONE
+                            btnGetStart.visibility = View.VISIBLE
+                            currentPage = 3
+                        }
                     }
-                    1 -> {
-                        binding.btnNext.visibility = View.VISIBLE
-                        binding.btnSkip.visibility = View.VISIBLE
-                        binding.btnGetStart.visibility = View.GONE
-                        currentPage = 1
-                    }
-                    2 -> {
-                        binding.btnNext.visibility = View.VISIBLE
-                        binding.btnSkip.visibility = View.VISIBLE
-                        binding.btnGetStart.visibility = View.GONE
-                        currentPage = 2
-                    }
-                    3 -> {
-                        binding.btnNext.visibility = View.GONE
-                        binding.btnSkip.visibility = View.GONE
-                        binding.btnGetStart.visibility = View.VISIBLE
-                        currentPage = 3
-                    }
+                    super.onPageSelected(position)
                 }
-                super.onPageSelected(position)
+            })
+
+            btnSkip.setOnClickListener {
+                startActivity(Intent(activity, MainActivity::class.java))
+                activity?.finish()
             }
-        })
 
-        binding.btnSkip.setOnClickListener {
-            startActivity(Intent(activity, MainActivity::class.java))
-            activity?.finish()
-        }
+            btnNext.setOnClickListener {
+                if (currentPage < 3) {
+                    currentPage++
+                    binding.viewPager.currentItem = currentPage
+                }
+            }
 
-        binding.btnNext.setOnClickListener {
-            if (currentPage < 3) {
-                currentPage++
-                binding.viewPager.currentItem = currentPage
+            btnGetStart.setOnClickListener {
+                startActivity(Intent(activity, MainActivity::class.java))
+                activity?.finish()
             }
         }
 
-        binding.btnGetStart.setOnClickListener {
-            startActivity(Intent(activity, MainActivity::class.java))
-            activity?.finish()
-        }
         return binding.root
     }
 

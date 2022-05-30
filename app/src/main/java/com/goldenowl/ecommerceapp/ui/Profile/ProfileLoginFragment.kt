@@ -38,27 +38,33 @@ class ProfileLoginFragment : Fragment() {
         })
         authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
 
-        if(userManager.isLogged()){
-            binding.txtName.text =  userManager.getName()
-            binding.txtEmail.text = userManager.getEmail()
-            Glide.with(this)
-                .load(userManager.getAvatar())
-                .error(R.drawable.ic_no_login)
-                .into(binding.imgAvatar)
-        }
 
-        binding.btnLogout.setOnClickListener{
-            userManager.logOut()
-            authViewModel.logOut()
-            startActivity(Intent(activity, AuthActivity::class.java))
-            activity?.finish()
-        }
-        binding.settingLayout.setOnClickListener{
-            startActivity(Intent(activity, SettingActivity::class.java))
-//            activity?.finish()
-        }
-
+        bind()
         return binding.root
+    }
+
+    private fun bind(){
+        binding.apply {
+            if(userManager.isLogged()){
+                txtName.text =  userManager.getName()
+                txtEmail.text = userManager.getEmail()
+                Glide.with(requireActivity())
+                    .load(userManager.getAvatar())
+                    .error(R.drawable.ic_no_login)
+                    .into(binding.imgAvatar)
+            }
+
+            btnLogout.setOnClickListener{
+                userManager.logOut()
+                authViewModel.logOut()
+                startActivity(Intent(activity, AuthActivity::class.java))
+                activity?.finish()
+            }
+            settingLayout.setOnClickListener{
+                startActivity(Intent(activity, SettingActivity::class.java))
+//            activity?.finish()
+            }
+        }
     }
 
     override fun onResume() {

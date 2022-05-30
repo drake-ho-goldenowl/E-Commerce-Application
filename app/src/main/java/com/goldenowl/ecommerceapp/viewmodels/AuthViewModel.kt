@@ -31,7 +31,7 @@ import java.util.*
 class AuthViewModel(application: Application, private val listener: OnSignInStartedListener) :
     BaseViewModel(application) {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    val userLiveData: MutableLiveData<FirebaseUser> = MutableLiveData()
+    val userLiveData: MutableLiveData<FirebaseUser?> = MutableLiveData()
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
     val validEmailLiveData: MutableLiveData<String> = MutableLiveData()
     val validPasswordLiveData: MutableLiveData<String> = MutableLiveData()
