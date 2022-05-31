@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.ActivitySettingBinding
+import com.goldenowl.ecommerceapp.ui.BottomSheetChangePassword
 import com.goldenowl.ecommerceapp.ui.DatePickerFragment
-import com.goldenowl.ecommerceapp.ui.ModalBottomSheet
 import com.goldenowl.ecommerceapp.viewmodels.SettingViewModel
 
 
@@ -91,8 +91,8 @@ class SettingActivity : AppCompatActivity() {
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), 456)
             }
             txtChange.setOnClickListener {
-                val modalBottomSheet = ModalBottomSheet()
-                modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
+                val modalBottomSheet = BottomSheetChangePassword()
+                modalBottomSheet.show(supportFragmentManager, BottomSheetChangePassword.TAG)
             }
 
         }

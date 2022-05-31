@@ -7,7 +7,6 @@
     tools:context=".ui.ShopFragment">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
@@ -36,11 +35,12 @@
                 app:statusBarScrim="?attr/colorOnPrimary">
 
                 <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/MaterialToolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:title="Women's tops"
                     app:menu="@menu/top_app_bar"
+                    app:title="Women's tops"
                     app:titleCentered="true"
                     app:titleTextColor="@color/white" />
 
@@ -60,8 +60,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="10dp"
-                app:layout_collapseMode="pin"
                 android:orientation="horizontal"
+                app:layout_collapseMode="pin"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -80,53 +80,48 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/recyclerViewCategories">
 
-                <ImageView
-                    android:id="@+id/imgFilter"
+
+                <Button
+                    android:id="@+id/btnFilter"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_filter_list"
+                    android:layout_height="24dp"
+                    android:background="@color/transparent"
+                    android:drawableLeft="@drawable/ic_baseline_filter_list"
+                    android:fontFamily="@font/metropolis"
+                    android:gravity="top"
+                    android:padding="0dp"
+                    android:text="Filters"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="11sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/txtFilter"
+                <Button
+                    android:id="@+id/btnSort"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="7dp"
-                    android:text="Filters"
-                    android:textSize="11sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/imgFilter"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/imgFilterPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="61dp"
-                    android:src="@drawable/ic_baseline_swap_vert"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/txtFilter"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/txtFilterPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="6dp"
+                    android:layout_height="24dp"
+                    android:background="@color/transparent"
+                    android:drawableLeft="@drawable/ic_baseline_swap_vert"
+                    android:fontFamily="@font/metropolis"
+                    android:padding="0dp"
                     android:text="Price: lowest to high"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
                     android:textSize="11sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/imgFilterPrice"
+                    app:layout_constraintLeft_toRightOf="@id/btnFilter"
+                    app:layout_constraintRight_toLeftOf="@id/btnChangeView"
                     app:layout_constraintTop_toTopOf="parent" />
 
+
                 <ImageView
+                    android:id="@+id/btnChangeView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:src="@drawable/ic_view_modules"
+                    android:src="@drawable/ic_view_module"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -139,15 +134,15 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/grey2"
+                android:foregroundGravity="center"
                 android:paddingBottom="80dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layoutFilter"/>
+                app:layout_constraintTop_toBottomOf="@+id/layoutFilter" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

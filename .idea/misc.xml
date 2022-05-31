@@ -6,6 +6,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable-v23/btn_favorite_active.xml" value="0.17" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable-v24/bag_icon.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable-v24/ic_baseline_heart.xml" value="0.17" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/bag_icon.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/bottom_sheet_change_password.xml" value="0.157" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_custom.xml" value="0.157" />
@@ -22,9 +23,11 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/favorites.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/favorites_icon.xml" value="0.153" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/home_icon.xml" value="0.1215" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_arrow_back.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_arrow_right.xml" value="0.157" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_bag.xml" value="0.157" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_favorites.xml" value="0.17" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_filter_list.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_heart.xml" value="0.17" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_home.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_profile.xml" value="0.153" />
@@ -36,13 +39,18 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_dot_select.xml" value="0.1515" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_fb.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_google.xml" value="0.158" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_grid_layout.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_heart.xml" value="0.17" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_heart_active.xml" value="0.17" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_intro1.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_intro2.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_intro3.xml" value="0.1515" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_intro4.xml" value="0.1515" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_linear_layout.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_no_login.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_outline_bag.xml" value="0.153" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_outline_check.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_outline_favorites.xml" value="0.153" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_outline_home.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_outline_home_24.xml" value="0.1555" />
@@ -51,6 +59,8 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_round_arrow_right.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_search.xml" value="0.153" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_splash.xml" value="0.1" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_view_module.xml" value="0.1325" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_view_modules.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/person_icon.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/profile_icon.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/rectangle.xml" value="0.1" />
@@ -83,6 +93,8 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_splash.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_tutorial.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_change_password.xml" value="0.25" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_filter.xml" value="0.2682291666666667" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_sort.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar.xml" value="0.165" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar2.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_app_bar.xml" value="0.26927083333333335" />
@@ -98,7 +110,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_profile_login.xml" value="0.2552083333333333" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_profile_no_login.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_second_intro.xml" value="0.26927083333333335" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_shop.xml" value="0.21052631578947367" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_shop.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_sign_up.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_signup.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_signup2.xml" value="0.26927083333333335" />
@@ -107,11 +119,11 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_view_page_tutorial.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_categories.xml" value="0.4868421052631579" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_list_profile.xml" value="0.335" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product.xml" value="0.4650793650793651" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product.xml" value="0.5" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product_2.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/splash_screen.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/toolbar.xml" value="0.25" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/menu/menu_nav.xml" value="0.1" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/menu/menu_nav.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/menu/top_app_bar.xml" value="0.375" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.153" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />

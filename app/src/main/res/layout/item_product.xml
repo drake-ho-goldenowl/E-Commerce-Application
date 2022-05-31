@@ -3,7 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="17dp">
+    android:layout_marginEnd="1dp"
+    android:layout_marginStart="16dp"
+    android:layout_marginBottom="7dp"
+    android:layout_marginTop="17dp"
+    android:layout_gravity="center">
 
 
     <androidx.cardview.widget.CardView
@@ -22,7 +26,7 @@
 
             <ImageView
                 android:id="@+id/imgProduct"
-                android:layout_width="148dp"
+                android:layout_width="162dp"
                 android:layout_height="184dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_sample"
@@ -53,7 +57,7 @@
         style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="14dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="8dp"
         android:numStars="5"
         android:progressTint="@color/yellow"
         android:rating="5"
@@ -65,13 +69,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2.5dp"
-        android:layout_marginTop="7dp"
         android:gravity="center"
         android:text="(10)"
         android:textColor="@color/grey3"
         android:textSize="11sp"
         app:layout_constraintLeft_toRightOf="@id/ratingBar"
-        app:layout_constraintTop_toBottomOf="@id/cardViewImgProduct" />
+        app:layout_constraintBottom_toBottomOf="@+id/ratingBar" />
 
     <TextView
         android:id="@+id/txtBrandName"

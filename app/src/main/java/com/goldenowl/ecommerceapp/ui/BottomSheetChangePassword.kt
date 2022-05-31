@@ -12,7 +12,7 @@ import com.goldenowl.ecommerceapp.databinding.BottomLayoutChangePasswordBinding
 import com.goldenowl.ecommerceapp.viewmodels.ChangePasswordViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ModalBottomSheet : BottomSheetDialogFragment() {
+class BottomSheetChangePassword : BottomSheetDialogFragment() {
     private lateinit var binding: BottomLayoutChangePasswordBinding
     private lateinit var viewModel: ChangePasswordViewModel
     override fun onCreateView(
@@ -21,7 +21,7 @@ class ModalBottomSheet : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = BottomLayoutChangePasswordBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(ChangePasswordViewModel::class.java)
+        viewModel = ViewModelProvider(this)[ChangePasswordViewModel::class.java]
 
         observeSetup()
         bind()

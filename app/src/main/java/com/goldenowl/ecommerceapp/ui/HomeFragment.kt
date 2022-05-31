@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.goldenowl.ecommerceapp.adapters.RecycleListHorizonal
+import com.goldenowl.ecommerceapp.adapters.RecycleListHorizontal
 import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
@@ -17,16 +17,16 @@ class HomeFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater,container,false)
-        val dataSet = arrayListOf("hi","hi","hi","hi","hi")
         binding.recyclerViewSale.layoutManager = LinearLayoutManager(
             this.context,
             LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerViewSale.adapter = RecycleListHorizonal(dataSet)
+        binding.recyclerViewSale.adapter = RecycleListHorizontal{
+
+        }
 
         binding.recyclerViewNew.layoutManager = LinearLayoutManager(
             this.context,
             LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerViewNew.adapter = RecycleListHorizonal(dataSet)
         return binding.root
     }
 }

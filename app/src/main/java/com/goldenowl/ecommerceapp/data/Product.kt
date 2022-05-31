@@ -22,7 +22,7 @@ data class Product(
     val createdDate: Date?,
     @Nullable @ColumnInfo(name = "sale_percent")
     val salePercent: Int?,
-    @ColumnInfo(name = "is_popular")
+    @field:JvmField @ColumnInfo(name = "is_popular")
     val isPopular: Boolean?,
     @NonNull @ColumnInfo(name = "number_reviews")
     val numberReviews: Int,

@@ -1,5 +1,6 @@
 package com.goldenowl.ecommerceapp.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,30 +8,22 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.goldenowl.ecommerceapp.databinding.ItemCategoriesBinding
 
+
 class RecycleListCategories(private val onItemClicked: (String) -> Unit) :
     ListAdapter<String, RecycleListCategories.ItemViewHolder>(DiffCallback) {
     var positionCurrent = -1
-
-    class ItemViewHolder(private var binding: ItemCategoriesBinding) :
+    class ItemViewHolder(private val context: Context,private var binding: ItemCategoriesBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(category: String, position: Int, currentPosition: Int) {
+        val bind = binding
+        fun bind(category: String) {
             binding.apply {
                 txtCategory.text = category
-//                if (currentPosition == position) {
-//                    txtCategory.setTextColor(R.color.white)
-//                    layoutItemCategory.setBackgroundResource(R.drawable.btn_custom5)
-//                } else {
-//                    txtCategory.setTextColor(R.color.white)
-//                    layoutItemCategory.setBackgroundResource(R.drawable.btn_custom4)
-//                }
             }
-
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(
+        return ItemViewHolder(parent.context,
             ItemCategoriesBinding.inflate(
                 LayoutInflater.from(
                     parent.context
@@ -46,10 +39,8 @@ class RecycleListCategories(private val onItemClicked: (String) -> Unit) :
         holder.itemView.setOnClickListener {
             onItemClicked(current.toString())
             positionCurrent = position
-            println(positionCurrent)
         }
-
-        holder.bind(current, position, positionCurrent)
+        holder.bind(current)
     }
 
     companion object {

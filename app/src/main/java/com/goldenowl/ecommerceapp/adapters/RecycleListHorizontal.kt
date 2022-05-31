@@ -8,14 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.Product
-import com.goldenowl.ecommerceapp.databinding.ItemProduct2Binding
+import com.goldenowl.ecommerceapp.databinding.ItemProductBinding
 
-class RecycleListVertical(private val onItemClicked: (Product) -> Unit) :
-    ListAdapter<Product, RecycleListVertical.ItemViewHolder>(DiffCallback) {
+class RecycleListHorizontal(private val onItemClicked: (Product) -> Unit) :
+    ListAdapter<Product, RecycleListHorizontal.ItemViewHolder>(DiffCallback) {
 
-    class ItemViewHolder(private var binding: ItemProduct2Binding) :
+    class ItemViewHolder(private var binding: ItemProductBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
 
         fun bind(product: Product) {
             binding.apply {
@@ -31,10 +30,9 @@ class RecycleListVertical(private val onItemClicked: (Product) -> Unit) :
             }
         }
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(
-            ItemProduct2Binding.inflate(
+            ItemProductBinding.inflate(
                 LayoutInflater.from(
                     parent.context
                 ),
@@ -63,5 +61,6 @@ class RecycleListVertical(private val onItemClicked: (Product) -> Unit) :
             }
         }
     }
+
 
 }
