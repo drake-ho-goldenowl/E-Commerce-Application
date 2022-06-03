@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(product: Product)
 
     @Update
@@ -20,19 +20,16 @@ interface ProductDao {
     @Query("SELECT category_name FROM product GROUP BY category_name")
     fun getAllCategory(): Flow<List<String>>
 
-    @Query("SELECT * FROM product WHERE category_name = :category ORDER BY :str DESC")
-    fun filterByCategory(category: String, str: String): Flow<List<Product>>
+    @Query("SELECT * FROM product WHERE category_name = :category")
+    fun filterByCategory(category: String): Flow<List<Product>>
 
-    @Query("SELECT * FROM product ORDER BY :str DESC")
-    fun filterBySort(str: String): Flow<List<Product>>
+    @Query("SELECT * FROM product WHERE title LIKE '%' || :search || '%'")
+    fun filterBySearch(search: String): Flow<List<Product>>
 
-    @Query("SELECT * FROM product WHERE title LIKE '%' || :search || '%'  ORDER BY :str DESC")
-    fun filterBySearch(search: String, str: String): Flow<List<Product>>
-
-    @Query("SELECT * FROM product WHERE title LIKE '%' || :search || '%' AND category_name = :category ORDER BY :str DESC")
+    @Query("SELECT * FROM product WHERE title LIKE '%' || :search || '%' AND category_name = :category")
     fun filterByCategoryAndSearch(
         search: String,
         category: String,
-        str: String
     ): Flow<List<Product>>
+
 }

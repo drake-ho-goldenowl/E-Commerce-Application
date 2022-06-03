@@ -11,40 +11,32 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment_to_shopFragment"
-            app:destination="@id/shopFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_in_left"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            android:id="@+id/action_homeFragment_to_catalogFragment"
+            app:destination="@id/catalogFragment" />
     </fragment>
     <fragment
         android:id="@+id/shopFragment"
-        android:name="com.goldenowl.ecommerceapp.ui.ShopFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Shop.ShopFragment"
         android:label="fragment_shop"
         tools:layout="@layout/fragment_shop" >
         <action
-            android:id="@+id/action_shopFragment_to_bagFragment"
-            app:destination="@id/bagFragment" />
+            android:id="@+id/action_shopFragment_to_catalogFragment"
+            app:destination="@id/catalogFragment" />
+        <argument
+            android:name="nameCategories"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/bagFragment"
         android:name="com.goldenowl.ecommerceapp.ui.BagFragment"
         android:label="fragment_bag"
-        tools:layout="@layout/fragment_bag" >
-        <action
-            android:id="@+id/action_bagFragment_to_favoritesFragment"
-            app:destination="@id/favoritesFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_bag" />
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.goldenowl.ecommerceapp.ui.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" >
-        <action
-            android:id="@+id/action_favoritesFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_favorites" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.goldenowl.ecommerceapp.ui.Profile.ProfileFragment"
@@ -56,6 +48,9 @@
         <action
             android:id="@+id/action_profileFragment_to_profileLoginFragment"
             app:destination="@id/profileLoginFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileLoginFragment"
@@ -67,4 +62,18 @@
         android:name="com.goldenowl.ecommerceapp.ui.Profile.ProfileNoLoginFragment"
         android:label="fragment_profile_no_login"
         tools:layout="@layout/fragment_profile_no_login" />
+    <fragment
+        android:id="@+id/catalogFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Shop.CatalogFragment"
+        android:label="fragment_catalog"
+        tools:layout="@layout/fragment_catalog" >
+        <argument
+            android:name="nameCategories"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Profile.SettingFragment"
+        android:label="fragment_setting"
+        tools:layout="@layout/fragment_setting" />
 </navigation>

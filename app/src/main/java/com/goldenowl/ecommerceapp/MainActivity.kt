@@ -1,14 +1,16 @@
 package com.goldenowl.ecommerceapp
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.goldenowl.ecommerceapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -23,10 +25,28 @@ class MainActivity : AppCompatActivity() {
 
         setupBottomNavMenu(navController)
 
+
+    }
+
+    override fun onBackPressed() {
+//        super.onBackPressed()
     }
 
     private fun setupBottomNavMenu(navController: NavController) {
         binding.bottomNavigation.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.homeFragment, R.id.shopFragment, R.id.bagFragment, R.id.favoritesFragment, R.id.profileFragment, R.id.catalogFragment -> binding.bottomNavigation.visibility =
+                    View.VISIBLE
+                else -> binding.bottomNavigation.visibility = View.GONE
+            }
+        }
+
+        binding.bottomNavigation.setOnItemSelectedListener { item->
+            NavigationUI.onNavDestinationSelected(item,navController)
+            navController.popBackStack(item.itemId,inclusive = false)
+            true
+        }
     }
 
 }

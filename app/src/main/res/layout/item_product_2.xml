@@ -11,7 +11,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="12dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -66,6 +66,7 @@
                 android:layout_marginTop="6dp"
                 android:numStars="5"
                 android:progressTint="@color/yellow"
+                android:secondaryProgressTint="@color/transparent"
                 android:rating="5"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
@@ -84,7 +85,7 @@
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
 
             <TextView
-                android:id="@+id/txtOldPrice"
+                android:id="@+id/txtPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
@@ -100,16 +101,17 @@
 
     </androidx.cardview.widget.CardView>
 
-    <CheckBox
-        android:id="@+id/checkboxFavorite"
+    <ImageButton
+        android:id="@+id/btnFavorite"
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginBottom="-10dp"
-        android:background="@drawable/checkbox_selector"
+        android:background="@drawable/btn_favorite_no_active"
         android:button="@null"
         android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/cardViewProduct"
         app:layout_constraintRight_toRightOf="@+id/cardViewProduct" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

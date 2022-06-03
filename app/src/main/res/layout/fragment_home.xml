@@ -79,6 +79,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/txtViewAllSale"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="51dp"
@@ -105,11 +106,11 @@
                     android:id="@+id/recyclerViewSale"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="22dp"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    app:layout_constraintTop_toBottomOf="@id/txtSubSale" />
+                    app:layout_constraintTop_toBottomOf="@id/txtSubSale"
+                    tools:layout_editor_absoluteX="16dp" />
 
                 <TextView
                     android:id="@+id/txtNew"
@@ -124,6 +125,7 @@
                     app:layout_constraintTop_toBottomOf="@id/recyclerViewSale" />
 
                 <TextView
+                    android:id="@+id/txtViewAllNew"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="65dp"
@@ -152,7 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="22dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginBottom="127dp"
                     android:orientation="horizontal"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"

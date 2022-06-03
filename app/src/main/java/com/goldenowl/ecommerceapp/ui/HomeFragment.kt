@@ -5,28 +5,79 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.adapters.RecycleListHorizontal
 import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
+import com.goldenowl.ecommerceapp.viewmodels.HomeViewModel
+import com.goldenowl.ecommerceapp.viewmodels.HomeViewModelFactory
+
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
+    private val viewModel: HomeViewModel by activityViewModels {
+        HomeViewModelFactory(
+            (activity?.application as EcommerceApplication).database.productDao(),
+            (activity?.application as EcommerceApplication).database.favoriteDao(),
+        )
+    }
+
+    private lateinit var adapterSale: RecycleListHorizontal
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(inflater,container,false)
-        binding.recyclerViewSale.layoutManager = LinearLayoutManager(
-            this.context,
-            LinearLayoutManager.HORIZONTAL, false)
-        binding.recyclerViewSale.adapter = RecycleListHorizontal{
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+
+        adapterSale = RecycleListHorizontal (this) {
 
         }
 
-        binding.recyclerViewNew.layoutManager = LinearLayoutManager(
-            this.context,
-            LinearLayoutManager.HORIZONTAL, false)
+
+        viewModel.product.observe(viewLifecycleOwner){
+            adapterSale.submitList(viewModel.filterSale(it))
+        }
+
+
+        bind()
+
         return binding.root
+    }
+
+    private fun bind(){
+        binding.apply {
+            recyclerViewSale.adapter = adapterSale
+
+            recyclerViewSale.layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.HORIZONTAL, false
+            )
+
+
+            recyclerViewNew.layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.HORIZONTAL, false
+            )
+
+            txtViewAllSale.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
+                    nameCategories = ""
+                )
+
+                findNavController().navigate(action)
+            }
+
+            txtViewAllNew.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
+                    nameCategories = ""
+                )
+                findNavController().navigate(action)
+            }
+
+        }
     }
 }

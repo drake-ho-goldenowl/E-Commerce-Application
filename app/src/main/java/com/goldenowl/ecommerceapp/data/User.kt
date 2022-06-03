@@ -6,7 +6,8 @@ class User(
     var password: String,
     val token: String,
     var dob: String = "",
-    var avatar: String = ""
+    var avatar: String = "",
 ) {
     constructor() : this("", "", "", "", "","")
 }
+

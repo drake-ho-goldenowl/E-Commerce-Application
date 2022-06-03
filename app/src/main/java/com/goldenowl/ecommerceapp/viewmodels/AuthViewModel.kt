@@ -5,6 +5,8 @@ import android.content.ContentValues
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -29,7 +31,7 @@ import java.util.*
 
 
 class AuthViewModel(application: Application, private val listener: OnSignInStartedListener) :
-    BaseViewModel(application) {
+    BaseViewModel() {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val userLiveData: MutableLiveData<FirebaseUser?> = MutableLiveData()
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
@@ -296,4 +298,19 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
         }
     }
 
+}
+
+
+class AuthViewModelFactory(
+    private val application: Application,
+    private val listener: OnSignInStartedListener
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(AuthViewModel::class.java)){
+            @Suppress("UNCHECKED_CAST")
+            return AuthViewModel(application,listener) as T
+        }
+        throw IllegalAccessException("Unknown ViewModel class")
+    }
 }

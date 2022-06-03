@@ -35,7 +35,9 @@ data class Product(
     @ColumnInfo(name = "description")
     val description: String,
     @NonNull @ColumnInfo(name = "tags")
-    val tags: List<Tag>
+    val tags: List<Tag>,
+    @field:JvmField
+    var isFavorite: Boolean = false
 ) {
     constructor() : this(
         "",
@@ -50,6 +52,10 @@ data class Product(
         "",
         emptyList(),
         "",
-        emptyList())
+        emptyList(),
+    )
 }
+
+
+
 

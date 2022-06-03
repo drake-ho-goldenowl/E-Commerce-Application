@@ -11,4 +11,8 @@ class AuthActivity : AppCompatActivity(R.layout.activity_auth) {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment_log)
                 as NavHostFragment? ?: return
     }
+
+    override fun onBackPressed() {
+//        super.onBackPressed()
+    }
 }

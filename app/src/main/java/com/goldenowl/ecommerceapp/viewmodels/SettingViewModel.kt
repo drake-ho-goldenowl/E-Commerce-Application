@@ -1,15 +1,15 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
-import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
-class SettingViewModel(application: Application) : BaseViewModel(application) {
+class SettingViewModel(val userManager: UserManager) : BaseViewModel() {
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
-    private var userManager: UserManager = UserManager.getInstance(application)
     private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
 
     fun updateName(nameText: String) {
@@ -79,5 +79,16 @@ class SettingViewModel(application: Application) : BaseViewModel(application) {
             validNameLiveData.postValue("")
             true
         }
+    }
+}
+
+
+class SettingViewModelFactory(private val userManager: UserManager) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SettingViewModel(userManager) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

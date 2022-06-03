@@ -39,7 +39,7 @@ class SignUpFragment : Fragment() {
                 startActivityForResult(client?.signInIntent, REQUEST_SIGN_IN)
             }
         })
-        authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
+        authViewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
         observeSetup()
         bind()
         return binding.root
@@ -47,7 +47,11 @@ class SignUpFragment : Fragment() {
 
     private fun bind(){
         binding.apply {
-            actionBar.toolBar.title = "Sign up"
+            appBarLayout.topAppBar.title = "Sign up"
+            appBarLayout.MaterialToolbar.setNavigationOnClickListener {
+                startActivity(Intent(activity, MainActivity::class.java))
+                activity?.finish()
+            }
 
             btnAlreadyHave.setOnClickListener(
                 Navigation.createNavigateOnClickListener(
@@ -56,7 +60,7 @@ class SignUpFragment : Fragment() {
                 )
             )
 
-            actionBar.toolBar.setNavigationOnClickListener {
+            appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 startActivity(Intent(activity, MainActivity::class.java))
                 activity?.finish()
             }

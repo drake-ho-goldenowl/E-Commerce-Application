@@ -1,16 +1,16 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
-import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.Hash
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 
-class ChangePasswordViewModel(application: Application) : BaseViewModel(application) {
+class ChangePasswordViewModel(private val userManager: UserManager) : BaseViewModel() {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private var userManager: UserManager = UserManager.getInstance(application)
     val validOldPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validNewPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validRepeatPasswordLiveData: MutableLiveData<String> = MutableLiveData()
@@ -116,6 +116,17 @@ class ChangePasswordViewModel(application: Application) : BaseViewModel(applicat
             validNewPasswordLiveData.postValue("")
             return true
         }
+    }
+}
+
+
+class ChangePasswordViewModelFactory(private val userManager: UserManager) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(ShopViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return ChangePasswordViewModel(userManager) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
 

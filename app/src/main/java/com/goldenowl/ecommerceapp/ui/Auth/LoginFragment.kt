@@ -50,9 +50,12 @@ class LoginFragment : Fragment() {
 
     private fun bind(){
         binding.apply {
-            actionBar.toolBar.title = "Login"
+            appBarLayout.topAppBar.title = "Login"
+            appBarLayout.MaterialToolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
 
-            actionBar.toolBar.setNavigationOnClickListener {
+            appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigate(R.id.action_loginFragment_to_signUpFragment)
             }
 

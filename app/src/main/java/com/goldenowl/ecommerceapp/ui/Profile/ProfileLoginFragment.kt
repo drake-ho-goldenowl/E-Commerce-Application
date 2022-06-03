@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
-import com.goldenowl.ecommerceapp.SettingActivity
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileLoginBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
@@ -61,8 +61,7 @@ class ProfileLoginFragment : Fragment() {
                 activity?.finish()
             }
             settingLayout.setOnClickListener{
-                startActivity(Intent(activity, SettingActivity::class.java))
-//            activity?.finish()
+                findNavController().navigate(R.id.action_profileFragment_to_settingFragment)
             }
         }
     }

@@ -1,43 +1,51 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.ui.Profile
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.goldenowl.ecommerceapp.data.UserManager
-import com.goldenowl.ecommerceapp.databinding.ActivitySettingBinding
-import com.goldenowl.ecommerceapp.ui.BottomSheetChangePassword
+import com.goldenowl.ecommerceapp.EcommerceApplication
+import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.databinding.FragmentSettingBinding
 import com.goldenowl.ecommerceapp.ui.DatePickerFragment
 import com.goldenowl.ecommerceapp.viewmodels.SettingViewModel
+import com.goldenowl.ecommerceapp.viewmodels.SettingViewModelFactory
 
+class SettingFragment : Fragment() {
+    private val viewModel: SettingViewModel by activityViewModels{
+        SettingViewModelFactory(
+            (activity?.application as EcommerceApplication).userManager
+        )
+    }
+    private lateinit var binding: FragmentSettingBinding
 
-class SettingActivity : AppCompatActivity() {
-    private lateinit var viewModel: SettingViewModel
-    private lateinit var binding: ActivitySettingBinding
-    private lateinit var userManager: UserManager
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySettingBinding.inflate(layoutInflater)
-        userManager = UserManager.getInstance(this)
-        viewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
-        Glide.with(this)
-            .load(userManager.getAvatar())
-            .error(R.drawable.ic_no_login)
-            .into(binding.imgAvatar)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentSettingBinding.inflate(inflater,container,false)
+
         bind()
         observeSetup()
-        setContentView(binding.root)
+        return binding.root
     }
-
     private fun bind() {
         binding.apply {
-            editTextFullName.setText(userManager.getName())
-            editTextDateOfBirth.setText(userManager.getDOB())
+            appBarLayout.topAppBar.title = "Setting"
+            editTextFullName.setText(viewModel.userManager.getName())
+            editTextDateOfBirth.setText(viewModel.userManager.getDOB())
+            Glide.with(this@SettingFragment)
+                .load(viewModel.userManager.getAvatar())
+                .error(R.drawable.ic_no_login)
+                .into(binding.imgAvatar)
 
             if (viewModel.checkLoginWithFbOrGoogle()) {
                 txtChange.visibility = View.GONE
@@ -66,8 +74,8 @@ class SettingActivity : AppCompatActivity() {
             }
 
             editTextDateOfBirth.setOnClickListener {
-                val newFragment = DatePickerFragment(editTextDateOfBirth, userManager.getDOB())
-                newFragment.show(supportFragmentManager, "datePicker")
+                val newFragment = DatePickerFragment(editTextDateOfBirth, viewModel.userManager.getDOB())
+                newFragment.show(parentFragmentManager, "datePicker")
             }
 
             editTextDateOfBirth.addTextChangedListener(object : TextWatcher {
@@ -92,14 +100,18 @@ class SettingActivity : AppCompatActivity() {
             }
             txtChange.setOnClickListener {
                 val modalBottomSheet = BottomSheetChangePassword()
-                modalBottomSheet.show(supportFragmentManager, BottomSheetChangePassword.TAG)
+                modalBottomSheet.show(parentFragmentManager, BottomSheetChangePassword.TAG)
+            }
+
+            binding.appBarLayout.MaterialToolbar.setNavigationOnClickListener {
+                findNavController().navigateUp()
             }
 
         }
     }
 
     private fun observeSetup() {
-        viewModel.validNameLiveData.observe(this) {
+        viewModel.validNameLiveData.observe(viewLifecycleOwner) {
             alertName(it)
         }
     }
@@ -112,7 +124,7 @@ class SettingActivity : AppCompatActivity() {
             }
             val filePath = data.data
             binding.imgAvatar.setImageURI(filePath)
-            viewModel.uploadImage(filePath, userManager.getAccessToken())
+            viewModel.uploadImage(filePath, viewModel.userManager.getAccessToken())
         }
     }
 

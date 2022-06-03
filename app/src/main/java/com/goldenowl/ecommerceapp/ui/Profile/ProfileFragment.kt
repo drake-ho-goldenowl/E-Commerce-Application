@@ -19,6 +19,7 @@ class ProfileFragment : Fragment() {
     ): View {
         val userManager = UserManager.getInstance(this.requireContext())
         binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding.appBarLayout.topAppBar.title = "My Profile"
         if (!userManager.isLogged()) {
             changeFragment(ProfileNoLoginFragment())
             return binding.root
@@ -26,7 +27,6 @@ class ProfileFragment : Fragment() {
         changeFragment(ProfileLoginFragment())
         return binding.root
     }
-
 
     private fun changeFragment(fragment: Fragment) {
         val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()

@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="140dp"
+    android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/actionBar"
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/topAppBar"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:background="@color/grey2"
-        app:elevation="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorOnPrimary"
+        android:fitsSystemWindows="true"
+        app:collapsedTitleGravity="center_horizontal"
+        app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
+        app:collapsedTitleTextColor="@color/black"
+        app:contentScrim="@color/colorOnPrimary"
+        app:expandedTitleMarginBottom="5dp"
+        app:expandedTitleMarginStart="14dp"
+        app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
+        app:expandedTitleTextColor="@color/black"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:statusBarScrim="?attr/colorOnPrimary">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/MaterialToolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:expandedTitleMarginBottom="6dp"
-            app:expandedTitleMarginStart="14dp">
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:title="TEST"
+            app:titleCentered="true" />
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolBar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:navigationIcon="@drawable/ic_arrow_back"
-                app:title="Login" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-</FrameLayout>
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+</com.google.android.material.appbar.AppBarLayout>

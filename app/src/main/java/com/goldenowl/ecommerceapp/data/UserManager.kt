@@ -13,27 +13,27 @@ class UserManager(context: Context) {
     private val accountManager: AccountManager = AccountManager.get(context)
     private val db = Firebase.firestore
 
-    fun addAccount(
-        name: String,
-        email: String,
-        password: String,
-        access_token: String,
-        dob: String = "",
-        avatar: String = "",
-    ) {
-        val data = Bundle()
-            .apply {
-                this.putString(NAME, name)
-                this.putString(EMAIL, email)
-                this.putString(PASSWORD, password)
-                this.putString(DOB, dob)
-                this.putString(TOKEN, access_token)
-                this.putString(AVATAR, avatar)
-            }
-        val account = Account(email, ACCOUNT_TYPE)
-        accountManager.addAccountExplicitly(account, access_token, data)
-        accountManager.setAuthToken(account, AUTH_TOKEN_TYPE, access_token)
-    }
+//    fun addAccount(
+//        name: String,
+//        email: String,
+//        password: String,
+//        access_token: String,
+//        dob: String = "",
+//        avatar: String = "",
+//    ) {
+//        val data = Bundle()
+//            .apply {
+//                this.putString(NAME, name)
+//                this.putString(EMAIL, email)
+//                this.putString(PASSWORD, password)
+//                this.putString(DOB, dob)
+//                this.putString(TOKEN, access_token)
+//                this.putString(AVATAR, avatar)
+//            }
+//        val account = Account(email, ACCOUNT_TYPE)
+//        accountManager.addAccountExplicitly(account, access_token, data)
+//        accountManager.setAuthToken(account, AUTH_TOKEN_TYPE, access_token)
+//    }
 
     fun addAccount(
         user: User
@@ -67,7 +67,7 @@ class UserManager(context: Context) {
             getPassword(),
             getAccessToken(),
             getDOB(),
-            getAvatar()
+            getAvatar(),
         )
     }
 

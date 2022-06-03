@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui
+package com.goldenowl.ecommerceapp.ui.Shop
 
 import android.graphics.Typeface
 import android.os.Bundle
@@ -62,7 +62,7 @@ class BottomSheetSort(private val select: Int) : BottomSheetDialogFragment() {
         button.setTypeface(button.typeface,Typeface.BOLD)
     }
     private fun sendData(select: String,position: Int) {
-        setFragmentResult(REQUEST_KEY, bundleOf(BUNDLE_KEY_NAME to select,BUNDLE_KEY_POSITION to position))
+        setFragmentResult(REQUEST_KEY, bundleOf(BUNDLE_KEY_NAME to select, BUNDLE_KEY_POSITION to position))
     }
 
     companion object {

@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui
+package com.goldenowl.ecommerceapp.ui.Profile
 
 import android.os.Bundle
 import android.text.Editable
@@ -7,21 +7,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
+import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutChangePasswordBinding
 import com.goldenowl.ecommerceapp.viewmodels.ChangePasswordViewModel
+import com.goldenowl.ecommerceapp.viewmodels.ChangePasswordViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomSheetChangePassword : BottomSheetDialogFragment() {
     private lateinit var binding: BottomLayoutChangePasswordBinding
-    private lateinit var viewModel: ChangePasswordViewModel
+    private val viewModel: ChangePasswordViewModel by activityViewModels {
+        ChangePasswordViewModelFactory(
+            (activity?.application as EcommerceApplication).userManager
+        )
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = BottomLayoutChangePasswordBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this)[ChangePasswordViewModel::class.java]
 
         observeSetup()
         bind()

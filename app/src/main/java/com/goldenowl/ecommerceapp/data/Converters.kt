@@ -45,4 +45,14 @@ class Converters  {
     fun jsonToTags(value: String?): List<Tag>{
         return Gson().fromJson(value,Array<Tag>::class.java).toList()
     }
+
+    @TypeConverter
+    fun sizeToJson(value: Size): String? {
+        return Gson().toJson(value)
+    }
+
+    @TypeConverter
+    fun jsonToSize(value: String?): Size{
+        return Gson().fromJson(value,Size::class.java)
+    }
 }

@@ -6,59 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.Profile.ProfileFragment">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
-
         <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="-100dp">
 
-            <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appBarLayout"
-                android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:fitsSystemWindows="true">
-
-                <com.google.android.material.appbar.CollapsingToolbarLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/colorOnPrimary"
-                    android:fitsSystemWindows="true"
-                    app:collapsedTitleGravity="center_horizontal"
-                    app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
-                    app:collapsedTitleTextColor="@color/black"
-                    app:contentScrim="@color/colorOnPrimary"
-                    app:expandedTitleMarginBottom="5dp"
-                    app:expandedTitleMarginStart="14dp"
-                    app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
-                    app:expandedTitleTextColor="@color/black"
-                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                    app:statusBarScrim="?attr/colorOnPrimary">
-
-                    <com.google.android.material.appbar.MaterialToolbar
-                        android:id="@+id/topAppBar"
-                        android:layout_width="match_parent"
-                        android:layout_height="?attr/actionBarSize"
-                        app:layout_collapseMode="pin"
-                        app:title="My Profile"
-                        app:menu="@menu/top_app_bar"
-                        app:titleCentered="true"
-                        app:titleTextColor="@color/white" />
-
-
-                </com.google.android.material.appbar.CollapsingToolbarLayout>
-            </com.google.android.material.appbar.AppBarLayout>
+            <include android:id="@+id/appBarLayout"
+                layout="@layout/fragment_action_bar"/>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/host_fragment_profile"
@@ -68,7 +24,5 @@
                 android:layout_height="match_parent" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
