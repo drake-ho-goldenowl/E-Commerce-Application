@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.EcommerceApplication
-import com.goldenowl.ecommerceapp.adapters.RecycleListHorizontal
+import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
 import com.goldenowl.ecommerceapp.viewmodels.HomeViewModel
 import com.goldenowl.ecommerceapp.viewmodels.HomeViewModelFactory
@@ -21,10 +21,12 @@ class HomeFragment : Fragment() {
         HomeViewModelFactory(
             (activity?.application as EcommerceApplication).database.productDao(),
             (activity?.application as EcommerceApplication).database.favoriteDao(),
+            (activity?.application as EcommerceApplication).userManager
         )
     }
 
-    private lateinit var adapterSale: RecycleListHorizontal
+    private lateinit var adapterSale: ListProductGridAdapter
+    private lateinit var adapterNew: ListProductGridAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,18 +35,28 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
 
-        adapterSale = RecycleListHorizontal (this) {
+        adapterSale = ListProductGridAdapter (this) {
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
+                idProduct = it.id
+            )
+            findNavController().navigate(action)
+        }
 
+        adapterNew = ListProductGridAdapter(this){
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
+                idProduct = it.id
+            )
+            findNavController().navigate(action)
         }
 
 
         viewModel.product.observe(viewLifecycleOwner){
             adapterSale.submitList(viewModel.filterSale(it))
+            adapterNew.submitList(viewModel.filterNew(it))
         }
 
 
         bind()
-
         return binding.root
     }
 
@@ -57,6 +69,7 @@ class HomeFragment : Fragment() {
                 LinearLayoutManager.HORIZONTAL, false
             )
 
+            recyclerViewNew.adapter = adapterNew
 
             recyclerViewNew.layoutManager = LinearLayoutManager(
                 context,

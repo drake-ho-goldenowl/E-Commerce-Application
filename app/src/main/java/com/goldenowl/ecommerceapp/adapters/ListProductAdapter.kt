@@ -1,5 +1,6 @@
 package com.goldenowl.ecommerceapp.adapters
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,8 @@ import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.ItemProduct2Binding
 import com.goldenowl.ecommerceapp.ui.Shop.BottomSheetSize
 
-class RecycleListVertical(private val fragment: Fragment, private val onItemClicked: (Product) -> Unit) :
-    ListAdapter<Product, RecycleListVertical.ItemViewHolder>(DiffCallback) {
+class ListProductAdapter(private val fragment: Fragment, private val onItemClicked: (Product) -> Unit) :
+    ListAdapter<Product, ListProductAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(private val fragment: Fragment,private var binding: ItemProduct2Binding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -34,6 +35,20 @@ class RecycleListVertical(private val fragment: Fragment, private val onItemClic
                 ratingBar.rating = product.reviewStars.toFloat()
                 txtNumberVote.text = "(${product.numberReviews})"
                 txtPrice.text = "${product.colors[0].sizes[0].price}\$"
+
+                if(product.salePercent != null){
+                    txtPrice.paintFlags = txtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    txtSalePrice.visibility = View.VISIBLE
+                    txtSalePercent.visibility = View.VISIBLE
+                    txtSalePercent.text = "-${product.salePercent}%"
+                    txtSalePrice.text = "${product.colors[0].sizes[0].price * (100 - product.salePercent)/100}\$"
+                }
+                else{
+                    txtPrice.paintFlags = 0
+                    txtSalePercent.visibility = View.GONE
+                    txtSalePrice.visibility = View.GONE
+
+                }
 
                 setButtonFavorite(binding.btnFavorite,product.isFavorite)
 

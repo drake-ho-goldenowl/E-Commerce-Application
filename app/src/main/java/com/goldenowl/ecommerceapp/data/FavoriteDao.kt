@@ -13,9 +13,19 @@ interface FavoriteDao {
     @Delete
     suspend fun delete(favorite: Favorite)
 
-    @Query("SELECT id FROM favorite")
+    @Query("SELECT id FROM favorite GROUP BY id")
     suspend fun getAllId(): List<String>
+
+    @Query("SELECT id FROM favorite WHERE id = :id GROUP BY id")
+    suspend fun getId(id : String): String
+
+    @Query("SELECT categoryName FROM favorite GROUP BY categoryName")
+    fun getAllCategory(): Flow<List<String>>
 
     @Query("SELECT * FROM favorite")
     fun getAll(): Flow<List<Favorite>>
+
+    @Query("SELECT * FROM FAVORITE")
+    suspend fun getAllList(): List<Favorite>
+
 }

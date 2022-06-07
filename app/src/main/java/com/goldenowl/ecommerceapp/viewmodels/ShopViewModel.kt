@@ -26,6 +26,14 @@ class ShopViewModel(private val productDao: ProductDao) :
         }
     }.asLiveData()
 
+    private val statusIdProduct = MutableStateFlow("")
+    val product : LiveData<Product> = statusIdProduct.flatMapLatest {
+        productDao.getProductFlow(it)
+    }.asLiveData()
+
+    fun setProduct(idProduct: String){
+        statusIdProduct.value = idProduct
+    }
 
     fun filterSort(products: List<Product>): List<Product> {
         return when (statusFilter.value.third) {
@@ -59,7 +67,27 @@ class ShopViewModel(private val productDao: ProductDao) :
 
     fun setSort(select: Int) {
         statusFilter.value = Triple(statusFilter.value.first, statusFilter.value.second, select)
+    }
 
+    fun getAllSize(): MutableList<String> {
+        val sizes: MutableSet<String> = mutableSetOf()
+        for (color in product.value!!.colors) {
+            for (size in color.sizes) {
+                if (size.quantity > 0) {
+                    sizes.add(size.size)
+                }
+            }
+        }
+        return sizes.toMutableList()
+    }
+
+
+    fun getAllColor(): MutableList<String> {
+        val colors: MutableSet<String> = mutableSetOf()
+        for (color in product.value!!.colors) {
+            colors.add(color.color!!)
+        }
+        return colors.toMutableList()
     }
 
     companion object {

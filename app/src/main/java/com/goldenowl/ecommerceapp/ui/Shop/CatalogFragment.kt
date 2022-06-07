@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
-import com.goldenowl.ecommerceapp.adapters.RecycleListHorizontal
-import com.goldenowl.ecommerceapp.adapters.RecycleListVertical
+import com.goldenowl.ecommerceapp.adapters.ListProductAdapter
+import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentCatalogBinding
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModelFactory
@@ -29,8 +29,8 @@ class CatalogFragment : Fragment() {
     }
     private var nameTitle: String? = null
     private lateinit var binding: FragmentCatalogBinding
-    private lateinit var adapterProduct : RecycleListVertical
-    private lateinit var adapterProductGrid : RecycleListHorizontal
+    private lateinit var adapterProduct : ListProductAdapter
+    private lateinit var adapterProductGrid : ListProductGridAdapter
     private lateinit var adapterCategory : ListCategoriesAdater
 
     private var isLinearLayoutManager = true
@@ -52,10 +52,10 @@ class CatalogFragment : Fragment() {
         viewModel.setSort(0)
 
 
-        adapterProduct = RecycleListVertical(this) {
+        adapterProduct = ListProductAdapter(this) {
         }
 
-        adapterProductGrid = RecycleListHorizontal(this) {
+        adapterProductGrid = ListProductGridAdapter(this) {
         }
 
         adapterCategory = ListCategoriesAdater { str ->

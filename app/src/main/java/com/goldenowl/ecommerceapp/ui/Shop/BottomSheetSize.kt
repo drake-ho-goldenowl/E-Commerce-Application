@@ -22,7 +22,9 @@ class BottomSheetSize(private val product: Product) :BottomSheetDialogFragment()
     private val viewModel: BottomSheetSizeViewModel by activityViewModels{
         BottomSheetSizeViewModelFactory(
             product,
-            (activity?.application as EcommerceApplication).database.favoriteDao()
+            (activity?.application as EcommerceApplication).database.favoriteDao(),
+            (activity?.application as EcommerceApplication).database.productDao()
+
         )
     }
     private lateinit var binding: BottomLayoutSelectSizeBinding

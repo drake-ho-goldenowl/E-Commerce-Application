@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_catalogFragment"
             app:destination="@id/catalogFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/shopFragment"
@@ -31,12 +34,20 @@
         android:id="@+id/bagFragment"
         android:name="com.goldenowl.ecommerceapp.ui.BagFragment"
         android:label="fragment_bag"
-        tools:layout="@layout/fragment_bag" />
+        tools:layout="@layout/fragment_bag" >
+        <action
+            android:id="@+id/action_bagFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="com.goldenowl.ecommerceapp.ui.FavoritesFragment"
         android:label="fragment_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites" >
+        <action
+            android:id="@+id/action_favoritesFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.goldenowl.ecommerceapp.ui.Profile.ProfileFragment"
@@ -70,10 +81,22 @@
         <argument
             android:name="nameCategories"
             app:argType="string" />
+        <action
+            android:id="@+id/action_catalogFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.goldenowl.ecommerceapp.ui.Profile.SettingFragment"
         android:label="fragment_setting"
         tools:layout="@layout/fragment_setting" />
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.goldenowl.ecommerceapp.ProductDetailFragment"
+        android:label="fragment_product_detail"
+        tools:layout="@layout/fragment_product_detail" >
+        <argument
+            android:name="idProduct"
+            app:argType="string" />
+    </fragment>
 </navigation>

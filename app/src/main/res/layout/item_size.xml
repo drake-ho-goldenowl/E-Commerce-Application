@@ -3,11 +3,10 @@
     android:id="@+id/layoutItemSize"
     android:layout_width="100dp"
     android:layout_height="40dp"
-    android:layout_marginTop="16dp"
     android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
-    android:background="@drawable/btn_size_custom_2"
-    >
+    android:background="@drawable/btn_size_custom_2">
 
     <TextView
         android:id="@+id/txtSize"
@@ -15,7 +14,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="XL"
-        android:textSize="14sp"
-        />
+        android:textSize="14sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,10 +1,18 @@
 package com.goldenowl.ecommerceapp.data
 
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import java.util.*
-@Entity(primaryKeys = ["id","size"])
+
+@Entity(primaryKeys = ["id", "size"])
 data class Favorite(
+    @ColumnInfo @NonNull
     val id: String,
+    @ColumnInfo @NonNull
+    val size: String,
+    var quantity: Long,
+    val price: Long,
     val title: String,
     val brandName: String,
     val images: String,
@@ -16,10 +24,10 @@ data class Favorite(
     val reviewStars: Int,
     val categoryName: String,
     val color: String,
-    val size: Size,
 ) {
     constructor() : this(
         "",
+        "", 0, 0,
         "",
         "",
         "",
@@ -30,6 +38,5 @@ data class Favorite(
         0,
         "",
         "",
-        Size(),
     )
 }
