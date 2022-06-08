@@ -13,14 +13,16 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.Favorite
+import com.goldenowl.ecommerceapp.data.FavoriteAndProduct
+import com.goldenowl.ecommerceapp.data.Size
 import com.goldenowl.ecommerceapp.databinding.ItemProductFavoriteBinding
 
 class ListFavoriteGridAdapter(
     private val fragment: Fragment,
     private val onCloseClicked: (Favorite) -> Unit,
-    private val onItemClicked: (Favorite) -> Unit
+    private val onItemClicked: (FavoriteAndProduct) -> Unit
 ) :
-    ListAdapter<Favorite, ListFavoriteGridAdapter.ItemViewHolder>(DiffCallback) {
+    ListAdapter<FavoriteAndProduct, ListFavoriteGridAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(
         private val fragment: Fragment,
@@ -29,39 +31,40 @@ class ListFavoriteGridAdapter(
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(favorite: Favorite) {
+        fun bind(favoriteAndProduct: FavoriteAndProduct) {
+            val size = filterSize(favoriteAndProduct)
             binding.apply {
                 Glide.with(itemView.context)
-                    .load(favorite.images)
+                    .load(favoriteAndProduct.product.images[0])
                     .error(R.drawable.img_sample_2)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProduct)
-                txtName.text = favorite.title
-                txtBrandName.text = favorite.brandName
-                ratingBar.rating = favorite.reviewStars.toFloat()
-                txtColorInput.text = favorite.color
-                txtSizeInput.text = favorite.size
-                txtNumberVote.text = "(${favorite.numberReviews})"
-                txtPrice.text = "${favorite.price}\$"
+                txtName.text = favoriteAndProduct.product.title
+                txtBrandName.text = favoriteAndProduct.product.brandName
+                ratingBar.rating = favoriteAndProduct.product.reviewStars.toFloat()
+                txtColorInput.text = favoriteAndProduct.product.colors[0].color
+                txtSizeInput.text = favoriteAndProduct.favorite.size
 
-                if(favorite.quantity < 1){
+                txtNumberVote.text = "(${favoriteAndProduct.product.numberReviews})"
+                txtPrice.text = "${size?.price}\$"
+
+                if (size?.quantity!! < 1) {
                     grayOutLayout.visibility = View.VISIBLE
                     txtSoldOut.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     grayOutLayout.visibility = View.GONE
                     txtSoldOut.visibility = View.GONE
                 }
 
 
-                if(favorite.salePercent != null){
+                if (favoriteAndProduct.product.salePercent != null) {
                     txtPrice.paintFlags = txtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     txtSalePrice.visibility = View.VISIBLE
                     txtSalePercent.visibility = View.VISIBLE
-                    txtSalePercent.text = "-${favorite.salePercent}%"
-                    txtSalePrice.text = "${favorite.price * (100 - favorite.salePercent)/100}\$"
-                }
-                else{
+                    txtSalePercent.text = "-${favoriteAndProduct.product.salePercent}%"
+                    txtSalePrice.text =
+                        "${size.price * (100 - favoriteAndProduct.product.salePercent) / 100}\$"
+                } else {
                     txtPrice.paintFlags = 0
                     txtSalePercent.visibility = View.GONE
                     txtSalePrice.visibility = View.GONE
@@ -69,14 +72,21 @@ class ListFavoriteGridAdapter(
                 }
 
 
-//                setButtonFavorite(binding.btnFavorite,product.isFavorite)
-//
-//
+//                setButtonFavorite(binding.btnFavorite,favoriteAndProduct.product.isFavorite)
 //                btnFavorite.setOnClickListener {
 //                    val bottomSheetSize = BottomSheetSize(product)
 //                    bottomSheetSize.show(fragment.parentFragmentManager, BottomSheetSize.TAG)
 //                }
             }
+        }
+
+        private fun filterSize(favoriteAndProduct : FavoriteAndProduct) : Size? {
+            for(size in favoriteAndProduct.product.colors[0].sizes){
+                if(favoriteAndProduct.favorite.size == size.size){
+                    return size
+                }
+            }
+            return null
         }
 
         private fun setButtonFavorite(buttonView: View, isFavorite: Boolean) {
@@ -118,12 +128,18 @@ class ListFavoriteGridAdapter(
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<Favorite>() {
-            override fun areItemsTheSame(oldProduct: Favorite, newProduct: Favorite): Boolean {
+        private val DiffCallback = object : DiffUtil.ItemCallback<FavoriteAndProduct>() {
+            override fun areItemsTheSame(
+                oldProduct: FavoriteAndProduct,
+                newProduct: FavoriteAndProduct
+            ): Boolean {
                 return newProduct === oldProduct
             }
 
-            override fun areContentsTheSame(oldProduct: Favorite, newProduct: Favorite): Boolean {
+            override fun areContentsTheSame(
+                oldProduct: FavoriteAndProduct,
+                newProduct: FavoriteAndProduct
+            ): Boolean {
                 return newProduct == oldProduct
             }
         }

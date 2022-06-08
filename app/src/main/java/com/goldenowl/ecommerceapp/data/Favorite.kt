@@ -3,41 +3,23 @@ package com.goldenowl.ecommerceapp.data
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import java.util.*
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
+import androidx.room.Index
 
-@Entity(primaryKeys = ["id", "size"])
+@Entity(primaryKeys = ["id", "size"],
+    foreignKeys = [ForeignKey(entity = Product::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("idProduct"),
+        onDelete = CASCADE)],
+    indices = [Index(value = ["id"], unique = true)]
+)
 data class Favorite(
     @ColumnInfo @NonNull
-    val id: String,
+    val id: Int = 0,
     @ColumnInfo @NonNull
-    val size: String,
-    var quantity: Long,
-    val price: Long,
-    val title: String,
-    val brandName: String,
-    val images: String,
-    val createdDate: Date?,
-    val salePercent: Int?,
-    @field:JvmField
-    val isPopular: Boolean?,
-    val numberReviews: Int,
-    val reviewStars: Int,
-    val categoryName: String,
-    val color: String,
+    val size: String = "",
+    val idProduct: String = "",
     var isBag: Boolean = false
 ) {
-    constructor() : this(
-        "",
-        "", 0, 0,
-        "",
-        "",
-        "",
-        null,
-        null,
-        null,
-        0,
-        0,
-        "",
-        "",
-    )
 }

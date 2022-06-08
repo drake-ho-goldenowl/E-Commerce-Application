@@ -18,18 +18,21 @@ interface FavoriteDao {
     suspend fun deleteAll()
 
     @Query("SELECT id FROM favorite GROUP BY id")
-    suspend fun getAllId(): List<String>
+    suspend fun getAllId(): List<Int>
 
-    @Query("SELECT id FROM favorite WHERE id = :id GROUP BY id")
-    suspend fun getId(id: String): String
+    @Query("SELECT idProduct FROM favorite GROUP BY idProduct")
+    suspend fun getAllIdProduct(): List<String>
 
-    @Query("SELECT * FROM favorite WHERE id = :id AND color = :color")
-    fun getFavoriteFlow(id: String, color: String): Flow<Favorite>
+    @Query("SELECT idProduct FROM favorite WHERE idProduct = :id GROUP BY idProduct")
+    suspend fun getIdProduct(id: String): String
 
-    @Query("SELECT * FROM favorite WHERE id = :id AND color = :color")
-    fun getFavorite(id: String, color: String): Favorite
+    @Query("SELECT * FROM favorite WHERE id = :id AND size = :size")
+    fun getFavoriteFlow(id: String, size: String): Flow<Favorite>
 
-    @Query("SELECT categoryName FROM favorite GROUP BY categoryName")
+    @Query("SELECT * FROM favorite WHERE id = :id AND size = :size")
+    fun getFavorite(id: String, size: String): Favorite
+
+    @Query("SELECT category_name FROM favorite INNER JOIN product ON product.id = favorite.id GROUP BY category_name")
     fun getAllCategory(): Flow<List<String>>
 
     @Query("SELECT * FROM favorite")
@@ -37,5 +40,11 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM FAVORITE")
     suspend fun getAllList(): List<Favorite>
+
+    @Query("SELECT * FROM favorite")
+    fun getAllFavoriteAndProduct(): Flow<List<FavoriteAndProduct>>
+
+    @Query("SELECT * FROM FAVORITE")
+    suspend fun getAllListFavoriteAndProduct(): List<FavoriteAndProduct>
 
 }

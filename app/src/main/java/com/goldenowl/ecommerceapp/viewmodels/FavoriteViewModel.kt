@@ -20,7 +20,7 @@ class FavoriteViewModel(
 ) :
     BaseViewModel() {
     private val db = Firebase.firestore
-    var favorites = favoriteDao.getAll().asLiveData()
+    var favorites = favoriteDao.getAllFavoriteAndProduct().asLiveData()
     val allCategory = favoriteDao.getAllCategory().asLiveData()
 
 
@@ -49,9 +49,9 @@ class FavoriteViewModel(
     }
 
     private suspend fun checkFavorites(favorite: Favorite){
-        val id = favoriteDao.getId(favorite.id)
+        val id = favoriteDao.getIdProduct(favorite.idProduct)
         if(id.isNullOrBlank()){
-            val product = productDao.getProduct(favorite.id)
+            val product = productDao.getProduct(favorite.idProduct)
             product.isFavorite = false
             productDao.update(product)
         }
@@ -59,23 +59,10 @@ class FavoriteViewModel(
 
 
 
-    private fun createFavorite(product: Product, color: String, size: String): Favorite {
-        val sizeSelect = getSizeOfColor(product.colors[0].sizes, size) ?: Size()
+    private fun createFavorite(product: Product,size: String): Favorite {
         return Favorite(
-            product.id,
-            sizeSelect.size,
-            sizeSelect.quantity,
-            sizeSelect.price,
-            product.title,
-            product.brandName,
-            product.images[0],
-            product.createdDate,
-            product.salePercent,
-            product.isPopular,
-            product.numberReviews,
-            product.reviewStars,
-            product.categoryName,
-            color,
+            size = size,
+            idProduct = product.id
         )
     }
 
@@ -89,8 +76,8 @@ class FavoriteViewModel(
         return null
     }
 
-    fun insertFavorite(product: Product, color: String, size: String) {
-        val favorite = createFavorite(product, color, size)
+    fun insertFavorite(product: Product, size: String) {
+        val favorite = createFavorite(product, size)
         viewModelScope.launch {
             favoriteDao.insert(favorite)
             product.isFavorite = true

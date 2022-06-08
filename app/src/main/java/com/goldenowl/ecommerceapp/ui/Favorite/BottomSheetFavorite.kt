@@ -67,7 +67,7 @@ class BottomSheetFavorite(private val product: Product) :BottomSheetDialogFragme
             recyclerViewSize.adapter = adapter
             btnAddToCart.setOnClickListener {
                 if(!selectSize.isNullOrBlank()){
-                    viewModel.insertFavorite(product,product.colors[0].color.toString(),selectSize.toString())
+                    viewModel.insertFavorite(product,selectSize.toString())
                     dismiss()
                 }
                 else{

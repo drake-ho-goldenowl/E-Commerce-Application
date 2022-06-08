@@ -54,35 +54,9 @@ class HomeViewModel(
                 viewModelScope.launch {
                     val product = doc.toObject<Product>()
                     if (favoriteDao.getAllId().isNotEmpty()) {
-                        product.isFavorite = checkFavorite(favoriteDao.getAllId(), product)
-                    }
-                    if (favorites.data!!.isNotEmpty()) {
-                        refreshFavorites(product, favorites.data!!)
+                        product.isFavorite = checkFavorite(favoriteDao.getAllIdProduct(), product)
                     }
                     productDao.insert(product)
-                }
-            }
-        }
-    }
-
-    private suspend fun refreshFavorites(product: Product, favorites: List<Favorite>) {
-        var flag = false
-        for (favorite in favorites) {
-            if (flag) break
-            if (favorite.id == product.id) {
-                for (color in product.colors) {
-                    if (flag) break
-                    if (favorite.color == color.color) {
-                        for (size in color.sizes) {
-                            if (favorite.size == size.size && favorite.quantity != size.quantity) {
-                                favorite.quantity = size.quantity
-                                println("size ${favorite.quantity}")
-                                favoriteDao.update(favorite)
-                                flag = true
-                                break
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -103,7 +77,7 @@ class HomeViewModel(
                     if (favorites.lastEdit != LAST_EDIT_TIME_FAVORITES) {
                         viewModelScope.launch {
                             for (favorite in favorites.data!!) {
-                                val product = productDao.getProduct(favorite.id)
+                                val product = productDao.getProduct(favorite.idProduct)
                                 if(product.isFavorite){
                                     favoriteDao.insert(favorite)
                                 }
