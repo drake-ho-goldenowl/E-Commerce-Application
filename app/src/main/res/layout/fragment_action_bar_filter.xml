@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:background="@color/colorOnPrimary"
+        android:fitsSystemWindows="true"
+        app:collapsedTitleGravity="center_horizontal"
+        app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
+        app:collapsedTitleTextColor="@color/black"
+        app:contentScrim="@color/colorOnPrimary"
+        app:expandedTitleMarginBottom="5dp"
+        app:expandedTitleMarginStart="14dp"
+        app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
+        app:expandedTitleTextColor="@color/black"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:statusBarScrim="?attr/colorOnPrimary">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/MaterialToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_collapseMode="pin"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="TEST"
+            app:menu="@menu/top_app_bar"
+            app:titleCentered="true"/>
+
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorOnPrimary"
+        android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:nestedScrollingEnabled="true"
+            android:orientation="horizontal"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/grey2"
+            android:nestedScrollingEnabled="true">
+
+            <Button
+                android:id="@+id/btnFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/ic_baseline_filter_list"
+                android:fontFamily="@font/metropolis"
+                android:gravity="top"
+                android:padding="0dp"
+                android:text="Filters"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btnSort"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:background="@color/transparent"
+                android:drawableLeft="@drawable/ic_baseline_swap_vert"
+                android:fontFamily="@font/metropolis"
+                android:padding="0dp"
+                android:text="Popular"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/btnFilter"
+                app:layout_constraintRight_toLeftOf="@id/btnChangeView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <ImageView
+                android:id="@+id/btnChangeView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_view_module"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.appbar.AppBarLayout>

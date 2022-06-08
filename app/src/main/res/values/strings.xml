@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">ECommerceApp</string>
+    <string name="home">Home</string>
+    <string name="shop">Shop</string>
+    <string name="bag">Bag</string>
+    <string name="favorites">Favorites</string>
+    <string name="profile">Profile</string>
+    <string name="facebook_app_id">5050456001727835</string>
+    <string name="fb_login_protocol_scheme">fb5050456001727835</string>
+    <string name="facebook_client_token">dde6806e3253d6ea3a2034b60906cf54</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
