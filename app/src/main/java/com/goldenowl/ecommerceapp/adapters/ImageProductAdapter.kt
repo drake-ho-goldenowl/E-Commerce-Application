@@ -2,7 +2,7 @@ package com.goldenowl.ecommerceapp.adapters
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.goldenowl.ecommerceapp.ViewPageImageProduct
+import com.goldenowl.ecommerceapp.ui.Shop.ViewPageImageProduct
 
 class ImageProductAdapter(fragment: Fragment,listImage: List<String>) :
     FragmentStateAdapter(fragment) {

@@ -14,7 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.ItemProductBinding
-import com.goldenowl.ecommerceapp.ui.Shop.BottomSheetSize
+import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 
 class ListProductGridAdapter(
     private val fragment: Fragment,
@@ -57,8 +57,8 @@ class ListProductGridAdapter(
 
 
                 btnFavorite.setOnClickListener {
-                    val bottomSheetSize = BottomSheetSize(product)
-                    bottomSheetSize.show(fragment.parentFragmentManager, BottomSheetSize.TAG)
+                    val bottomSheetSize = BottomSheetFavorite(product)
+                    bottomSheetSize.show(fragment.parentFragmentManager, BottomSheetFavorite.TAG)
                 }
             }
         }

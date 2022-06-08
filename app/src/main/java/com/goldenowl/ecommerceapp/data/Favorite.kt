@@ -24,6 +24,7 @@ data class Favorite(
     val reviewStars: Int,
     val categoryName: String,
     val color: String,
+    var isBag: Boolean = false
 ) {
     constructor() : this(
         "",

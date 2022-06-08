@@ -21,6 +21,7 @@ class HomeFragment : Fragment() {
         HomeViewModelFactory(
             (activity?.application as EcommerceApplication).database.productDao(),
             (activity?.application as EcommerceApplication).database.favoriteDao(),
+            (activity?.application as EcommerceApplication).database.bagDao(),
             (activity?.application as EcommerceApplication).userManager
         )
     }

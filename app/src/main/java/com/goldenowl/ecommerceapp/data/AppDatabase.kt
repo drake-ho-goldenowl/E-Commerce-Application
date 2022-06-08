@@ -7,11 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 
-@Database(entities = [Product::class, Favorite::class], version = 1, exportSchema = false)
+@Database(entities = [Product::class, Favorite::class, Bag::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
     abstract fun favoriteDao(): FavoriteDao
+    abstract fun bagDao(): BagDao
 
     companion object {
         @Volatile

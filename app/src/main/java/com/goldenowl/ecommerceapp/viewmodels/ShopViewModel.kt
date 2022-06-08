@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 
 
 class ShopViewModel(private val productDao: ProductDao) :
-    ViewModel() {
+    BaseViewModel() {
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = productDao.getAllCategory().asLiveData()
     val products: LiveData<List<Product>> = statusFilter.flatMapLatest {

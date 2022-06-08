@@ -1,22 +1,26 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.ui.Shop
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.goldenowl.ecommerceapp.EcommerceApplication
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.adapters.SpinnerAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentProductDetailBinding
-import com.goldenowl.ecommerceapp.ui.Shop.BottomSheetSize
+import com.goldenowl.ecommerceapp.ui.Bag.BottomSheetCart
+import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModelFactory
@@ -46,6 +50,8 @@ class ProductDetailFragment : Fragment() {
         arguments?.let {
             idProduct = it.getString(ID_PRODUCT).toString()
         }
+        binding = FragmentProductDetailBinding.inflate(inflater, container, false)
+
 
         viewModel.setProduct(idProduct)
 
@@ -57,7 +63,6 @@ class ProductDetailFragment : Fragment() {
         }
 
         observeSetup()
-        binding = FragmentProductDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -68,6 +73,14 @@ class ProductDetailFragment : Fragment() {
     }
 
     private fun observeSetup() {
+        viewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
+            Toast.makeText(
+                this.context,
+                str,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
         viewModel.product.observe(viewLifecycleOwner) {
             product = it
             colors = viewModel.getAllColor()
@@ -186,8 +199,23 @@ class ProductDetailFragment : Fragment() {
             setButtonFavorite(btnFavorite,product.isFavorite)
 
             btnFavorite.setOnClickListener {
-                val bottomSheetSize = BottomSheetSize(product)
-                bottomSheetSize.show(parentFragmentManager, BottomSheetSize.TAG)
+                val bottomSheetSize = BottomSheetFavorite(product)
+                bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+            }
+
+            btnAddToCart.setOnClickListener {
+                if(selectColor != null && selectColor != null){
+                    val bottomSheetCart = BottomSheetCart(product,selectSize!!,selectColor!!)
+                    bottomSheetCart.show(parentFragmentManager, BottomSheetCart.TAG)
+                }
+                else{
+                    if (selectSize == null){
+                        viewModel.toastMessage.postValue("Please select size")
+                    }
+                    else{
+                        viewModel.toastMessage.postValue("Please select color")
+                    }
+                }
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui
+package com.goldenowl.ecommerceapp.ui.Favorite
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.EcommerceApplication
@@ -37,6 +38,9 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        if(!viewModel.userManager.isLogged()){
+            findNavController().navigate(R.id.warningFragment)
+        }
         binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         adapterCategory = ListCategoriesAdater { str ->
 //            if(binding.appBarLayout.topAppBar.title == str){
@@ -48,7 +52,6 @@ class FavoritesFragment : Fragment() {
 //                binding.appBarLayout.topAppBar.title = str
 //            }
         }
-
 
         adapterFavorite = ListFavoriteAdapter(this, {
             viewModel.removeFavorite(it)
@@ -109,7 +112,6 @@ class FavoritesFragment : Fragment() {
 
         viewModel.favorites.observe(this.viewLifecycleOwner) {
 //            val product = viewModel.filterSort(it)
-            viewModel.addFavorite(it)
             adapterFavoriteGrid.submitList(it)
             adapterFavorite.submitList(it)
         }
