@@ -47,5 +47,5 @@ jobs:
           appId: 1:901780403692:android:f2fe057702958e3ffe3cc9
           token: ${{secrets.FIREBASE_TOKEN}}
           groups: ViewGO
-          file: app/release/app-release.apk
+          file: app/build/outputs/apk/release/app-release.apk
           releaseNotesFile: log.txt
