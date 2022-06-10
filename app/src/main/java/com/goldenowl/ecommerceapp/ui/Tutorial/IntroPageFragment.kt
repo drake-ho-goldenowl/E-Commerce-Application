@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui.Splash
+package com.goldenowl.ecommerceapp.ui.Tutorial
 
 import android.os.Bundle
 import android.view.LayoutInflater

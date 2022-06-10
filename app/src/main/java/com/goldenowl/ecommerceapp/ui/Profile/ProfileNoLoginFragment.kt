@@ -6,16 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileNoLoginBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
-import com.goldenowl.ecommerceapp.utilities.REQUEST_SIGN_IN
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModelFactory
-import com.goldenowl.ecommerceapp.viewmodels.OnSignInStartedListener
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileNoLoginFragment : Fragment() {
     private lateinit var binding: FragmentProfileNoLoginBinding
     override fun onCreateView(
@@ -28,17 +23,6 @@ class ProfileNoLoginFragment : Fragment() {
             startActivity(Intent(activity, AuthActivity::class.java))
             activity?.finish()
         }
-
-        val factory = AuthViewModelFactory(this.requireActivity().application, object:
-            OnSignInStartedListener {
-            override fun onSignInStarted(client: GoogleSignInClient?) {
-                startActivityForResult(client?.signInIntent, REQUEST_SIGN_IN)
-            }
-        })
-        val authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
-        val userManager = UserManager.getInstance(this.requireContext())
-        userManager.logOut()
-        authViewModel.logOut()
         return binding.root
     }
 }

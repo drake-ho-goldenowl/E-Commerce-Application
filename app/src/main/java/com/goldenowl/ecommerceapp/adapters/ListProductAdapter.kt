@@ -53,7 +53,7 @@ class ListProductAdapter(private val fragment: Fragment, private val onItemClick
                 setButtonFavorite(binding.btnFavorite,product.isFavorite)
 
                 btnFavorite.setOnClickListener {
-                    val bottomSheetSize = BottomSheetFavorite(product)
+                    val bottomSheetSize = BottomSheetFavorite(product,null,null)
                     bottomSheetSize.show(fragment.parentFragmentManager, BottomSheetFavorite.TAG)
                 }
             }

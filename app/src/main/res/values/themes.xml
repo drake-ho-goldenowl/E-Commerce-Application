@@ -14,10 +14,10 @@
         <item name="android:statusBarColor" >@color/transparent</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <!-- Customize your theme here. -->
-<!--        <item name="android:windowTranslucentStatus">true</item>-->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <!--        <item name="android:windowTranslucentStatus">true</item>-->
         <item name="android:textViewStyle">@font/metropolis</item>
         <item name="fontFamily">@font/metropolis</item>
-
 
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
 
@@ -25,6 +25,13 @@
 <!--        <item name="windowActionBar">false</item>-->
         <item name="textAppearanceHeadline4">@style/TextAppearance.App.Headline4</item>
         <item name="textAppearanceSubtitle1">@style/TextAppearance.App.Subtitle1</item>
+
+    </style>
+
+    <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ic_app_background</item>
+        <item name="windowSplashScreenAnimatedIcon"> @mipmap/ic_app</item>
+        <item name="postSplashScreenTheme">@style/Theme.ECommerceApp</item>
     </style>
 
 

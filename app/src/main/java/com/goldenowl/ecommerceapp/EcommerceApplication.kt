@@ -1,10 +1,10 @@
 package com.goldenowl.ecommerceapp
 
 import android.app.Application
-import com.goldenowl.ecommerceapp.data.AppDatabase
-import com.goldenowl.ecommerceapp.data.UserManager
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class EcommerceApplication : Application(){
-    val database: AppDatabase by lazy { AppDatabase.getDatabase(this) }
-    val userManager: UserManager by lazy { UserManager.getInstance(this) }
+//    val database: AppDatabase by lazy { AppDatabase.getInstance(this) }
+//    val userManager: UserManager by lazy { UserManager.getInstance(this) }
 }

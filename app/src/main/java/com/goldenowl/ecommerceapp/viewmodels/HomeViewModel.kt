@@ -2,24 +2,26 @@ package com.goldenowl.ecommerceapp.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
+import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
 
-class HomeViewModel(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
-    private val bagDao: BagDao,
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val bagRepository: BagRepository,
     private val userManager: UserManager
 ) : ViewModel() {
-    val product = productDao.getAll().asLiveData()
+    val product = productRepository.getAll().asLiveData()
     private val db = Firebase.firestore
 
     fun filterSale(products: List<Product>): List<Product> {
@@ -27,62 +29,38 @@ class HomeViewModel(
     }
 
     fun filterNew(products: List<Product>): List<Product> {
-        return products.filter { it.isPopular == true }
+        return products.filter { it.isPopular }
     }
 
-    private var favorites = Favorites()
     private var bags = Bags()
 
 
     init {
         println("Run Home")
-        fetchData()
+        if (!userManager.isLogged()) {
+            viewModelScope.launch {
+                bagRepository.deleteAll()
+                favoriteRepository.deleteAll()
+            }
+        }
+        fetchProduct()
         fetchFavorites()
         fetchBag()
     }
 
-    private fun fetchData() {
-        db.collection("products").addSnapshotListener { value, e ->
+    private fun fetchProduct() {
+        db.collection(PRODUCT_FIREBASE).addSnapshotListener { value, e ->
             if (e != null) {
                 Log.w(ShopViewModel.TAG, "Listen failed.", e)
                 return@addSnapshotListener
             }
             viewModelScope.launch {
-                favorites.data = favoriteDao.getAllList()
-            }
-            for (doc in value!!) {
-                viewModelScope.launch {
+                for (doc in value!!) {
                     val product = doc.toObject<Product>()
-                    if (favoriteDao.getAllId().isNotEmpty()) {
-                        product.isFavorite = checkFavorite(favoriteDao.getAllId(), product)
+                    if (favoriteRepository.countFavorite() > 0) {
+                        product.isFavorite = checkFavorite(favoriteRepository.getAllIdProduct(), product)
                     }
-                    if (favorites.data!!.isNotEmpty()) {
-                        refreshFavorites(product, favorites.data!!)
-                    }
-                    productDao.insert(product)
-                }
-            }
-        }
-    }
-
-    private suspend fun refreshFavorites(product: Product, favorites: List<Favorite>) {
-        var flag = false
-        for (favorite in favorites) {
-            if (flag) break
-            if (favorite.id == product.id) {
-                for (color in product.colors) {
-                    if (flag) break
-                    if (favorite.color == color.color) {
-                        for (size in color.sizes) {
-                            if (favorite.size == size.size && favorite.quantity != size.quantity) {
-                                favorite.quantity = size.quantity
-                                println("size ${favorite.quantity}")
-                                favoriteDao.update(favorite)
-                                flag = true
-                                break
-                            }
-                        }
-                    }
+                    productRepository.insert(product)
                 }
             }
         }
@@ -92,47 +70,39 @@ class HomeViewModel(
         if (!userManager.isLogged()) {
             return
         }
-        db.collection("favorites").document(userManager.getAccessToken())
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Log.w(FavoriteViewModel.TAG, "Listen failed.", error)
-                    return@addSnapshotListener
-                }
-                if (snapshot != null && snapshot.exists()) {
-                    favorites = snapshot.toObject<Favorites>()!!
-                    if (favorites.lastEdit != LAST_EDIT_TIME_FAVORITES) {
+        var favorites: Favorites
+        db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
+            .get().addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    favorites = documentSnapshot.toObject<Favorites>()!!
+
+                    if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
                         viewModelScope.launch {
                             for (favorite in favorites.data!!) {
-                                val product = productDao.getProduct(favorite.id)
-                                if(product.isFavorite){
-                                    favoriteDao.insert(favorite)
-                                }
-                                else{
-                                    insertFavorite(product,favorite)
+                                val product = productRepository.getProduct(favorite.idProduct)
+                                if (product.isFavorite) {
+                                    favoriteRepository.insert(favorite)
+                                } else {
+                                    insertFavorite(product, favorite)
                                 }
                             }
                         }
                         LAST_EDIT_TIME_FAVORITES =
-                            snapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
+                            documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
+                    } else if (favorites.lastEdit!! < LAST_EDIT_TIME_FAVORITES) {
+                        viewModelScope.launch {
+                            updateFavoriteFirebase(favoriteRepository.getAllList())
+                        }
                     }
                 }
             }
     }
 
-    private fun insertFavorite(product: Product,favorite: Favorite) {
-        viewModelScope.launch {
-            favoriteDao.insert(favorite)
-            product.isFavorite = true
-            fetchProduct(product)
-        }
-    }
-
-
     private fun fetchBag() {
         if (!userManager.isLogged()) {
             return
         }
-        db.collection("bags").document(userManager.getAccessToken())
+        db.collection(BAG_FIREBASE).document(userManager.getAccessToken())
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.w(FavoriteViewModel.TAG, "Listen failed.", error)
@@ -143,7 +113,7 @@ class HomeViewModel(
                     if (bags.lastEdit != LAST_EDIT_TIME_BAG) {
                         viewModelScope.launch {
                             for (bag in bags.data!!) {
-                                bagDao.insert(bag)
+                                bagRepository.insert(bag)
                             }
                         }
                         LAST_EDIT_TIME_BAG =
@@ -153,10 +123,27 @@ class HomeViewModel(
             }
     }
 
+    private fun updateFavoriteFirebase(favorites: List<Favorite>) {
+        val docData: MutableMap<String, Any> = HashMap()
+        LAST_EDIT_TIME_FAVORITES = Date()
+        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_FAVORITES!!
+        docData[FavoriteViewModel.DATA] = favorites
+        db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
+            .set(docData)
+            .addOnSuccessListener {
+                Log.d(UserManager.TAG, "DocumentSnapshot added")
+            }
+            .addOnFailureListener { e ->
+                Log.w(UserManager.TAG, "Error adding document", e)
+            }
+    }
 
-    private fun fetchProduct(product: Product) {
+
+    private fun insertFavorite(product: Product, favorite: Favorite) {
         viewModelScope.launch {
-            productDao.update(product)
+            favoriteRepository.insert(favorite)
+            product.isFavorite = true
+            productRepository.update(product)
         }
     }
 
@@ -167,20 +154,5 @@ class HomeViewModel(
             }
         }
         return false
-    }
-}
-
-class HomeViewModelFactory(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
-    private val bagDao: BagDao,
-    private val userManager: UserManager
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return HomeViewModel(productDao, favoriteDao,bagDao ,userManager) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

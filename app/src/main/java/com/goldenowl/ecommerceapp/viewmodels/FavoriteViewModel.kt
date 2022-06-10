@@ -1,140 +1,126 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.set
+import javax.inject.Inject
 
-class FavoriteViewModel(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
+@HiltViewModel
+class FavoriteViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val bagRepository: BagRepository,
     val userManager: UserManager
 ) :
     BaseViewModel() {
-    private val db = Firebase.firestore
-    var favorites = favoriteDao.getAll().asLiveData()
-    val allCategory = favoriteDao.getAllCategory().asLiveData()
+    val statusFilter = MutableStateFlow(Triple("", "", 0))
+    val allCategory = favoriteRepository.getAllCategory().asLiveData()
+    val favoriteAndProducts: LiveData<List<FavoriteAndProduct>> = statusFilter.flatMapLatest {
+        if (it.first.isNotBlank() && it.second.isNotBlank()) {
+            favoriteRepository.filterByCategoryAndSearch(it.second, it.first)
+        } else if (it.first.isNotBlank()) {
+            favoriteRepository.filterByCategory(it.first)
+        } else if (it.second.isNotBlank()) {
+            favoriteRepository.filterBySearch(it.second)
+        } else {
+            favoriteRepository.getAllFavoriteAndProduct()
+        }
+    }.asLiveData()
 
-
-    private fun updateFavoriteFirebase(favorites: List<Favorite>){
-        val docData: MutableMap<String, Any> = HashMap()
-        LAST_EDIT_TIME_FAVORITES = Date()
-        docData[LAST_EDIT] = LAST_EDIT_TIME_FAVORITES!!
-        docData[DATA] = favorites
-        db.collection("favorites").document(userManager.getAccessToken())
-            .set(docData)
-            .addOnSuccessListener {
-                Log.d(UserManager.TAG, "DocumentSnapshot added")
+    fun filterSort(favorites: List<FavoriteAndProduct>): List<FavoriteAndProduct> {
+        return when (statusFilter.value.third) {
+            0 -> favorites.sortedByDescending {
+                it.product.isPopular
             }
-            .addOnFailureListener { e ->
-                Log.w(UserManager.TAG, "Error adding document", e)
+            1 -> favorites.sortedByDescending {
+                it.product.createdDate
             }
-    }
-
-
-    fun removeFavorite(favorite: Favorite){
-        viewModelScope.launch {
-            favoriteDao.delete(favorite)
-            checkFavorites(favorite)
-            updateFavoriteFirebase(favoriteDao.getAllList())
-        }
-    }
-
-    private suspend fun checkFavorites(favorite: Favorite){
-        val id = favoriteDao.getId(favorite.id)
-        if(id.isNullOrBlank()){
-            val product = productDao.getProduct(favorite.id)
-            product.isFavorite = false
-            productDao.update(product)
-        }
-    }
-
-
-
-    private fun createFavorite(product: Product, color: String, size: String): Favorite {
-        val sizeSelect = getSizeOfColor(product.colors[0].sizes, size) ?: Size()
-        return Favorite(
-            product.id,
-            sizeSelect.size,
-            sizeSelect.quantity,
-            sizeSelect.price,
-            product.title,
-            product.brandName,
-            product.images[0],
-            product.createdDate,
-            product.salePercent,
-            product.isPopular,
-            product.numberReviews,
-            product.reviewStars,
-            product.categoryName,
-            color,
-        )
-    }
-
-
-    private fun getSizeOfColor(sizes: List<Size>, select: String): Size? {
-        for (size in sizes) {
-            if (select == size.size) {
-                return size
+            2 -> favorites.sortedByDescending {
+                it.product.numberReviews
             }
-        }
-        return null
-    }
-
-    fun insertFavorite(product: Product, color: String, size: String) {
-        val favorite = createFavorite(product, color, size)
-        viewModelScope.launch {
-            favoriteDao.insert(favorite)
-            product.isFavorite = true
-            fetchProduct(product)
-            updateFavoriteFirebase(favoriteDao.getAllList())
-        }
-    }
-
-    private fun fetchProduct(product: Product) {
-        viewModelScope.launch {
-            productDao.update(product)
-        }
-    }
-
-
-    fun getAllSize(product: Product): List<String> {
-        val sizes: MutableSet<String> = mutableSetOf()
-        for (color in product.colors) {
-            for (size in color.sizes) {
-                if (size.quantity > 0) {
-                    sizes.add(size.size)
+            3 -> favorites.sortedBy {
+                val size = it.product.getSize(it.favorite.size)
+                size?.price
+            }
+            else -> {
+                favorites.sortedByDescending {
+                    val size = it.product.getSize(it.favorite.size)
+                    size?.price
                 }
             }
         }
-        return sizes.toList()
     }
 
-    companion object{
+    fun setCategory(category: String) {
+        statusFilter.value = Triple(category, statusFilter.value.second, statusFilter.value.third)
+    }
+
+    fun setSearch(search: String) {
+        statusFilter.value = Triple(statusFilter.value.first, search, statusFilter.value.third)
+    }
+
+    fun setSort(select: Int) {
+        statusFilter.value = Triple(statusFilter.value.first, statusFilter.value.second, select)
+    }
+
+    fun updateFavoriteFirebase() {
+        viewModelScope.launch {
+            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+        }
+    }
+
+
+    fun insertBag(idProduct: String, color: String, size: String, favorite: Favorite?) {
+        viewModelScope.launch {
+            val favoriteNew = bagRepository.insertBag(
+                idProduct,
+                color,
+                size,
+                favorite,
+                userManager.getAccessToken()
+            )
+            if (favoriteNew != null) {
+                favoriteRepository.update(favoriteNew)
+                favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+            }
+            bagRepository.updateBagFirebase(userManager.getAccessToken())
+        }
+    }
+
+
+    fun removeFavorite(favorite: Favorite) {
+        viewModelScope.launch {
+            favoriteRepository.delete(favorite)
+            checkFavorites(favorite)
+            updateFavoriteFirebase()
+        }
+    }
+
+    fun insertFavorite(product: Product,size: String,color: String){
+        viewModelScope.launch {
+            val productNew = favoriteRepository.insertFavorite(product, size,color)
+            productRepository.update(productNew)
+        }
+    }
+
+    private suspend fun checkFavorites(favorite: Favorite) {
+        val id = favoriteRepository.getIdProduct(favorite.idProduct)
+        if (id.isNullOrBlank()) {
+            val product = productRepository.getProduct(favorite.idProduct)
+            product.isFavorite = false
+            productRepository.update(product)
+        }
+    }
+
+
+    companion object {
         const val LAST_EDIT = "lastEdit"
         const val DATA = "data"
         const val TAG = "FAVORITE_VIEW_MODEL"
-    }
-}
-
-class FavoriteViewModelFactory(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
-    private val userManager: UserManager
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return FavoriteViewModel(productDao, favoriteDao, userManager) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

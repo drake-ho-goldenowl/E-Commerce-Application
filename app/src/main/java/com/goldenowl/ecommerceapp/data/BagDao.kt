@@ -23,7 +23,7 @@ interface BagDao {
     @Query("SELECT * FROM bag")
     suspend fun getAllList(): List<Bag>
 
-    @Query("SELECT * FROM bag WHERE id=:id AND color = :color AND size = :size")
-    suspend fun getBag(id : String, color: String, size: String): Bag
+    @Query("SELECT * FROM bag WHERE idProduct = :idProduct AND color = :color AND size = :size")
+    suspend fun getBag(idProduct: String, color: String, size: String): Bag
 
 }

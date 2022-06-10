@@ -4,30 +4,35 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
 import com.goldenowl.ecommerceapp.adapters.ListFavoriteAdapter
 import com.goldenowl.ecommerceapp.adapters.ListFavoriteGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentFavoritesBinding
+import com.goldenowl.ecommerceapp.ui.Shop.BottomSheetSort
 import com.goldenowl.ecommerceapp.ui.Shop.CatalogFragment
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
-import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FavoritesFragment : Fragment() {
-    private val viewModel: FavoriteViewModel by activityViewModels {
-        FavoriteViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao(),
-            (activity?.application as EcommerceApplication).database.favoriteDao(),
-            (activity?.application as EcommerceApplication).userManager
-        )
-    }
+
+    private val viewModel: FavoriteViewModel by viewModels()
+//    private val viewModel: FavoriteViewModel by activityViewModels {
+//        FavoriteViewModelFactory(
+//            (activity?.application as EcommerceApplication).database.productDao(),
+//            (activity?.application as EcommerceApplication).database.favoriteDao(),
+//            (activity?.application as EcommerceApplication).userManager
+//        )
+//    }
 
     private lateinit var adapterFavorite: ListFavoriteAdapter
     private lateinit var adapterFavoriteGrid: ListFavoriteGridAdapter
@@ -38,36 +43,57 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if(!viewModel.userManager.isLogged()){
+        if (!viewModel.userManager.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
         binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        viewModel.setSearch("")
+        viewModel.setSort(0)
+
         adapterCategory = ListCategoriesAdater { str ->
-//            if(binding.appBarLayout.topAppBar.title == str){
-//                viewModel.setCategory("")
-//                binding.appBarLayout.topAppBar.title = "All product"
-//            }
-//            else{
-//                viewModel.setCategory(str)
-//                binding.appBarLayout.topAppBar.title = str
-//            }
+            if (viewModel.statusFilter.value.first == str) {
+                viewModel.setCategory("")
+            } else {
+                viewModel.setCategory(str)
+            }
         }
 
         adapterFavorite = ListFavoriteAdapter(this, {
-            viewModel.removeFavorite(it)
+            viewModel.removeFavorite(it.favorite)
         }, {
-
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailFragment(
+                idProduct = it.product.id
+            )
+            findNavController().navigate(action)
+        }, {
+            viewModel.insertBag(
+                it.product.id,
+                it.product.colors[0].color.toString(),
+                it.favorite.size,
+                it.favorite
+            )
         })
 
         adapterFavoriteGrid = ListFavoriteGridAdapter(this, {
-            viewModel.removeFavorite(it)
+            viewModel.removeFavorite(it.favorite)
         }, {
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailFragment(
+                idProduct = it.product.id
+            )
+            findNavController().navigate(action)
+        }, {
+            viewModel.insertBag(
+                it.product.id,
+                it.product.colors[0].color.toString(),
+                it.favorite.size,
+                it.favorite
+            )
         })
-
 
 
         observeSetup()
         bind()
+        setFragmentListener()
         return binding.root
     }
 
@@ -101,6 +127,45 @@ class FavoritesFragment : Fragment() {
                     recyclerViewProduct.adapter = adapterFavoriteGrid
                 }
             }
+
+            appBarLayout.btnSort.setOnClickListener {
+                val bottomSheetSort = BottomSheetSort(viewModel.statusFilter.value.third)
+                bottomSheetSort.show(parentFragmentManager, BottomSheetSort.TAG)
+            }
+
+            // Handle Search Bar
+            appBarLayout.MaterialToolbar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.ic_search -> {
+                        val searchView = it.actionView as SearchView
+                        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                            override fun onQueryTextSubmit(query: String?): Boolean {
+                                return true
+                            }
+
+                            override fun onQueryTextChange(newText: String?): Boolean {
+                                if (newText!!.isNotEmpty()) {
+                                    println(viewModel.statusFilter.value.second)
+                                    viewModel.setSearch(newText)
+                                }
+                                return true
+                            }
+                        })
+
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
+    }
+
+    private fun setFragmentListener() {
+        setFragmentResultListener(REQUEST_KEY) { _, bundle ->
+            val result = bundle.getString(BUNDLE_KEY_NAME)
+            val position = bundle.getInt(BUNDLE_KEY_POSITION)
+            binding.appBarLayout.btnSort.text = result
+            viewModel.setSort(position)
         }
     }
 
@@ -110,13 +175,16 @@ class FavoritesFragment : Fragment() {
             adapterCategory.submitList(it)
         }
 
-        viewModel.favorites.observe(this.viewLifecycleOwner) {
-//            val product = viewModel.filterSort(it)
-            adapterFavoriteGrid.submitList(it)
-            adapterFavorite.submitList(it)
+        viewModel.favoriteAndProducts.observe(this.viewLifecycleOwner) {
+            val favorites = viewModel.filterSort(it)
+            adapterFavoriteGrid.submitList(favorites)
+            adapterFavorite.submitList(favorites)
         }
     }
 
     companion object {
+        const val REQUEST_KEY = "request_key"
+        const val BUNDLE_KEY_NAME = "bundle_name"
+        const val BUNDLE_KEY_POSITION = "bundle_position"
     }
 }

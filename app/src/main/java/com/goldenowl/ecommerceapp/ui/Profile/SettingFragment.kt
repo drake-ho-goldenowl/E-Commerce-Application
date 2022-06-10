@@ -9,22 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentSettingBinding
 import com.goldenowl.ecommerceapp.ui.DatePickerFragment
 import com.goldenowl.ecommerceapp.viewmodels.SettingViewModel
-import com.goldenowl.ecommerceapp.viewmodels.SettingViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingFragment : Fragment() {
-    private val viewModel: SettingViewModel by activityViewModels{
-        SettingViewModelFactory(
-            (activity?.application as EcommerceApplication).userManager
-        )
-    }
+    private val viewModel: SettingViewModel by viewModels()
     private lateinit var binding: FragmentSettingBinding
 
     override fun onCreateView(

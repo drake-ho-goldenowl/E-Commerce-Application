@@ -7,26 +7,22 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
 import com.goldenowl.ecommerceapp.adapters.ListProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentCatalogBinding
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
-import com.goldenowl.ecommerceapp.viewmodels.ShopViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CatalogFragment : Fragment() {
-    private val viewModel: ShopViewModel by activityViewModels {
-        ShopViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao()
-        )
-    }
+    private val viewModel: ShopViewModel by viewModels()
     private var nameTitle: String? = null
     private lateinit var binding: FragmentCatalogBinding
     private lateinit var adapterProduct : ListProductAdapter
@@ -53,9 +49,17 @@ class CatalogFragment : Fragment() {
 
 
         adapterProduct = ListProductAdapter(this) {
+            val action = CatalogFragmentDirections.actionCatalogFragmentToProductDetailFragment(
+                idProduct = it.id
+            )
+            findNavController().navigate(action)
         }
 
         adapterProductGrid = ListProductGridAdapter(this) {
+            val action = CatalogFragmentDirections.actionCatalogFragmentToProductDetailFragment(
+                idProduct = it.id
+            )
+            findNavController().navigate(action)
         }
 
         adapterCategory = ListCategoriesAdater { str ->

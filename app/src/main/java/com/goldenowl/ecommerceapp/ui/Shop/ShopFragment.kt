@@ -5,22 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdapter2
 import com.goldenowl.ecommerceapp.databinding.FragmentShopBinding
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
-import com.goldenowl.ecommerceapp.viewmodels.ShopViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ShopFragment : Fragment() {
-    private val viewModel: ShopViewModel by activityViewModels {
-        ShopViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao()
-        )
-    }
+    private val viewModel: ShopViewModel by viewModels()
     private lateinit var binding: FragmentShopBinding
 
     private lateinit var adapterCategory: ListCategoriesAdapter2

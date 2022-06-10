@@ -6,38 +6,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
-import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileLoginBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
-import com.goldenowl.ecommerceapp.utilities.REQUEST_SIGN_IN
 import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModelFactory
-import com.goldenowl.ecommerceapp.viewmodels.OnSignInStartedListener
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProfileLoginFragment : Fragment() {
     private lateinit var binding:FragmentProfileLoginBinding
-    private lateinit var userManager: UserManager
-    private lateinit var authViewModel: AuthViewModel
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileLoginBinding.inflate(inflater,container,false)
-        userManager = UserManager.getInstance(this.requireContext())
-        val factory = AuthViewModelFactory(this.requireActivity().application, object:
-            OnSignInStartedListener {
-            override fun onSignInStarted(client: GoogleSignInClient?) {
-                startActivityForResult(client?.signInIntent, REQUEST_SIGN_IN)
-            }
-        })
-        authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
-
 
         bind()
         return binding.root
@@ -45,17 +32,17 @@ class ProfileLoginFragment : Fragment() {
 
     private fun bind(){
         binding.apply {
-            if(userManager.isLogged()){
-                txtName.text =  userManager.getName()
-                txtEmail.text = userManager.getEmail()
+            if(authViewModel.userManager.isLogged()){
+                txtName.text =  authViewModel.userManager.getName()
+                txtEmail.text = authViewModel.userManager.getEmail()
                 Glide.with(requireActivity())
-                    .load(userManager.getAvatar())
+                    .load(authViewModel.userManager.getAvatar())
                     .error(R.drawable.ic_no_login)
                     .into(binding.imgAvatar)
             }
 
             btnLogout.setOnClickListener{
-                userManager.logOut()
+                authViewModel.userManager.logOut()
                 authViewModel.logOut()
                 startActivity(Intent(activity, AuthActivity::class.java))
                 activity?.finish()
@@ -68,13 +55,16 @@ class ProfileLoginFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(userManager.isLogged()){
-            binding.txtName.text =  userManager.getName()
-            binding.txtEmail.text = userManager.getEmail()
-            Glide.with(this)
-                .load(userManager.getAvatar())
-                .error(R.drawable.ic_no_login)
-                .into(binding.imgAvatar)
+        authViewModel.apply {
+            if(userManager.isLogged()){
+                binding.txtName.text =  userManager.getName()
+                binding.txtEmail.text = userManager.getEmail()
+                Glide.with(this@ProfileLoginFragment)
+                    .load(userManager.getAvatar())
+                    .error(R.drawable.ic_no_login)
+                    .into(binding.imgAvatar)
+            }
         }
+
     }
 }

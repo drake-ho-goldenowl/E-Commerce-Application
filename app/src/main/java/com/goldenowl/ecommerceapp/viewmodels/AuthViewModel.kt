@@ -1,12 +1,9 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
-import android.app.Application
 import android.content.ContentValues
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -16,9 +13,10 @@ import com.facebook.login.LoginResult
 import com.goldenowl.ecommerceapp.data.User
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.Hash
-import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
+import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
+import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -26,33 +24,35 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-
-class AuthViewModel(application: Application, private val listener: OnSignInStartedListener) :
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    val userManager: UserManager,
+    private val googleSignInClient: GoogleSignInClient,
+) :
     BaseViewModel() {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
+
     val userLiveData: MutableLiveData<FirebaseUser?> = MutableLiveData()
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
     val validEmailLiveData: MutableLiveData<String> = MutableLiveData()
     val validPasswordLiveData: MutableLiveData<String> = MutableLiveData()
-    private val googleSignInClient: GoogleSignInClient
     val callbackManager = CallbackManager.Factory.create()
-    private val userManager: UserManager
-    private val db = Firebase.firestore
-
 
     init {
         if (firebaseAuth.currentUser != null) {
             userLiveData.postValue(firebaseAuth.currentUser)
         }
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("901780403692-v39fpjhl0hj5rpur16nadpeemee34psf.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(application, gso)
-        userManager = UserManager.getInstance(application)
+//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken("901780403692-v39fpjhl0hj5rpur16nadpeemee34psf.apps.googleusercontent.com")
+//            .requestEmail()
+//            .build()
+//        googleSignInClient = GoogleSignIn.getClient(application, gso)
     }
 
     fun signUp(name: String, email: String, password: String) {
@@ -87,7 +87,7 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
     }
 
     fun forgotPassword(emailText: String) {
-        if (emailText.isNullOrBlank()) {
+        if (emailText.isBlank()) {
             toastMessage.postValue("Please enter email")
         } else {
             firebaseAuth.sendPasswordResetEmail(emailText)
@@ -107,20 +107,8 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = firebaseAuth.currentUser
-                    userLiveData.postValue(user)
-                    toastMessage.postValue("Login Success")
                     user?.let {
-                        db.collection("users").document(it.uid).get()
-                            .addOnSuccessListener { documentSnapshot ->
-                                val account = documentSnapshot.toObject<User>()
-                                account?.let {
-                                    if (account.password != Hash.hashSHA256(password)) {
-                                        account.password = Hash.hashSHA256(password)
-                                        userManager.writeProfile(account)
-                                    }
-                                    userManager.addAccount(account)
-                                }
-                            }
+                        actionLoginOrCreateFirebase(user, password)
                     }
                 } else {
                     toastMessage.postValue("Login Failure: " + task.exception)
@@ -128,12 +116,41 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
             }
     }
 
+    //If function hasn't password parameter mean login with social
+    private fun actionLoginOrCreateFirebase(user: FirebaseUser, password: String?) {
+        db.collection(USER_FIREBASE).document(user.uid).get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val documentSnapshot = task.result
+                if (documentSnapshot.exists()) {
+                    val account = documentSnapshot.toObject<User>()
+                    account?.let {
+                        if (password != null && account.password != Hash.hashSHA256(password)) {
+                            account.password = Hash.hashSHA256(password)
+                            userManager.writeProfile(account)
+                        }
+                        userManager.addAccount(account)
+                    }
+                } else {
+                    if (password == null) {
+                        createNewUserManagerForLoginSocial(user)
+                    }
+                }
+                userLiveData.postValue(user)
+                toastMessage.postValue(LOGIN_SUCCESS)
+            }
+        }
+
+    }
+
     fun logOut() {
         firebaseAuth.signOut()
+        userManager.logOut()
+        LAST_EDIT_TIME_FAVORITES = null
+        LAST_EDIT_TIME_BAG = null
         userLiveData.postValue(null)
     }
 
-    fun signInWithGoogle() {
+    fun signInWithGoogle(listener: OnSignInStartedListener) {
         listener.onSignInStarted(googleSignInClient)
     }
 
@@ -143,20 +160,8 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
                 val user = firebaseAuth.currentUser
-                userLiveData.postValue(user)
-                toastMessage.postValue("Login Success")
-                db.collection("users").document(user!!.uid).get().addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val documentSnapshot = task.result
-                        if (documentSnapshot.exists()) {
-                            val account = documentSnapshot.toObject<User>()
-                            account?.let {
-                                userManager.addAccount(account)
-                            }
-                        } else {
-                            createNewUserManagerForLoginSocial(user)
-                        }
-                    }
+                user?.let {
+                    actionLoginOrCreateFirebase(user, null)
                 }
             } else {
                 toastMessage.postValue("Login Fail")
@@ -168,9 +173,9 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
     fun loginWithFacebook() {
         LoginManager.getInstance()
             .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-                override fun onSuccess(loginResult: LoginResult) {
-                    Log.d(ContentValues.TAG, "facebook:onSuccess:$loginResult")
-                    handleFacebookAccessToken(loginResult.accessToken)
+                override fun onSuccess(result: LoginResult) {
+                    Log.d(ContentValues.TAG, "facebook:onSuccess:$result")
+                    handleFacebookAccessToken(result.accessToken)
                 }
 
                 override fun onCancel() {
@@ -193,23 +198,9 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(ContentValues.TAG, "signInWithCredential:success")
                     val user = firebaseAuth.currentUser
-                    userLiveData.postValue(user)
-                    db.collection("users").document(user!!.uid).get()
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                val documentSnapshot = task.result
-                                if (documentSnapshot.exists()) {
-                                    val account = documentSnapshot.toObject<User>()
-                                    account?.let {
-                                        userManager.addAccount(account)
-                                    }
-                                } else {
-                                    createNewUserManagerForLoginSocial(user)
-                                }
-                            }
-                        }
-
-
+                    user?.let {
+                        actionLoginOrCreateFirebase(user, null)
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(ContentValues.TAG, "signInWithCredential:failure", task.exception)
@@ -298,19 +289,23 @@ class AuthViewModel(application: Application, private val listener: OnSignInStar
         }
     }
 
-}
-
-
-class AuthViewModelFactory(
-    private val application: Application,
-    private val listener: OnSignInStartedListener
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(AuthViewModel::class.java)){
-            @Suppress("UNCHECKED_CAST")
-            return AuthViewModel(application,listener) as T
-        }
-        throw IllegalAccessException("Unknown ViewModel class")
+    companion object {
+        const val LOGIN_SUCCESS = "Login Success"
     }
+
 }
+
+
+//class AuthViewModelFactory(
+//    private val application: Application,
+//    private val listener: OnSignInStartedListener
+//) : ViewModelProvider.Factory {
+//
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
+//            @Suppress("UNCHECKED_CAST")
+//            return AuthViewModel(application, listener) as T
+//        }
+//        throw IllegalAccessException("Unknown ViewModel class")
+//    }
+//}
