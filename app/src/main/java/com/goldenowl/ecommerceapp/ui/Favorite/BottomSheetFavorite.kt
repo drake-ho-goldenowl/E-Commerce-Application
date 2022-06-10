@@ -5,27 +5,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import com.goldenowl.ecommerceapp.EcommerceApplication
+import androidx.fragment.app.viewModels
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
-import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModelFactory
 import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class BottomSheetFavorite(private val product: Product) :BottomSheetDialogFragment(){
-    private val viewModel: FavoriteViewModel by activityViewModels {
-        FavoriteViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao(),
-            (activity?.application as EcommerceApplication).database.favoriteDao(),
-            (activity?.application as EcommerceApplication).userManager
-        )
-    }
+    private val viewModel: FavoriteViewModel by viewModels()
+//    private val viewModel: FavoriteViewModel by activityViewModels {
+//        FavoriteViewModelFactory(
+//            (activity?.application as EcommerceApplication).database.productDao(),
+//            (activity?.application as EcommerceApplication).database.favoriteDao(),
+//            (activity?.application as EcommerceApplication).userManager
+//        )
+//    }
     private lateinit var binding: BottomLayoutSelectSizeBinding
     private var selectSize: String? = null
     private lateinit var adapter: ListSizeAdapter

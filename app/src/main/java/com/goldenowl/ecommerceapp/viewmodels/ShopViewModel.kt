@@ -1,34 +1,35 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import com.goldenowl.ecommerceapp.data.Product
-import com.goldenowl.ecommerceapp.data.ProductDao
+import com.goldenowl.ecommerceapp.data.ProductRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import javax.inject.Inject
 
 
-class ShopViewModel(private val productDao: ProductDao) :
+@HiltViewModel
+class ShopViewModel @Inject constructor(private val productRepository: ProductRepository) :
     BaseViewModel() {
     val statusFilter = MutableStateFlow(Triple("", "", 0))
-    val allCategory = productDao.getAllCategory().asLiveData()
+    val allCategory = productRepository.getAllCategory().asLiveData()
     val products: LiveData<List<Product>> = statusFilter.flatMapLatest {
         if (it.first.isNotBlank() && it.second.isNotBlank()) {
-            productDao.filterByCategoryAndSearch(it.second, it.first)
+            productRepository.filterByCategoryAndSearch(it.second, it.first)
         } else if (it.first.isNotBlank()) {
-            productDao.filterByCategory(it.first)
+            productRepository.filterByCategory(it.first)
         } else if (it.second.isNotBlank()) {
-            productDao.filterBySearch(it.second)
+            productRepository.filterBySearch(it.second)
         } else {
-            productDao.getAll()
+            productRepository.getAll()
         }
     }.asLiveData()
 
     private val statusIdProduct = MutableStateFlow("")
     val product : LiveData<Product> = statusIdProduct.flatMapLatest {
-        productDao.getProductFlow(it)
+        productRepository.getProductFlow(it)
     }.asLiveData()
 
     fun setProduct(idProduct: String){
@@ -95,14 +96,14 @@ class ShopViewModel(private val productDao: ProductDao) :
     }
 }
 
-class ShopViewModelFactory(
-    private val productDao: ProductDao,
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ShopViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ShopViewModel(productDao) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
+//class ShopViewModelFactory(
+//    private val productDao: ProductDao,
+//) : ViewModelProvider.Factory {
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//        if (modelClass.isAssignableFrom(ShopViewModel::class.java)) {
+//            @Suppress("UNCHECKED_CAST")
+//            return ShopViewModel(productDao) as T
+//        }
+//        throw IllegalArgumentException("Unknown ViewModel class")
+//    }
+//}

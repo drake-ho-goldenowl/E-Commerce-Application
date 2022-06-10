@@ -93,13 +93,13 @@ class ListFavoriteAdapter(
             if (isBag) {
                 buttonView.background = ContextCompat.getDrawable(
                     fragment.requireContext(),
-                    R.drawable.btn_favorite_active
+                    R.drawable.btn_bag_active
                 )
             }
             else{
                 buttonView.background = ContextCompat.getDrawable(
                     fragment.requireContext(),
-                    R.drawable.btn_favorite_no_active
+                    R.drawable.btn_bag_no_active
                 )
             }
         }

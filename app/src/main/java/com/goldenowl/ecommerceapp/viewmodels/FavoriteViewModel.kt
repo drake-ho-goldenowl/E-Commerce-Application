@@ -1,12 +1,15 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.utilities.FAVORITE_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
@@ -14,24 +17,25 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.set
 
+@HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
+    private val productRepository: ProductRepository,
+    private val favoriteRepository: FavoriteRepository,
     val userManager: UserManager
 ) :
     BaseViewModel() {
     private val db = Firebase.firestore
     val statusFilter = MutableStateFlow(Triple("", "", 0))
-    val allCategory = favoriteDao.getAllCategory().asLiveData()
+    val allCategory = favoriteRepository.getAllCategory().asLiveData()
     val favoriteAndProducts: LiveData<List<FavoriteAndProduct>> = statusFilter.flatMapLatest {
         if (it.first.isNotBlank() && it.second.isNotBlank()) {
-            favoriteDao.filterByCategoryAndSearch(it.second, it.first)
+            favoriteRepository.filterByCategoryAndSearch(it.second, it.first)
         } else if (it.first.isNotBlank()) {
-            favoriteDao.filterByCategory(it.first)
+            favoriteRepository.filterByCategory(it.first)
         } else if (it.second.isNotBlank()) {
-            favoriteDao.filterBySearch(it.second)
+            favoriteRepository.filterBySearch(it.second)
         } else {
-            favoriteDao.getAllFavoriteAndProduct()
+            favoriteRepository.getAllFavoriteAndProduct()
         }
     }.asLiveData()
 
@@ -89,18 +93,18 @@ class FavoriteViewModel @Inject constructor(
 
     fun removeFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            favoriteDao.delete(favorite)
+            favoriteRepository.delete(favorite)
             checkFavorites(favorite)
-            updateFavoriteFirebase(favoriteDao.getAllList())
+            updateFavoriteFirebase(favoriteRepository.getAllList())
         }
     }
 
     private suspend fun checkFavorites(favorite: Favorite) {
-        val id = favoriteDao.getIdProduct(favorite.idProduct)
+        val id = favoriteRepository.getIdProduct(favorite.idProduct)
         if (id.isBlank()) {
-            val product = productDao.getProduct(favorite.idProduct)
+            val product = productRepository.getProduct(favorite.idProduct)
             product.isFavorite = false
-            productDao.update(product)
+            productRepository.update(product)
         }
     }
 
@@ -116,10 +120,10 @@ class FavoriteViewModel @Inject constructor(
     fun insertFavorite(product: Product, size: String) {
         val favorite = createFavorite(product, size)
         viewModelScope.launch {
-            favoriteDao.insert(favorite)
+            favoriteRepository.insert(favorite)
             product.isFavorite = true
-            productDao.update(product)
-            updateFavoriteFirebase(favoriteDao.getAllList())
+            productRepository.update(product)
+            updateFavoriteFirebase(favoriteRepository.getAllList())
         }
     }
 
@@ -128,20 +132,5 @@ class FavoriteViewModel @Inject constructor(
         const val LAST_EDIT = "lastEdit"
         const val DATA = "data"
         const val TAG = "FAVORITE_VIEW_MODEL"
-    }
-}
-
-
-class FavoriteViewModelFactory(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
-    private val userManager: UserManager
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return FavoriteViewModel(productDao, favoriteDao, userManager) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

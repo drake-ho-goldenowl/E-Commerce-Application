@@ -7,20 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import com.goldenowl.ecommerceapp.EcommerceApplication
+import androidx.fragment.app.viewModels
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutChangePasswordBinding
 import com.goldenowl.ecommerceapp.viewmodels.ChangePasswordViewModel
-import com.goldenowl.ecommerceapp.viewmodels.ChangePasswordViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BottomSheetChangePassword : BottomSheetDialogFragment() {
     private lateinit var binding: BottomLayoutChangePasswordBinding
-    private val viewModel: ChangePasswordViewModel by activityViewModels {
-        ChangePasswordViewModelFactory(
-            (activity?.application as EcommerceApplication).userManager
-        )
-    }
+    private val viewModel: ChangePasswordViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

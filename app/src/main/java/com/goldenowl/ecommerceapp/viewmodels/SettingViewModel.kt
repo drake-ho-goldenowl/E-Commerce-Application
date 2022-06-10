@@ -2,13 +2,14 @@ package com.goldenowl.ecommerceapp.viewmodels
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SettingViewModel(val userManager: UserManager) : BaseViewModel() {
+@HiltViewModel
+class SettingViewModel @Inject constructor(val userManager: UserManager) : BaseViewModel() {
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
     private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
 
@@ -79,16 +80,5 @@ class SettingViewModel(val userManager: UserManager) : BaseViewModel() {
             validNameLiveData.postValue("")
             true
         }
-    }
-}
-
-
-class SettingViewModelFactory(private val userManager: UserManager) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SettingViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SettingViewModel(userManager) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

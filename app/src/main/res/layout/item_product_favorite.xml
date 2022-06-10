@@ -166,7 +166,7 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:layout_marginTop="-20dp"
-        android:background="@drawable/btn_favorite_no_active"
+        android:background="@drawable/btn_bag_no_active"
         android:button="@null"
         android:elevation="4dp"
         app:layout_constraintRight_toRightOf="parent"

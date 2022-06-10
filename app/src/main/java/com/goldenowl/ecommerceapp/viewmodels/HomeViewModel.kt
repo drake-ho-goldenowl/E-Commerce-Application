@@ -2,7 +2,6 @@ package com.goldenowl.ecommerceapp.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
@@ -10,16 +9,19 @@ import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
-class HomeViewModel(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
-    private val bagDao: BagDao,
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val bagRepository: BagRepository,
     private val userManager: UserManager
 ) : ViewModel() {
-    val product = productDao.getAll().asLiveData()
+    val product = productRepository.getAll().asLiveData()
     private val db = Firebase.firestore
 
     fun filterSale(products: List<Product>): List<Product> {
@@ -37,8 +39,8 @@ class HomeViewModel(
         println("Run Home")
         if (!userManager.isLogged()) {
             viewModelScope.launch {
-                bagDao.deleteAll()
-                favoriteDao.deleteAll()
+                bagRepository.deleteAll()
+                favoriteRepository.deleteAll()
             }
         }
         fetchProduct()
@@ -55,10 +57,10 @@ class HomeViewModel(
             viewModelScope.launch {
                 for (doc in value!!) {
                     val product = doc.toObject<Product>()
-                    if (favoriteDao.countFavorite() > 0) {
-                        product.isFavorite = checkFavorite(favoriteDao.getAllIdProduct(), product)
+                    if (favoriteRepository.countFavorite() > 0) {
+                        product.isFavorite = checkFavorite(favoriteRepository.getAllIdProduct(), product)
                     }
-                    productDao.insert(product)
+                    productRepository.insert(product)
                 }
             }
         }
@@ -77,9 +79,9 @@ class HomeViewModel(
                     if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
                         viewModelScope.launch {
                             for (favorite in favorites.data!!) {
-                                val product = productDao.getProduct(favorite.idProduct)
+                                val product = productRepository.getProduct(favorite.idProduct)
                                 if (product.isFavorite) {
-                                    favoriteDao.insert(favorite)
+                                    favoriteRepository.insert(favorite)
                                 } else {
                                     insertFavorite(product, favorite)
                                 }
@@ -89,7 +91,7 @@ class HomeViewModel(
                             documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
                     } else if (favorites.lastEdit!! < LAST_EDIT_TIME_FAVORITES) {
                         viewModelScope.launch {
-                            updateFavoriteFirebase(favoriteDao.getAllList())
+                            updateFavoriteFirebase(favoriteRepository.getAllList())
                         }
                     }
                 }
@@ -111,7 +113,7 @@ class HomeViewModel(
                     if (bags.lastEdit != LAST_EDIT_TIME_BAG) {
                         viewModelScope.launch {
                             for (bag in bags.data!!) {
-                                bagDao.insert(bag)
+                                bagRepository.insert(bag)
                             }
                         }
                         LAST_EDIT_TIME_BAG =
@@ -139,9 +141,9 @@ class HomeViewModel(
 
     private fun insertFavorite(product: Product, favorite: Favorite) {
         viewModelScope.launch {
-            favoriteDao.insert(favorite)
+            favoriteRepository.insert(favorite)
             product.isFavorite = true
-            productDao.update(product)
+            productRepository.update(product)
         }
     }
 
@@ -152,20 +154,5 @@ class HomeViewModel(
             }
         }
         return false
-    }
-}
-
-class HomeViewModelFactory(
-    private val productDao: ProductDao,
-    private val favoriteDao: FavoriteDao,
-    private val bagDao: BagDao,
-    private val userManager: UserManager
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return HomeViewModel(productDao, favoriteDao, bagDao, userManager) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

@@ -5,33 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.activityViewModels
-import com.goldenowl.ecommerceapp.EcommerceApplication
+import androidx.fragment.app.viewModels
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
 import com.goldenowl.ecommerceapp.viewmodels.BagViewModel
-import com.goldenowl.ecommerceapp.viewmodels.BagViewModelFactory
 import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class BottomSheetCart(
     private val product: Product,
     private var selectSizeInt: Int,
     private val selectColorInt: Int
 ) : BottomSheetDialogFragment() {
-    private val viewModel: BagViewModel by activityViewModels {
-        BagViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao(),
-            (activity?.application as EcommerceApplication).database.bagDao(),
-            (activity?.application as EcommerceApplication).database.favoriteDao(),
-            (activity?.application as EcommerceApplication).userManager
-        )
-    }
+    private val viewModel: BagViewModel by viewModels()
 
     private lateinit var binding: BottomLayoutSelectSizeBinding
     private var selectSize: String? = null

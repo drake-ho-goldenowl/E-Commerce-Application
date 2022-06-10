@@ -7,11 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageHomeAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
@@ -19,19 +18,12 @@ import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
 import com.goldenowl.ecommerceapp.utilities.IS_FIRST
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
 import com.goldenowl.ecommerceapp.viewmodels.HomeViewModel
-import com.goldenowl.ecommerceapp.viewmodels.HomeViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private val viewModel: HomeViewModel by activityViewModels {
-        HomeViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao(),
-            (activity?.application as EcommerceApplication).database.favoriteDao(),
-            (activity?.application as EcommerceApplication).database.bagDao(),
-            (activity?.application as EcommerceApplication).userManager
-        )
-    }
+    private val viewModel: HomeViewModel by viewModels()
     private val listImage = listOf(R.drawable.img_home, R.drawable.img_home)
     private val listTitle = listOf("Street clothes", "Summer clothes")
 

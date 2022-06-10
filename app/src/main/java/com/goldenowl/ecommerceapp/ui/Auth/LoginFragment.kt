@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.facebook.login.LoginManager
 import com.goldenowl.ecommerceapp.MainActivity
@@ -16,17 +16,17 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentLoginBinding
 import com.goldenowl.ecommerceapp.utilities.REQUEST_SIGN_IN
 import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModelFactory
 import com.goldenowl.ecommerceapp.viewmodels.OnSignInStartedListener
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputLayout
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var authViewModel: AuthViewModel
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,13 +35,6 @@ class LoginFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentLoginBinding.inflate(inflater, container, false)
 
-        val factory = AuthViewModelFactory(this.requireActivity().application, object:
-            OnSignInStartedListener {
-            override fun onSignInStarted(client: GoogleSignInClient?) {
-                startActivityForResult(client?.signInIntent, REQUEST_SIGN_IN)
-            }
-        })
-        authViewModel = ViewModelProvider(this, factory).get(AuthViewModel::class.java)
         observeSetup()
         bind()
         return binding.root
@@ -67,7 +60,12 @@ class LoginFragment : Fragment() {
             }
 
             btnGoogle.setOnClickListener {
-                authViewModel.signInWithGoogle()
+                authViewModel.signInWithGoogle(object :
+                    OnSignInStartedListener {
+                    override fun onSignInStarted(client: GoogleSignInClient?) {
+                        startActivityForResult(client?.signInIntent, REQUEST_SIGN_IN)
+                    }
+                })
             }
             btnFacebook.setOnClickListener {
                 LoginManager.getInstance().logInWithReadPermissions(requireActivity(), listOf("email"))

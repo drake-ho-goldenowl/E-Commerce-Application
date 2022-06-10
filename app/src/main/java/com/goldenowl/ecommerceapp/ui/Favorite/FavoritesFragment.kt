@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
 import com.goldenowl.ecommerceapp.adapters.ListFavoriteAdapter
@@ -21,16 +20,19 @@ import com.goldenowl.ecommerceapp.databinding.FragmentFavoritesBinding
 import com.goldenowl.ecommerceapp.ui.Shop.BottomSheetSort
 import com.goldenowl.ecommerceapp.ui.Shop.CatalogFragment
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
-import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FavoritesFragment : Fragment() {
-    private val viewModel: FavoriteViewModel by activityViewModels {
-        FavoriteViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao(),
-            (activity?.application as EcommerceApplication).database.favoriteDao(),
-            (activity?.application as EcommerceApplication).userManager
-        )
-    }
+
+    private val viewModel: FavoriteViewModel by viewModels()
+//    private val viewModel: FavoriteViewModel by activityViewModels {
+//        FavoriteViewModelFactory(
+//            (activity?.application as EcommerceApplication).database.productDao(),
+//            (activity?.application as EcommerceApplication).database.favoriteDao(),
+//            (activity?.application as EcommerceApplication).userManager
+//        )
+//    }
 
     private lateinit var adapterFavorite: ListFavoriteAdapter
     private lateinit var adapterFavoriteGrid: ListFavoriteGridAdapter

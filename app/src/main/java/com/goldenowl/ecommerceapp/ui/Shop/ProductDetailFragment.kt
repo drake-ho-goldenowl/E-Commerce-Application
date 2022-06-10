@@ -8,11 +8,10 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.goldenowl.ecommerceapp.EcommerceApplication
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
@@ -23,14 +22,11 @@ import com.goldenowl.ecommerceapp.ui.Bag.BottomSheetCart
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
-import com.goldenowl.ecommerceapp.viewmodels.ShopViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProductDetailFragment : Fragment() {
-    private val viewModel: ShopViewModel by activityViewModels {
-        ShopViewModelFactory(
-            (activity?.application as EcommerceApplication).database.productDao()
-        )
-    }
+    private val viewModel: ShopViewModel by viewModels()
     private lateinit var binding: FragmentProductDetailBinding
     private lateinit var colors: MutableList<String>
     private lateinit var sizes: MutableList<String>

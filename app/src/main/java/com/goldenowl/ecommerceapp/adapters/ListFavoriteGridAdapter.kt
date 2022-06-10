@@ -72,11 +72,10 @@ class ListFavoriteGridAdapter(
                 }
 
 
-//                setButtonFavorite(binding.btnFavorite,favoriteAndProduct.product.isFavorite)
-//                btnFavorite.setOnClickListener {
-//                    val bottomSheetSize = BottomSheetSize(product)
-//                    bottomSheetSize.show(fragment.parentFragmentManager, BottomSheetSize.TAG)
-//                }
+                setButtonBag(binding.btnFavorite,favoriteAndProduct.favorite.isBag)
+                btnFavorite.setOnClickListener {
+
+                }
             }
         }
 
@@ -89,16 +88,17 @@ class ListFavoriteGridAdapter(
             return null
         }
 
-        private fun setButtonFavorite(buttonView: View, isFavorite: Boolean) {
-            if (isFavorite) {
+        private fun setButtonBag(buttonView: View, isBag: Boolean){
+            if (isBag) {
                 buttonView.background = ContextCompat.getDrawable(
                     fragment.requireContext(),
-                    R.drawable.btn_favorite_active
+                    R.drawable.btn_bag_active
                 )
-            } else {
+            }
+            else{
                 buttonView.background = ContextCompat.getDrawable(
                     fragment.requireContext(),
-                    R.drawable.btn_favorite_no_active
+                    R.drawable.btn_bag_no_active
                 )
             }
         }
