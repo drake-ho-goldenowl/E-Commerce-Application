@@ -12,21 +12,22 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.R
-import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.FavoriteAndProduct
 import com.goldenowl.ecommerceapp.data.Size
 import com.goldenowl.ecommerceapp.databinding.ItemProductFavoriteBinding
 
 class ListFavoriteGridAdapter(
     private val fragment: Fragment,
-    private val onCloseClicked: (Favorite) -> Unit,
-    private val onItemClicked: (FavoriteAndProduct) -> Unit
+    private val onCloseClicked: (FavoriteAndProduct) -> Unit,
+    private val onItemClicked: (FavoriteAndProduct) -> Unit,
+    private val onBagClicked: (FavoriteAndProduct) -> Unit
 ) :
     ListAdapter<FavoriteAndProduct, ListFavoriteGridAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(
         private val fragment: Fragment,
-        private val onCloseClicked: (Favorite) -> Unit,
+        private val onCloseClicked: (FavoriteAndProduct) -> Unit,
+        private val onBagClicked: (FavoriteAndProduct) -> Unit,
         private var binding: ItemProductFavoriteBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
@@ -42,7 +43,7 @@ class ListFavoriteGridAdapter(
                 txtName.text = favoriteAndProduct.product.title
                 txtBrandName.text = favoriteAndProduct.product.brandName
                 ratingBar.rating = favoriteAndProduct.product.reviewStars.toFloat()
-                txtColorInput.text = favoriteAndProduct.product.colors[0].color
+                txtColorInput.text = favoriteAndProduct.favorite.color
                 txtSizeInput.text = favoriteAndProduct.favorite.size
 
                 txtNumberVote.text = "(${favoriteAndProduct.product.numberReviews})"
@@ -71,10 +72,13 @@ class ListFavoriteGridAdapter(
 
                 }
 
+                btnRemoveFavorite.setOnClickListener{
+                    onCloseClicked(favoriteAndProduct)
+                }
 
-                setButtonBag(binding.btnFavorite,favoriteAndProduct.favorite.isBag)
-                btnFavorite.setOnClickListener {
-
+                setButtonBag(binding.btnBag,favoriteAndProduct.favorite.isBag)
+                btnBag.setOnClickListener {
+                    onBagClicked(favoriteAndProduct)
                 }
             }
         }
@@ -109,6 +113,7 @@ class ListFavoriteGridAdapter(
         return ItemViewHolder(
             fragment,
             onCloseClicked,
+            onBagClicked,
             ItemProductFavoriteBinding.inflate(
                 LayoutInflater.from(
                     parent.context

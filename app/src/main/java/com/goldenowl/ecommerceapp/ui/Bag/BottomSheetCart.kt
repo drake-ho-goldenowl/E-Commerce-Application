@@ -37,7 +37,8 @@ class BottomSheetCart(
     ): View {
         binding = BottomLayoutSelectSizeBinding.inflate(inflater, container, false)
         val listSize = product.getAllSize()
-        viewModel.setFavorite(product.id, product.colors[selectColorInt].color!!)
+        val color = product.colors[selectColorInt]
+        viewModel.setFavorite(product.id, color.sizes[selectSizeInt].size,color.color.toString())
         adapter = ListSizeAdapter {
             selectSize = it
         }
@@ -75,7 +76,7 @@ class BottomSheetCart(
             btnAddToCart.setOnClickListener {
                 if (!selectSize.isNullOrBlank()) {
                     viewModel.insertBag(
-                        product,
+                        product.id,
                         product.colors[selectColorInt].color.toString(),
                         selectSize.toString(),
                         favorite

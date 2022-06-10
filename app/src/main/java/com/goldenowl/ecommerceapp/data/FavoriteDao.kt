@@ -26,8 +26,8 @@ interface FavoriteDao {
     @Query("SELECT idProduct FROM favorite WHERE idProduct = :id GROUP BY idProduct")
     suspend fun getIdProduct(id: String): String
 
-    @Query("SELECT * FROM favorite WHERE idProduct = :idProduct AND size = :size")
-    fun getFavoriteFlow(idProduct: String, size: String): Flow<Favorite>
+    @Query("SELECT * FROM favorite WHERE idProduct = :idProduct AND size = :size AND color = :color")
+    fun getFavoriteFlow(idProduct: String, size: String, color: String): Flow<Favorite>
 
     @Query("SELECT * FROM favorite WHERE idProduct = :idProduct AND size = :size")
     fun getFavoriteWithIdProduct(idProduct: String, size: String): Favorite

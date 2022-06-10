@@ -1,30 +1,23 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
-import com.goldenowl.ecommerceapp.utilities.FAVORITE_FIREBASE
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
-import kotlin.collections.set
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val bagRepository: BagRepository,
     val userManager: UserManager
 ) :
     BaseViewModel() {
-    private val db = Firebase.firestore
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = favoriteRepository.getAllCategory().asLiveData()
     val favoriteAndProducts: LiveData<List<FavoriteAndProduct>> = statusFilter.flatMapLatest {
@@ -75,19 +68,28 @@ class FavoriteViewModel @Inject constructor(
         statusFilter.value = Triple(statusFilter.value.first, statusFilter.value.second, select)
     }
 
-    private fun updateFavoriteFirebase(favorites: List<Favorite>) {
-        val docData: MutableMap<String, Any> = HashMap()
-        LAST_EDIT_TIME_FAVORITES = Date()
-        docData[LAST_EDIT] = LAST_EDIT_TIME_FAVORITES!!
-        docData[DATA] = favorites
-        db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
-            .set(docData)
-            .addOnSuccessListener {
-                Log.d(UserManager.TAG, "DocumentSnapshot added")
+    fun updateFavoriteFirebase() {
+        viewModelScope.launch {
+            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+        }
+    }
+
+
+    fun insertBag(idProduct: String, color: String, size: String, favorite: Favorite?) {
+        viewModelScope.launch {
+            val favoriteNew = bagRepository.insertBag(
+                idProduct,
+                color,
+                size,
+                favorite,
+                userManager.getAccessToken()
+            )
+            if (favoriteNew != null) {
+                favoriteRepository.update(favoriteNew)
+                favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
             }
-            .addOnFailureListener { e ->
-                Log.w(UserManager.TAG, "Error adding document", e)
-            }
+            bagRepository.updateBagFirebase(userManager.getAccessToken())
+        }
     }
 
 
@@ -95,35 +97,23 @@ class FavoriteViewModel @Inject constructor(
         viewModelScope.launch {
             favoriteRepository.delete(favorite)
             checkFavorites(favorite)
-            updateFavoriteFirebase(favoriteRepository.getAllList())
+            updateFavoriteFirebase()
+        }
+    }
+
+    fun insertFavorite(product: Product,size: String,color: String){
+        viewModelScope.launch {
+            val productNew = favoriteRepository.insertFavorite(product, size,color)
+            productRepository.update(productNew)
         }
     }
 
     private suspend fun checkFavorites(favorite: Favorite) {
         val id = favoriteRepository.getIdProduct(favorite.idProduct)
-        if (id.isBlank()) {
+        if (id.isNullOrBlank()) {
             val product = productRepository.getProduct(favorite.idProduct)
             product.isFavorite = false
             productRepository.update(product)
-        }
-    }
-
-
-    private fun createFavorite(product: Product, size: String): Favorite {
-        return Favorite(
-            size = size,
-            idProduct = product.id
-        )
-    }
-
-
-    fun insertFavorite(product: Product, size: String) {
-        val favorite = createFavorite(product, size)
-        viewModelScope.launch {
-            favoriteRepository.insert(favorite)
-            product.isFavorite = true
-            productRepository.update(product)
-            updateFavoriteFirebase(favoriteRepository.getAllList())
         }
     }
 

@@ -1,6 +1,7 @@
 package com.goldenowl.ecommerceapp.ui.Shop
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ class ProductDetailFragment : Fragment() {
     private lateinit var product: Product
 
     private lateinit var adapterRelated: ListProductGridAdapter
+    private val handlerFragment = Handler()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -123,6 +125,15 @@ class ProductDetailFragment : Fragment() {
                     val adapterImage = ImageProductAdapter(this@ProductDetailFragment, images)
                     adapter = adapterImage
                 }
+
+                autoScroll()
+                //Auto scroll
+                registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        autoScroll()
+                    }
+                })
             }
 
             txtBrandName.text = product.brandName
@@ -134,7 +145,7 @@ class ProductDetailFragment : Fragment() {
 
 
             //Spinner Size
-            val adapterSize = SpinnerAdapter(requireContext(), sizes)
+            var adapterSize = SpinnerAdapter(requireContext(), sizes)
             spinnerSize.adapter = adapterSize
             spinnerSize.setSelection(adapterSize.count)
             spinnerSize.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -175,6 +186,13 @@ class ProductDetailFragment : Fragment() {
                     } else {
                         position
                     }
+                    if(selectColor != null){
+                        sizes = viewModel.getAllSizeOfColor(selectColor!!)
+                        sizes.add(DEFAULT_COLOR)
+                        adapterSize = SpinnerAdapter(requireContext(), sizes)
+                        spinnerSize.adapter = adapterSize
+                        spinnerSize.setSelection(adapterSize.count)
+                    }
 
                     changePrice()
                 }
@@ -195,12 +213,13 @@ class ProductDetailFragment : Fragment() {
             setButtonFavorite(btnFavorite,product.isFavorite)
 
             btnFavorite.setOnClickListener {
-                val bottomSheetSize = BottomSheetFavorite(product)
+                val select = selectColor?: 0
+                val bottomSheetSize = BottomSheetFavorite(product,selectSize,product.colors[select].color)
                 bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
             }
 
             btnAddToCart.setOnClickListener {
-                if(selectColor != null && selectColor != null){
+                if(selectColor != null && selectSize != null){
                     val bottomSheetCart = BottomSheetCart(product,selectSize!!,selectColor!!)
                     bottomSheetCart.show(parentFragmentManager, BottomSheetCart.TAG)
                 }
@@ -229,6 +248,29 @@ class ProductDetailFragment : Fragment() {
                 R.drawable.btn_favorite_no_active
             )
         }
+    }
+
+
+    private fun autoScroll(){
+        handlerFragment.removeMessages(0)
+        handlerFragment.postDelayed({
+            binding.viewPagerImageProduct.setCurrentItem(binding.viewPagerImageProduct.currentItem + 1, true)
+        }, 5000)
+    }
+
+    override fun onPause() {
+        handlerFragment.removeMessages(0)
+        super.onPause()
+    }
+
+    override fun onResume() {
+        autoScroll()
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        handlerFragment.removeMessages(0)
+        super.onDestroy()
     }
 
     companion object {

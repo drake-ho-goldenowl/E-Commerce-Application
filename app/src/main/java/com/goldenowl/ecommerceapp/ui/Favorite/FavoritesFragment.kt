@@ -43,7 +43,7 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if(!viewModel.userManager.isLogged()){
+        if (!viewModel.userManager.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
         binding = FragmentFavoritesBinding.inflate(inflater, container, false)
@@ -51,23 +51,43 @@ class FavoritesFragment : Fragment() {
         viewModel.setSort(0)
 
         adapterCategory = ListCategoriesAdater { str ->
-            if(viewModel.statusFilter.value.first == str){
+            if (viewModel.statusFilter.value.first == str) {
                 viewModel.setCategory("")
-            }
-            else{
+            } else {
                 viewModel.setCategory(str)
             }
         }
 
         adapterFavorite = ListFavoriteAdapter(this, {
-            viewModel.removeFavorite(it)
+            viewModel.removeFavorite(it.favorite)
         }, {
-
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailFragment(
+                idProduct = it.product.id
+            )
+            findNavController().navigate(action)
+        }, {
+            viewModel.insertBag(
+                it.product.id,
+                it.product.colors[0].color.toString(),
+                it.favorite.size,
+                it.favorite
+            )
         })
 
         adapterFavoriteGrid = ListFavoriteGridAdapter(this, {
-            viewModel.removeFavorite(it)
+            viewModel.removeFavorite(it.favorite)
         }, {
+            val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailFragment(
+                idProduct = it.product.id
+            )
+            findNavController().navigate(action)
+        }, {
+            viewModel.insertBag(
+                it.product.id,
+                it.product.colors[0].color.toString(),
+                it.favorite.size,
+                it.favorite
+            )
         })
 
 
@@ -124,10 +144,9 @@ class FavoritesFragment : Fragment() {
                             }
 
                             override fun onQueryTextChange(newText: String?): Boolean {
-                                if (newText!!.isNotEmpty()){
+                                if (newText!!.isNotEmpty()) {
                                     println(viewModel.statusFilter.value.second)
                                     viewModel.setSearch(newText)
-
                                 }
                                 return true
                             }

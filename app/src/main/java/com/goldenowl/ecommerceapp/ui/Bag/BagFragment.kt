@@ -20,10 +20,10 @@ class BagFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if(!viewModel.userManager.isLogged()){
+        if (!viewModel.userManager.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
-        binding = FragmentBagBinding.inflate(inflater,container,false)
+        binding = FragmentBagBinding.inflate(inflater, container, false)
         binding.appBarLayout.topAppBar.title = "Bag"
 
         setHasOptionsMenu(true)
@@ -41,7 +41,6 @@ class BagFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                println("Hello")
                 return true
             }
         })

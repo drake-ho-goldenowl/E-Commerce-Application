@@ -28,11 +28,11 @@ class ShopViewModel @Inject constructor(private val productRepository: ProductRe
     }.asLiveData()
 
     private val statusIdProduct = MutableStateFlow("")
-    val product : LiveData<Product> = statusIdProduct.flatMapLatest {
+    val product: LiveData<Product> = statusIdProduct.flatMapLatest {
         productRepository.getProductFlow(it)
     }.asLiveData()
 
-    fun setProduct(idProduct: String){
+    fun setProduct(idProduct: String) {
         statusIdProduct.value = idProduct
     }
 
@@ -77,6 +77,16 @@ class ShopViewModel @Inject constructor(private val productRepository: ProductRe
                 if (size.quantity > 0) {
                     sizes.add(size.size)
                 }
+            }
+        }
+        return sizes.toMutableList()
+    }
+
+    fun getAllSizeOfColor(selectColor: Int): MutableList<String> {
+        val sizes: MutableSet<String> = mutableSetOf()
+        for (size in product.value!!.colors[selectColor].sizes) {
+            if (size.quantity > 0) {
+                sizes.add(size.size)
             }
         }
         return sizes.toMutableList()

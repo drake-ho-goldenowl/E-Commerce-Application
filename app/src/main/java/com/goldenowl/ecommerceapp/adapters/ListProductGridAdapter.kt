@@ -57,7 +57,7 @@ class ListProductGridAdapter(
 
 
                 btnFavorite.setOnClickListener {
-                    val bottomSheetSize = BottomSheetFavorite(product)
+                    val bottomSheetSize = BottomSheetFavorite(product,null,null)
                     bottomSheetSize.show(fragment.parentFragmentManager, BottomSheetFavorite.TAG)
                 }
             }
