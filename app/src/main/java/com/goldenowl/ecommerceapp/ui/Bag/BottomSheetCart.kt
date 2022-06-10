@@ -43,15 +43,15 @@ class BottomSheetCart(
         savedInstanceState: Bundle?
     ): View {
         binding = BottomLayoutSelectSizeBinding.inflate(inflater, container, false)
-        val list = viewModel.getAllSize(product)
+        val listSize = product.getAllSize()
         viewModel.setFavorite(product.id, product.colors[selectColorInt].color!!)
         adapter = ListSizeAdapter {
             selectSize = it
         }
-        adapter.submitList(list)
+        adapter.submitList(listSize)
 
         adapter.positionCurrent = selectSizeInt
-        selectSize = list[selectSizeInt]
+        selectSize = listSize[selectSizeInt]
 
         viewModel.toastMessage.observe(viewLifecycleOwner) { str ->
             Toast.makeText(

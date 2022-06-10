@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.goldenowl.ecommerceapp.ui.HomeFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -101,7 +101,12 @@
     </fragment>
     <fragment
         android:id="@+id/warningFragment"
-        android:name="com.goldenowl.ecommerceapp.WarningFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.WarningFragment"
         android:label="fragment_warning"
         tools:layout="@layout/fragment_warning" />
+    <fragment
+        android:id="@+id/viewPageTutorialFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Tutorial.ViewPageTutorialFragment"
+        android:label="fragment_view_page_tutorial"
+        tools:layout="@layout/fragment_view_page_tutorial" />
 </navigation>

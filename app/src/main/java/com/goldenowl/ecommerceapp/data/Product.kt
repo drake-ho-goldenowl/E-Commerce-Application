@@ -11,49 +11,54 @@ import java.util.*
 @Entity
 data class Product(
     @PrimaryKey
-    val id: String,
+    val id: String = "",
     @NonNull @ColumnInfo(name = "title")
-    val title: String,
+    val title: String = "",
     @NonNull @ColumnInfo(name = "brand_name")
-    val brandName: String,
+    val brandName: String = "",
     @NonNull @ColumnInfo(name = "images")
-    val images: List<String>,
+    val images: List<String> = emptyList(),
     @ColumnInfo(name = "created_date")
-    val createdDate: Date?,
+    val createdDate: Date? = null,
     @Nullable @ColumnInfo(name = "sale_percent")
-    val salePercent: Int?,
+    val salePercent: Int? = null,
     @field:JvmField @ColumnInfo(name = "is_popular")
-    val isPopular: Boolean?,
+    val isPopular: Boolean = false,
     @NonNull @ColumnInfo(name = "number_reviews")
-    val numberReviews: Int,
+    val numberReviews: Int = 0,
     @NonNull @ColumnInfo(name = "review_stars")
-    val reviewStars: Int,
+    val reviewStars: Int = 0,
     @NonNull @ColumnInfo(name = "category_name")
-    val categoryName: String,
+    val categoryName: String = "",
     @NonNull @ColumnInfo(name = "colors")
-    val colors: List<Color>,
+    val colors: List<Color> = emptyList(),
     @ColumnInfo(name = "description")
-    val description: String,
+    val description: String = "",
     @NonNull @ColumnInfo(name = "tags")
-    val tags: List<Tag>,
+    val tags: List<Tag> = emptyList(),
     @field:JvmField
     var isFavorite: Boolean = false
 ) {
-    constructor() : this(
-        "",
-        "",
-        "",
-        emptyList(),
-        null,
-        null,
-        null,
-        0,
-        0,
-        "",
-        emptyList(),
-        "",
-        emptyList(),
-    )
+    fun getAllSize(): List<String> {
+        val sizes: MutableSet<String> = mutableSetOf()
+        for (color in this.colors) {
+            for (size in color.sizes) {
+                if (size.quantity > 0) {
+                    sizes.add(size.size)
+                }
+            }
+        }
+        return sizes.toList()
+    }
+
+    fun getSize(sizeStr: String) : Size?{
+        for (size in this.colors[0].sizes){
+            if(sizeStr == size.size){
+                return size
+            }
+        }
+        return null
+    }
 }
 
 

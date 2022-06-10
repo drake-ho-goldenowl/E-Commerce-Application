@@ -3,6 +3,7 @@ package com.goldenowl.ecommerceapp.viewmodels
 import android.util.Log
 import androidx.lifecycle.*
 import com.goldenowl.ecommerceapp.data.*
+import com.goldenowl.ecommerceapp.utilities.BAG_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -35,7 +36,7 @@ class BagViewModel(
         LAST_EDIT_TIME_BAG = Date()
         docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_BAG!!
         docData[FavoriteViewModel.DATA] = bags
-        db.collection("bags").document(userManager.getAccessToken())
+        db.collection(BAG_FIREBASE).document(userManager.getAccessToken())
             .set(docData)
             .addOnSuccessListener {
                 Log.d(UserManager.TAG, "DocumentSnapshot added")
@@ -54,66 +55,31 @@ class BagViewModel(
     }
 
     private suspend fun checkBags(bag: Bag){
-        val favorite = favoriteDao.getFavorite(bag.id,bag.color)
+        val favorite = favoriteDao.getFavoriteWithIdProduct(bag.idProduct,bag.color)
         favorite.isBag = false
         favoriteDao.update(favorite)
     }
 
 
-    private fun createBag(product: Product, color: String, size: String): Bag {
-        val sizeSelect = getSizeOfColor(product.colors[0].sizes, size) ?: Size()
+    private fun createBag(idProduct: String, color: String, size: String): Bag {
         return Bag(
-            product.id,
-            size,
-            color,
-            sizeSelect.quantity,
-            sizeSelect.price,
-            product.title,
-            product.brandName,
-            product.images[0],
-            product.salePercent,
+            size = size,
+            color = color,
+            idProduct =  idProduct,
+            quantity = 1
         )
     }
 
-
-    private fun getSizeOfColor(sizes: List<Size>, select: String): Size? {
-        for (size in sizes) {
-            if (select == size.size) {
-                return size
-            }
-        }
-        return null
-    }
-
     fun insertBag(product: Product, color: String, size: String,favorite: Favorite?) {
-        val bag = createBag(product, color, size)
+        val bag = createBag(product.id, color, size)
         viewModelScope.launch {
             bagDao.insert(bag)
             if(favorite != null){
                 favorite.isBag = true
-                fetchFavorite(favorite)
+                favoriteDao.update(favorite)
             }
             updateFavoriteFirebase(bagDao.getAllList())
         }
-    }
-
-    private fun fetchFavorite(favorite: Favorite) {
-        viewModelScope.launch {
-            favoriteDao.update(favorite)
-        }
-    }
-
-
-    fun getAllSize(product: Product): List<String> {
-        val sizes: MutableSet<String> = mutableSetOf()
-        for (color in product.colors) {
-            for (size in color.sizes) {
-                if (size.quantity > 0) {
-                    sizes.add(size.size)
-                }
-            }
-        }
-        return sizes.toList()
     }
 }
 

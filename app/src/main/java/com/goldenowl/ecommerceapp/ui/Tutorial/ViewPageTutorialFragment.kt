@@ -1,13 +1,12 @@
 package com.goldenowl.ecommerceapp.ui.Tutorial
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.goldenowl.ecommerceapp.MainActivity
 import com.goldenowl.ecommerceapp.adapters.TutorialPagerAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentViewPageTutorialBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -56,8 +55,7 @@ class ViewPageTutorialFragment : Fragment() {
             })
 
             btnSkip.setOnClickListener {
-                startActivity(Intent(activity, MainActivity::class.java))
-                activity?.finish()
+                findNavController().popBackStack()
             }
 
             btnNext.setOnClickListener {
@@ -68,8 +66,7 @@ class ViewPageTutorialFragment : Fragment() {
             }
 
             btnGetStart.setOnClickListener {
-                startActivity(Intent(activity, MainActivity::class.java))
-                activity?.finish()
+                findNavController().popBackStack()
             }
         }
 

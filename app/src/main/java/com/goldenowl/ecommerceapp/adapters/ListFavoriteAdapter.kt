@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -72,11 +73,10 @@ class ListFavoriteAdapter(
                 }
 
 
-//                setButtonFavorite(binding.btnFavorite,favoriteAndProduct.product.isFavorite)
-//                btnFavorite.setOnClickListener {
-//                    val bottomSheetSize = BottomSheetSize(product)
-//                    bottomSheetSize.show(fragment.parentFragmentManager, BottomSheetSize.TAG)
-//                }
+                setButtonBag(binding.btnFavorite,favoriteAndProduct.favorite.isBag)
+                btnFavorite.setOnClickListener {
+
+                }
             }
         }
         private fun filterSize(favoriteAndProduct : FavoriteAndProduct) : Size? {
@@ -89,20 +89,20 @@ class ListFavoriteAdapter(
         }
 
 
-//        private fun setButtonFavorite(buttonView: View, isFavorite: Boolean){
-//            if (isFavorite) {
-//                buttonView.background = ContextCompat.getDrawable(
-//                    fragment.requireContext(),
-//                    R.drawable.btn_favorite_active
-//                )
-//            }
-//            else{
-//                buttonView.background = ContextCompat.getDrawable(
-//                    fragment.requireContext(),
-//                    R.drawable.btn_favorite_no_active
-//                )
-//            }
-//        }
+        private fun setButtonBag(buttonView: View, isBag: Boolean){
+            if (isBag) {
+                buttonView.background = ContextCompat.getDrawable(
+                    fragment.requireContext(),
+                    R.drawable.btn_favorite_active
+                )
+            }
+            else{
+                buttonView.background = ContextCompat.getDrawable(
+                    fragment.requireContext(),
+                    R.drawable.btn_favorite_no_active
+                )
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {

@@ -36,12 +36,12 @@ class BottomSheetFavorite(private val product: Product) :BottomSheetDialogFragme
     ): View {
         binding = BottomLayoutSelectSizeBinding.inflate(inflater,container,false)
 
-        val list = viewModel.getAllSize(product)
+        val listSize = product.getAllSize()
 
         adapter = ListSizeAdapter{
             selectSize = it
         }
-        adapter.submitList(list)
+        adapter.submitList(listSize)
 
 
         viewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
