@@ -1,6 +1,7 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
@@ -31,6 +32,8 @@ class FavoriteViewModel @Inject constructor(
             favoriteRepository.getAllFavoriteAndProduct()
         }
     }.asLiveData()
+
+    val disMiss: MutableLiveData<Boolean> = MutableLiveData()
 
     fun filterSort(favorites: List<FavoriteAndProduct>): List<FavoriteAndProduct> {
         return when (statusFilter.value.third) {
@@ -103,6 +106,8 @@ class FavoriteViewModel @Inject constructor(
         viewModelScope.launch {
             val productNew = favoriteRepository.insertFavorite(product, size, color)
             productRepository.update(productNew)
+            updateFavoriteFirebase()
+            disMiss.postValue(true)
         }
     }
 

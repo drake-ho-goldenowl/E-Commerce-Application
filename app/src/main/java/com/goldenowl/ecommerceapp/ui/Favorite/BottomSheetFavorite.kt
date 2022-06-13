@@ -42,6 +42,11 @@ class BottomSheetFavorite(private val product: Product,private val selectSizeInt
         }
         color = color ?: product.colors[0].color
 
+        viewModel.disMiss.observe(viewLifecycleOwner){
+            if(it){
+                dismiss()
+            }
+        }
 
         observeSetup()
         bind()
@@ -77,8 +82,6 @@ class BottomSheetFavorite(private val product: Product,private val selectSizeInt
             btnAddToCart.setOnClickListener {
                 if (!selectSize.isNullOrBlank()) {
                     viewModel.insertFavorite(product, selectSize.toString(),color.toString())
-                    viewModel.updateFavoriteFirebase()
-                    dismiss()
                 } else {
                     viewModel.toastMessage.postValue("Please select size")
                 }
