@@ -23,11 +23,12 @@ class BottomSheetCart(
     private val selectColorInt: Int
 ) : BottomSheetDialogFragment() {
     private val viewModel: BagViewModel by viewModels()
-
     private lateinit var binding: BottomLayoutSelectSizeBinding
-    private var selectSize: String? = null
     private lateinit var adapter: ListSizeAdapter
+
+    private var selectSize: String? = null
     private var favorite: Favorite? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,14 +37,22 @@ class BottomSheetCart(
         binding = BottomLayoutSelectSizeBinding.inflate(inflater, container, false)
         val listSize = product.getAllSize()
         val color = product.colors[selectColorInt]
-        viewModel.setFavorite(product.id, color.sizes[selectSizeInt].size,color.color.toString())
+        viewModel.setFavorite(product.id, color.sizes[selectSizeInt].size, color.color.toString())
         adapter = ListSizeAdapter {
             selectSize = it
         }
+
+        viewModel.disMiss.postValue(false)
         adapter.submitList(listSize)
 
         adapter.positionCurrent = selectSizeInt
         selectSize = listSize[selectSizeInt]
+
+        viewModel.disMiss.observe(viewLifecycleOwner){
+            if(it){
+                dismiss()
+            }
+        }
 
         viewModel.toastMessage.observe(viewLifecycleOwner) { str ->
             Toast.makeText(
@@ -53,9 +62,9 @@ class BottomSheetCart(
             ).show()
         }
 
-//        viewModel.favorite.observe(viewLifecycleOwner) {
-//            favorite = it
-//        }
+        viewModel.favorite.observe(viewLifecycleOwner) {
+            favorite = it
+        }
 
         bind()
         return binding.root
@@ -69,13 +78,17 @@ class BottomSheetCart(
             btnAddToCart.text = "Add to Cart"
             btnAddToCart.setOnClickListener {
                 if (!selectSize.isNullOrBlank()) {
+                    viewModel.setFavorite(
+                        product.id,
+                        selectSize.toString(),
+                        product.colors[selectColorInt].color.toString()
+                    )
                     viewModel.insertBag(
                         product.id,
                         product.colors[selectColorInt].color.toString(),
                         selectSize.toString(),
                         favorite
                     )
-                    dismiss()
                     viewModel.toastMessage.postValue("Add to Cart Success")
                 } else {
                     viewModel.toastMessage.postValue("Please select size")

@@ -11,7 +11,6 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,8 +36,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         println("Run Home")
-        println(LAST_EDIT_TIME_BAG)
-        println(LAST_EDIT_TIME_FAVORITES)
         if (!userManager.isLogged()) {
             viewModelScope.launch {
                 bagRepository.deleteAll()
@@ -56,13 +53,9 @@ class HomeViewModel @Inject constructor(
                 Log.w(ShopViewModel.TAG, "Listen failed.", e)
                 return@addSnapshotListener
             }
-            viewModelScope.launch {
-                for (doc in value!!) {
+            for (doc in value!!) {
+                viewModelScope.launch {
                     val product = doc.toObject<Product>()
-                    if (favoriteRepository.countFavorite() > 0) {
-                        product.isFavorite =
-                            checkFavorite(favoriteRepository.getAllIdProduct(), product)
-                    }
                     productRepository.insert(product)
                 }
             }
@@ -73,29 +66,24 @@ class HomeViewModel @Inject constructor(
         if (!userManager.isLogged()) {
             return
         }
-        var favorites: Favorites
         db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
             .get().addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    favorites = documentSnapshot.toObject<Favorites>()!!
+                    val favorites = documentSnapshot.toObject<Favorites>()!!
 
                     if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
 
                         for (favorite in favorites.data!!) {
                             viewModelScope.launch {
-                                val product = productRepository.getProduct(favorite.idProduct)
-                                if (product.isFavorite) {
-                                    favoriteRepository.insert(favorite)
-                                } else {
-                                    insertFavorite(product, favorite)
-                                }
+                                favoriteRepository.insert(favorite)
+                                productRepository.updateIsFavorite(favorite.idProduct,true)
                             }
                         }
                         LAST_EDIT_TIME_FAVORITES =
                             documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
                     } else if (favorites.lastEdit!! < LAST_EDIT_TIME_FAVORITES) {
                         viewModelScope.launch {
-                            updateFavoriteFirebase(favoriteRepository.getAllList())
+                            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
                         }
                     }
                 }
@@ -115,8 +103,9 @@ class HomeViewModel @Inject constructor(
                 if (snapshot != null && snapshot.exists()) {
                     bags = snapshot.toObject<Bags>()!!
                     if (bags.lastEdit != LAST_EDIT_TIME_BAG) {
-                        viewModelScope.launch {
-                            for (bag in bags.data!!) {
+
+                        for (bag in bags.data!!) {
+                            viewModelScope.launch {
                                 bagRepository.insert(bag)
                             }
                         }
@@ -125,38 +114,5 @@ class HomeViewModel @Inject constructor(
                     }
                 }
             }
-    }
-
-    private fun updateFavoriteFirebase(favorites: List<Favorite>) {
-        val docData: MutableMap<String, Any> = HashMap()
-        LAST_EDIT_TIME_FAVORITES = Date()
-        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_FAVORITES!!
-        docData[FavoriteViewModel.DATA] = favorites
-        db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
-            .set(docData)
-            .addOnSuccessListener {
-                Log.d(UserManager.TAG, "DocumentSnapshot added")
-            }
-            .addOnFailureListener { e ->
-                Log.w(UserManager.TAG, "Error adding document", e)
-            }
-    }
-
-
-    private fun insertFavorite(product: Product, favorite: Favorite) {
-        viewModelScope.launch {
-            favoriteRepository.insert(favorite)
-            product.isFavorite = true
-            productRepository.update(product)
-        }
-    }
-
-    private fun checkFavorite(favorites: List<String>, product: Product): Boolean {
-        for (favorite in favorites) {
-            if (product.id == favorite) {
-                return true
-            }
-        }
-        return false
     }
 }

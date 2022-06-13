@@ -14,8 +14,6 @@ class ProductRepository @Inject constructor(
 
     suspend fun delete(product: Product) = productDao.delete(product)
 
-    suspend fun getProduct(id : String) = productDao.getProduct(id)
-
     fun getProductFlow(id : String) = productDao.getProductFlow(id)
 
     fun getAll() = productDao.getAll()
@@ -30,4 +28,7 @@ class ProductRepository @Inject constructor(
         search: String,
         category: String,
     ) = productDao.filterByCategoryAndSearch(search,category)
+
+    suspend fun updateIsFavorite(id: String, isFavorite: Boolean)
+            = productDao.updateIsFavorite(id, isFavorite)
 }

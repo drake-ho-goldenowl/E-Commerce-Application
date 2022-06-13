@@ -59,6 +59,17 @@ data class Product(
         }
         return null
     }
+    fun getColorAndSize(colorStr: String,sizeStr: String) : Size?{
+        for (color in this.colors){
+            if(color.color == colorStr){
+                for (size in color.sizes){
+                    if(sizeStr == size.size)
+                        return size
+                }
+            }
+        }
+        return null
+    }
 }
 
 

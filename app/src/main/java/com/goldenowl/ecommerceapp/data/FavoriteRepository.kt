@@ -25,23 +25,15 @@ class FavoriteRepository @Inject constructor(
 
     suspend fun deleteAll() = favoriteDao.deleteAll()
 
-    suspend fun countFavorite() = favoriteDao.countFavorite()
+    suspend fun countFavoriteWithIdProduct(idProduct: String) =
+        favoriteDao.countFavoriteWithIdProduct(idProduct)
 
-    suspend fun getAllIdProduct() = favoriteDao.getAllIdProduct()
-
-    suspend fun getIdProduct(id: String) = favoriteDao.getIdProduct(id)
-
-    fun getFavoriteFlow(idProduct: String, size: String, color: String) =
-        favoriteDao.getFavoriteFlow(idProduct, size, color)
-
-    fun getFavoriteWithIdProduct(idProduct: String, size: String) =
-        favoriteDao.getFavoriteWithIdProduct(idProduct, size)
+    fun getFavorite(idProduct: String, size: String, color: String) =
+        favoriteDao.getFavorite(idProduct, size, color)
 
     fun getAllCategory() = favoriteDao.getAllCategory()
 
     fun getAll() = favoriteDao.getAll()
-
-    suspend fun getAllList() = favoriteDao.getAllList()
 
     fun getAllFavoriteAndProduct() = favoriteDao.getAllFavoriteAndProduct()
 
@@ -61,6 +53,9 @@ class FavoriteRepository @Inject constructor(
             color = color
         )
     }
+
+    suspend fun updateIsBag(idProduct: String, size: String, color: String, isBag: Boolean) =
+        favoriteDao.updateIsBag(idProduct, size, color, isBag)
 
 
     suspend fun insertFavorite(product: Product, size: String, color: String): Product {

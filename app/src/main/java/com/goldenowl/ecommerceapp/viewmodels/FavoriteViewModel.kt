@@ -75,17 +75,15 @@ class FavoriteViewModel @Inject constructor(
     }
 
 
-    fun insertBag(idProduct: String, color: String, size: String, favorite: Favorite?) {
+    fun insertBag(idProduct: String, color: String, size: String,favorite: Favorite?) {
         viewModelScope.launch {
-            val favoriteNew = bagRepository.insertBag(
+            bagRepository.insertBag(
                 idProduct,
                 color,
                 size,
-                favorite,
-                userManager.getAccessToken()
             )
-            if (favoriteNew != null) {
-                favoriteRepository.update(favoriteNew)
+            if(favorite != null){
+                favoriteRepository.updateIsBag(idProduct,size,color,true)
                 favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
             }
             bagRepository.updateBagFirebase(userManager.getAccessToken())
@@ -101,22 +99,19 @@ class FavoriteViewModel @Inject constructor(
         }
     }
 
-    fun insertFavorite(product: Product,size: String,color: String){
+    fun insertFavorite(product: Product, size: String, color: String) {
         viewModelScope.launch {
-            val productNew = favoriteRepository.insertFavorite(product, size,color)
+            val productNew = favoriteRepository.insertFavorite(product, size, color)
             productRepository.update(productNew)
         }
     }
 
     private suspend fun checkFavorites(favorite: Favorite) {
-        val id = favoriteRepository.getIdProduct(favorite.idProduct)
-        if (id.isNullOrBlank()) {
-            val product = productRepository.getProduct(favorite.idProduct)
-            product.isFavorite = false
-            productRepository.update(product)
+        val count = favoriteRepository.countFavoriteWithIdProduct(favorite.idProduct)
+        if (count < 1) {
+            productRepository.updateIsFavorite(favorite.idProduct,false)
         }
     }
-
 
     companion object {
         const val LAST_EDIT = "lastEdit"

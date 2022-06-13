@@ -29,4 +29,6 @@ interface BagDao {
     @Query("SELECT * FROM bag WHERE idProduct = :idProduct AND color = :color AND size = :size")
     suspend fun getBag(idProduct: String, color: String, size: String): Bag
 
+    @Query("UPDATE bag set quantity = :quantity WHERE idProduct = :idProduct AND color = :color AND size = :size")
+    suspend fun updateQuantity(idProduct: String,color: String,size: String,quantity: Long)
 }

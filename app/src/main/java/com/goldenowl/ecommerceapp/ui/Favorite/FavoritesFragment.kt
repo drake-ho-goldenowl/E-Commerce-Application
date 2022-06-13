@@ -38,6 +38,7 @@ class FavoritesFragment : Fragment() {
     private lateinit var adapterFavoriteGrid: ListFavoriteGridAdapter
     private lateinit var adapterCategory: ListCategoriesAdater
     private var isLinearLayoutManager = true
+    private var isFilterCategory = true
     private lateinit var binding: FragmentFavoritesBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +50,7 @@ class FavoritesFragment : Fragment() {
         binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         viewModel.setSearch("")
         viewModel.setSort(0)
+        viewModel.setCategory("")
 
         adapterCategory = ListCategoriesAdater { str ->
             if (viewModel.statusFilter.value.first == str) {
@@ -131,6 +133,16 @@ class FavoritesFragment : Fragment() {
             appBarLayout.btnSort.setOnClickListener {
                 val bottomSheetSort = BottomSheetSort(viewModel.statusFilter.value.third)
                 bottomSheetSort.show(parentFragmentManager, BottomSheetSort.TAG)
+            }
+
+            appBarLayout.btnFilter.setOnClickListener {
+                isFilterCategory = !isFilterCategory
+                if(isFilterCategory){
+                    appBarLayout.recyclerViewCategories.visibility = View.VISIBLE
+                }
+                else{
+                    appBarLayout.recyclerViewCategories.visibility = View.GONE
+                }
             }
 
             // Handle Search Bar

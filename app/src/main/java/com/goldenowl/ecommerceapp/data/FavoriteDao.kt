@@ -17,20 +17,17 @@ interface FavoriteDao {
     @Query("DELETE FROM favorite")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(idProduct) FROM favorite GROUP BY idProduct,size")
-    suspend fun countFavorite(): Int = 0
+    @Query("SELECT COUNT(idProduct) FROM favorite WHERE idProduct = :idProduct")
+    suspend fun countFavoriteWithIdProduct(idProduct: String): Int
 
-    @Query("SELECT idProduct FROM favorite GROUP BY idProduct")
-    suspend fun getAllIdProduct(): List<String>
+    @Query("UPDATE favorite set isBag = :isBag WHERE idProduct = :idProduct AND size = :size AND color = :color")
+    suspend fun updateIsBag(idProduct: String, size: String, color: String,isBag: Boolean)
 
     @Query("SELECT idProduct FROM favorite WHERE idProduct = :id GROUP BY idProduct")
-    suspend fun getIdProduct(id: String): String
+    fun getIdProduct(id: String): Flow<String>
 
     @Query("SELECT * FROM favorite WHERE idProduct = :idProduct AND size = :size AND color = :color")
-    fun getFavoriteFlow(idProduct: String, size: String, color: String): Flow<Favorite>
-
-    @Query("SELECT * FROM favorite WHERE idProduct = :idProduct AND size = :size")
-    fun getFavoriteWithIdProduct(idProduct: String, size: String): Favorite
+    fun getFavorite(idProduct: String, size: String, color: String): Flow<Favorite>
 
     @Query("SELECT category_name FROM favorite INNER JOIN product ON product.id = favorite.idProduct GROUP BY category_name")
     fun getAllCategory(): Flow<List<String>>

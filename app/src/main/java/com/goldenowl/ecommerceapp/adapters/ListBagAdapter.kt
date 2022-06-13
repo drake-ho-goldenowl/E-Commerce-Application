@@ -1,7 +1,9 @@
 package com.goldenowl.ecommerceapp.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,11 +14,20 @@ import com.goldenowl.ecommerceapp.data.BagAndProduct
 import com.goldenowl.ecommerceapp.databinding.ItemBagBinding
 
 class ListBagAdapter(
-    private val onItemClicked: (BagAndProduct) -> Unit
+    private val onItemClicked: (BagAndProduct) -> Unit,
+    private val onAddClicked: (BagAndProduct) -> Unit,
+    private val onDeleteClicked: (BagAndProduct) -> Unit,
+    private val onPlusQuantityClicked: (BagAndProduct) -> Unit,
+    private val onMinusQuantityClicked: (BagAndProduct) -> Unit,
 ) :
     ListAdapter<BagAndProduct, ListBagAdapter.ItemViewHolder>(DiffCallback) {
 
-    class ItemViewHolder(private var binding: ItemBagBinding) :
+    class ItemViewHolder(private val context: Context,
+                         private val onAddClicked: (BagAndProduct) -> Unit,
+                         private val onDeleteClicked: (BagAndProduct) -> Unit,
+                         private val onPlusQuantityClicked: (BagAndProduct) -> Unit,
+                         private val onMinusQuantityClicked: (BagAndProduct) -> Unit,
+                         private var binding: ItemBagBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(bagAndProduct: BagAndProduct) {
@@ -27,15 +38,57 @@ class ListBagAdapter(
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProduct)
                 txtName.text = bagAndProduct.product.title
+                txtColorInput.text = bagAndProduct.bag.color
+                txtSizeInput.text = bagAndProduct.bag.size
                 txtQuantity.text = bagAndProduct.bag.quantity.toString()
+
+                val size = bagAndProduct.product.getColorAndSize(bagAndProduct.bag.color,bagAndProduct.bag.size)
+                txtPrice.text = "${size!!.price}\$"
+
+
+                btnMinus.setOnClickListener {
+                    onMinusQuantityClicked(bagAndProduct)
+                }
+
+                btnPlus.setOnClickListener {
+                    onPlusQuantityClicked(bagAndProduct)
+                }
+
+                btnMore.setOnClickListener { view ->
+                    val popup = PopupMenu(context, view)
+                    popup.menuInflater.inflate(R.menu.more_bag, popup.menu)
+
+                    popup.setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.menu_add_to_favorites -> {
+                                onAddClicked(bagAndProduct)
+                                true
+                            }
+
+                            R.id.menu_delete -> {
+                                onDeleteClicked(bagAndProduct)
+                                true
+                            }
+                            else -> false
+                        }
+
+                    }
+                    popup.show()
+                }
 
             }
         }
-    }
 
+
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(
+            parent.context,
+            onAddClicked,
+            onDeleteClicked,
+            onPlusQuantityClicked,
+            onMinusQuantityClicked,
             ItemBagBinding.inflate(
                 LayoutInflater.from(
                     parent.context
@@ -54,20 +107,18 @@ class ListBagAdapter(
         holder.bind(current)
     }
 
+
     companion object {
         private val DiffCallback = object : DiffUtil.ItemCallback<BagAndProduct>() {
-            override fun areItemsTheSame(
-                oldProduct: BagAndProduct,
-                newProduct: BagAndProduct
-            ): Boolean {
-                return newProduct === oldProduct
+            override fun areItemsTheSame(oldItem: BagAndProduct, newItem: BagAndProduct): Boolean {
+                return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldProduct: BagAndProduct,
-                newProduct: BagAndProduct
+                oldItem: BagAndProduct,
+                newItem: BagAndProduct
             ): Boolean {
-                return newProduct == oldProduct
+                return oldItem == newItem
             }
         }
     }

@@ -28,11 +28,20 @@ class BagFragment : Fragment() {
         }
         binding = FragmentBagBinding.inflate(inflater, container, false)
 
-        adapterBag = ListBagAdapter{
+        adapterBag = ListBagAdapter({
 
-        }
+        },{
+            viewModel.insertFavorite(it.product,it.bag.size,it.bag.color)
+        },{
+            viewModel.removeBag(it.bag)
+        },{
+            viewModel.plusQuantity(it.bag)
+        },{
+            viewModel.minusQuantity(it.bag)
+        })
 
         viewModel.bags.observe(viewLifecycleOwner){
+            adapterBag.submitList(it)
         }
 
 

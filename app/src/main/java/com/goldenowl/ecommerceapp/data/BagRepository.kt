@@ -29,28 +29,30 @@ class BagRepository @Inject constructor(
 
     fun getAllBagAndProduct() = bagDao.getAllBagAndProduct()
 
-    suspend fun getAllList() = bagDao.getAllList()
+    suspend fun updateQuantity(idProduct: String, color: String, size: String, quantity: Long) =
+        bagDao.updateQuantity(idProduct, color, size, quantity)
 
-    suspend fun getBag(idProduct: String, color: String, size: String) =
+    private suspend fun getBag(idProduct: String, color: String, size: String) =
         bagDao.getBag(idProduct, color, size)
 
     private fun createBag(idProduct: String, color: String, size: String): Bag {
         return Bag(
             size = size,
             color = color,
-            idProduct =  idProduct,
+            idProduct = idProduct,
             quantity = 1
         )
     }
 
-    suspend fun insertBag(idProduct: String, color: String, size: String,favorite: Favorite?,uid: String): Favorite?{
-        val bag = createBag(idProduct, color, size)
+    suspend fun insertBag(idProduct: String, color: String, size: String) {
+        val bagTemp = getBag(idProduct, color, size)
+        if (bagTemp == null){
+            val bag = createBag(idProduct, color, size)
             bagDao.insert(bag)
-            if(favorite != null) {
-                favorite.isBag = true
-            }
-        updateBagFirebase(uid)
-        return favorite
+        }
+        else{
+            bagDao.updateQuantity(idProduct,color,size,bagTemp.quantity+ 1)
+        }
     }
 
 
