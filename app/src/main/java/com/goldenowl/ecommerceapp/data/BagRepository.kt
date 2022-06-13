@@ -27,6 +27,8 @@ class BagRepository @Inject constructor(
 
     fun getAll() = bagDao.getAll()
 
+    fun getAllBagAndProduct() = bagDao.getAllBagAndProduct()
+
     suspend fun getAllList() = bagDao.getAllList()
 
     suspend fun getBag(idProduct: String, color: String, size: String) =

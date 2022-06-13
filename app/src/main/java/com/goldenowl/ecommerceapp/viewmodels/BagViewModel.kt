@@ -23,6 +23,7 @@ class BagViewModel @Inject constructor(
         favoriteRepository.getFavoriteFlow(it.first, it.second,it.third)
     }.asLiveData()
 
+    val bags: LiveData<List<BagAndProduct>> = bagRepository.getAllBagAndProduct().asLiveData()
 
     fun setFavorite(idProduct: String,size: String, color: String) {
         statusIdFavorite.value = Triple(idProduct, size,color)

@@ -6,7 +6,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.adapters.ListBagAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentBagBinding
 import com.goldenowl.ecommerceapp.viewmodels.BagViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,6 +18,7 @@ class BagFragment : Fragment() {
     private lateinit var binding: FragmentBagBinding
     private val viewModel: BagViewModel by viewModels()
 
+    private lateinit var adapterBag: ListBagAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -24,10 +27,27 @@ class BagFragment : Fragment() {
             findNavController().navigate(R.id.warningFragment)
         }
         binding = FragmentBagBinding.inflate(inflater, container, false)
-        binding.appBarLayout.topAppBar.title = "Bag"
 
+        adapterBag = ListBagAdapter{
+
+        }
+
+        viewModel.bags.observe(viewLifecycleOwner){
+        }
+
+
+        bind()
         setHasOptionsMenu(true)
         return binding.root
+    }
+
+    fun bind(){
+        binding.apply {
+            appBarLayout.topAppBar.title = "Bag"
+
+            recyclerViewBag.layoutManager = LinearLayoutManager(context)
+            recyclerViewBag.adapter = adapterBag
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

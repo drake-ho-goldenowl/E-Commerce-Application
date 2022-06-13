@@ -6,14 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
 import com.goldenowl.ecommerceapp.viewmodels.BagViewModel
-import com.google.android.flexbox.AlignItems
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -65,11 +63,7 @@ class BottomSheetCart(
 
     fun bind() {
         binding.apply {
-            val layoutManager = FlexboxLayoutManager(requireContext())
-            layoutManager.flexDirection = FlexDirection.ROW
-//        layoutManager.justifyContent = JustifyContent.CENTER
-            layoutManager.alignItems = AlignItems.CENTER
-            recyclerViewSize.layoutManager = layoutManager
+            recyclerViewSize.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
 
             recyclerViewSize.adapter = adapter
             btnAddToCart.text = "Add to Cart"
@@ -93,6 +87,7 @@ class BottomSheetCart(
 
 
     companion object {
+        const val GRIDVIEW_SPAN_COUNT = 3
         const val TAG = "BOTTOM_SHEET_SIZE"
     }
 }

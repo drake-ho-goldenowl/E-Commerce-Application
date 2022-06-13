@@ -16,6 +16,7 @@ data class Favorite(
     val size: String = "",
     @NonNull
     val idProduct: String = "",
+    @NonNull
     val color: String = "",
     var isBag: Boolean = false
 ) {

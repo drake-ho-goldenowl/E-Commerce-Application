@@ -20,6 +20,7 @@ class ViewPageImageProduct(private val url: String) : Fragment(){
 
         Glide.with(requireContext())
             .load(url)
+            .centerCrop()
 //            .error(R.drawable.img_sample_2)
 //            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .into(binding.imgProductDetail)

@@ -23,6 +23,9 @@ interface BagDao {
     @Query("SELECT * FROM bag")
     suspend fun getAllList(): List<Bag>
 
+    @Query("SELECT * FROM bag INNER JOIN product ON bag.idProduct = product.id")
+    fun getAllBagAndProduct(): Flow<List<BagAndProduct>>
+
     @Query("SELECT * FROM bag WHERE idProduct = :idProduct AND color = :color AND size = :size")
     suspend fun getBag(idProduct: String, color: String, size: String): Bag
 

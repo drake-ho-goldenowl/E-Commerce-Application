@@ -37,6 +37,8 @@ class HomeViewModel @Inject constructor(
 
     init {
         println("Run Home")
+        println(LAST_EDIT_TIME_BAG)
+        println(LAST_EDIT_TIME_FAVORITES)
         if (!userManager.isLogged()) {
             viewModelScope.launch {
                 bagRepository.deleteAll()
@@ -58,7 +60,8 @@ class HomeViewModel @Inject constructor(
                 for (doc in value!!) {
                     val product = doc.toObject<Product>()
                     if (favoriteRepository.countFavorite() > 0) {
-                        product.isFavorite = checkFavorite(favoriteRepository.getAllIdProduct(), product)
+                        product.isFavorite =
+                            checkFavorite(favoriteRepository.getAllIdProduct(), product)
                     }
                     productRepository.insert(product)
                 }
@@ -77,8 +80,9 @@ class HomeViewModel @Inject constructor(
                     favorites = documentSnapshot.toObject<Favorites>()!!
 
                     if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
-                        viewModelScope.launch {
-                            for (favorite in favorites.data!!) {
+
+                        for (favorite in favorites.data!!) {
+                            viewModelScope.launch {
                                 val product = productRepository.getProduct(favorite.idProduct)
                                 if (product.isFavorite) {
                                     favoriteRepository.insert(favorite)

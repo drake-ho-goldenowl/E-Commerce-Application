@@ -17,9 +17,7 @@ class FavoriteRepository @Inject constructor(
 ) {
     private val db = Firebase.firestore
 
-    suspend fun insert(favorite: Favorite) {
-        favoriteDao.insert(favorite)
-    }
+    suspend fun insert(favorite: Favorite) = favoriteDao.insert(favorite)
 
     suspend fun update(favorite: Favorite) = favoriteDao.update(favorite)
 
