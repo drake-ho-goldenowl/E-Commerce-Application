@@ -31,4 +31,7 @@ interface BagDao {
 
     @Query("UPDATE bag set quantity = :quantity WHERE idProduct = :idProduct AND color = :color AND size = :size")
     suspend fun updateQuantity(idProduct: String,color: String,size: String,quantity: Long)
+
+    @Query("SELECT * FROM bag INNER JOIN product ON product.id = bag.idProduct WHERE title LIKE '%' || :search || '%'")
+    fun filterBySearch(search: String): Flow<List<BagAndProduct>>
 }

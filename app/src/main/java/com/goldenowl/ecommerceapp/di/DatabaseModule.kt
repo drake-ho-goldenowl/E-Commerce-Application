@@ -37,6 +37,11 @@ class DatabaseModule {
     }
 
     @Provides
+    fun providePromotionDao(appDatabase: AppDatabase): PromotionDao {
+        return appDatabase.promotionDao()
+    }
+
+    @Provides
     fun provideUserManager(@ApplicationContext context: Context): UserManager{
         return UserManager.getInstance(context)
     }

@@ -35,6 +35,8 @@ class BagRepository @Inject constructor(
     private suspend fun getBag(idProduct: String, color: String, size: String) =
         bagDao.getBag(idProduct, color, size)
 
+    fun filterBySearch(search: String) = bagDao.filterBySearch(search)
+
     private fun createBag(idProduct: String, color: String, size: String): Bag {
         return Bag(
             size = size,

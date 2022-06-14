@@ -137,10 +137,9 @@ class FavoritesFragment : Fragment() {
 
             appBarLayout.btnFilter.setOnClickListener {
                 isFilterCategory = !isFilterCategory
-                if(isFilterCategory){
+                if (isFilterCategory) {
                     appBarLayout.recyclerViewCategories.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     appBarLayout.recyclerViewCategories.visibility = View.GONE
                 }
             }
@@ -157,8 +156,9 @@ class FavoritesFragment : Fragment() {
 
                             override fun onQueryTextChange(newText: String?): Boolean {
                                 if (newText!!.isNotEmpty()) {
-                                    println(viewModel.statusFilter.value.second)
                                     viewModel.setSearch(newText)
+                                } else {
+                                    viewModel.setSearch("")
                                 }
                                 return true
                             }

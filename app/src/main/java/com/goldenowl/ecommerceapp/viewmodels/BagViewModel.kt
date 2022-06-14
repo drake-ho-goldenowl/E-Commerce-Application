@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @HiltViewModel
 class BagViewModel @Inject constructor(
@@ -24,7 +25,17 @@ class BagViewModel @Inject constructor(
         favoriteRepository.getFavorite(it.first, it.second, it.third)
     }.asLiveData()
 
-    val bags: LiveData<List<BagAndProduct>> = bagRepository.getAllBagAndProduct().asLiveData()
+    private val filterSearch = MutableStateFlow("")
+    val bags: LiveData<List<BagAndProduct>> = filterSearch.flatMapLatest {
+        if (it.isNotBlank()) {
+            bagRepository.filterBySearch(it)
+        } else {
+            bagRepository.getAllBagAndProduct()
+        }
+    }.asLiveData()
+
+    val allBags: LiveData<List<BagAndProduct>> = bagRepository.getAllBagAndProduct().asLiveData()
+
     val disMiss: MutableLiveData<Boolean> = MutableLiveData()
 
     fun setFavorite(idProduct: String, size: String, color: String) {
@@ -91,7 +102,7 @@ class BagViewModel @Inject constructor(
         }
     }
 
-    fun calculatorTotal(lists: List<BagAndProduct>): Int {
+    fun calculatorTotal(lists: List<BagAndProduct>, salePercent: Long): Int {
         var total = 0.0
         viewModelScope.launch {
             for (bagAndProduct in lists) {
@@ -99,12 +110,16 @@ class BagViewModel @Inject constructor(
                     bagAndProduct.bag.color,
                     bagAndProduct.bag.size
                 )
-                if(size != null){
+                if (size != null) {
                     total += (size.price * bagAndProduct.bag.quantity)
                 }
             }
         }
-        return total.toInt()
+        total -= (salePercent * total / 100)
+        return total.roundToInt()
     }
 
+    fun setSearch(string: String) {
+        filterSearch.value = string
+    }
 }

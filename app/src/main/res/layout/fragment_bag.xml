@@ -83,43 +83,37 @@
                 app:layout_constraintBottom_toTopOf="@id/btnCheckOut"
                 app:layout_constraintRight_toRightOf="parent" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txtLayoutPromoCode"
+
+            <EditText
+                android:id="@+id/editPromoCode"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="28dp"
                 android:background="@drawable/edit_txt_custom"
-                app:boxStrokeWidth="0dp"
-                app:boxStrokeWidthFocused="0dp"
-                app:endIconDrawable="@drawable/ic_outline_check"
-                app:endIconTint="@color/green"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:hint="Enter your promo code"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="22dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
                 app:layout_constraintBottom_toTopOf="@id/txtPriceTotal"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent">
+                app:layout_constraintRight_toRightOf="parent" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editPromoCode"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/edit_txt_custom"
-                    android:hint="Enter your promo code"
-                    android:inputType="text"
-                    android:clickable="true"
-                    android:cursorVisible="false"
-                    android:focusable="false"
-                    android:maxLines="1" />
-
-
-            </com.google.android.material.textfield.TextInputLayout>
 
             <ImageButton
+                android:id="@+id/btnRemove"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:background="@drawable/btn_arrow_forward"
-                app:layout_constraintBottom_toBottomOf="@id/txtLayoutPromoCode"
-                app:layout_constraintRight_toRightOf="@id/txtLayoutPromoCode" />
+                app:layout_constraintBottom_toBottomOf="@id/editPromoCode"
+                app:layout_constraintRight_toRightOf="@id/editPromoCode" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

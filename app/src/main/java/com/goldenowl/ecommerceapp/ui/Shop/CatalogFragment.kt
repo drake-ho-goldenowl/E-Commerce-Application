@@ -25,9 +25,9 @@ class CatalogFragment : Fragment() {
     private val viewModel: ShopViewModel by viewModels()
     private var nameTitle: String? = null
     private lateinit var binding: FragmentCatalogBinding
-    private lateinit var adapterProduct : ListProductAdapter
-    private lateinit var adapterProductGrid : ListProductGridAdapter
-    private lateinit var adapterCategory : ListCategoriesAdater
+    private lateinit var adapterProduct: ListProductAdapter
+    private lateinit var adapterProductGrid: ListProductGridAdapter
+    private lateinit var adapterCategory: ListCategoriesAdater
 
     private var isLinearLayoutManager = true
     override fun onCreateView(
@@ -38,10 +38,9 @@ class CatalogFragment : Fragment() {
             nameTitle = it.getString(NAME_CATEGORY).toString()
         }
         binding = FragmentCatalogBinding.inflate(inflater, container, false)
-        if(nameTitle.isNullOrBlank()){
+        if (nameTitle.isNullOrBlank()) {
             viewModel.setCategory("")
-        }
-        else{
+        } else {
             viewModel.setCategory(nameTitle.toString())
         }
         viewModel.setSearch("")
@@ -63,11 +62,10 @@ class CatalogFragment : Fragment() {
         }
 
         adapterCategory = ListCategoriesAdater { str ->
-            if(binding.appBarLayout.topAppBar.title == str){
+            if (binding.appBarLayout.topAppBar.title == str) {
                 viewModel.setCategory("")
                 binding.appBarLayout.topAppBar.title = "All product"
-            }
-            else{
+            } else {
                 viewModel.setCategory(str)
                 binding.appBarLayout.topAppBar.title = str
             }
@@ -80,7 +78,7 @@ class CatalogFragment : Fragment() {
         return binding.root
     }
 
-    private fun observeSetup(){
+    private fun observeSetup() {
         viewModel.allCategory.observe(this.viewLifecycleOwner) {
             adapterCategory.submitList(it)
         }
@@ -92,12 +90,11 @@ class CatalogFragment : Fragment() {
         }
     }
 
-    private fun bind(){
+    private fun bind() {
         binding.apply {
-            if(nameTitle.isNullOrBlank()){
+            if (nameTitle.isNullOrBlank()) {
                 appBarLayout.topAppBar.title = "All Product"
-            }
-            else{
+            } else {
                 appBarLayout.topAppBar.title = nameTitle
             }
 
@@ -126,7 +123,8 @@ class CatalogFragment : Fragment() {
                     recyclerViewProduct.layoutManager = LinearLayoutManager(context)
                     recyclerViewProduct.adapter = adapterProduct
                 } else {
-                    recyclerViewProduct.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
+                    recyclerViewProduct.layoutManager =
+                        GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
                     recyclerViewProduct.adapter = adapterProductGrid
                 }
             }
@@ -148,10 +146,10 @@ class CatalogFragment : Fragment() {
                             }
 
                             override fun onQueryTextChange(newText: String?): Boolean {
-                                if (newText!!.isNotEmpty()){
-                                    println(viewModel.statusFilter.value.second)
+                                if (newText!!.isNotEmpty()) {
                                     viewModel.setSearch(newText)
-
+                                } else {
+                                    viewModel.setSearch("")
                                 }
                                 return true
                             }
