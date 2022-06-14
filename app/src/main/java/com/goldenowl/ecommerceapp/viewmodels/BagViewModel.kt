@@ -32,7 +32,7 @@ class BagViewModel @Inject constructor(
     }
 
 
-    fun updateBagFirebase() {
+    private fun updateBagFirebase() {
         viewModelScope.launch {
             bagRepository.updateBagFirebase(userManager.getAccessToken())
         }
@@ -90,4 +90,21 @@ class BagViewModel @Inject constructor(
             disMiss.postValue(true)
         }
     }
+
+    fun calculatorTotal(lists: List<BagAndProduct>): Int {
+        var total = 0.0
+        viewModelScope.launch {
+            for (bagAndProduct in lists) {
+                val size = bagAndProduct.product.getColorAndSize(
+                    bagAndProduct.bag.color,
+                    bagAndProduct.bag.size
+                )
+                if(size != null){
+                    total += (size.price * bagAndProduct.bag.quantity)
+                }
+            }
+        }
+        return total.toInt()
+    }
+
 }

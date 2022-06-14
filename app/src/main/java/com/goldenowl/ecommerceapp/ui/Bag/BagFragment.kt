@@ -42,6 +42,7 @@ class BagFragment : Fragment() {
 
         viewModel.bags.observe(viewLifecycleOwner){
             adapterBag.submitList(it)
+            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(it)}\$"
         }
 
 
