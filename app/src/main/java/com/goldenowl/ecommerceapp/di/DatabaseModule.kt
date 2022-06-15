@@ -5,6 +5,7 @@ import com.goldenowl.ecommerceapp.data.*
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.FirebaseApp
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -53,5 +54,10 @@ class DatabaseModule {
             .requestEmail()
             .build()
         return GoogleSignIn.getClient(context, gso)
+    }
+
+    @Provides
+    fun provideFirebaseApp(): FirebaseApp {
+        return FirebaseApp.getInstance()
     }
 }

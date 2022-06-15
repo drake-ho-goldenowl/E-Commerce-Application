@@ -6,12 +6,11 @@ import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class UserManager(context: Context) {
     private val accountManager: AccountManager = AccountManager.get(context)
-    private val db = Firebase.firestore
+    private val db = FirebaseFirestore.getInstance()
 
 //    fun addAccount(
 //        name: String,
