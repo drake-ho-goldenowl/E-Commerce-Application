@@ -83,7 +83,10 @@ class HomeViewModel @Inject constructor(
                             documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
                     } else if (favorites.lastEdit!! < LAST_EDIT_TIME_FAVORITES) {
                         viewModelScope.launch {
-                            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+                            favoriteRepository.updateFavoriteFirebase(
+                                db,
+                                userManager.getAccessToken()
+                            )
                         }
                     }
                 }

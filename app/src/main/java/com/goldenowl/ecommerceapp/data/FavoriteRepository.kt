@@ -4,6 +4,7 @@ import android.util.Log
 import com.goldenowl.ecommerceapp.utilities.FAVORITE_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -15,7 +16,6 @@ import javax.inject.Singleton
 class FavoriteRepository @Inject constructor(
     private val favoriteDao: FavoriteDao
 ) {
-    private val db = Firebase.firestore
 
     suspend fun insert(favorite: Favorite) = favoriteDao.insert(favorite)
 
@@ -66,7 +66,7 @@ class FavoriteRepository @Inject constructor(
     }
 
 
-    suspend fun updateFavoriteFirebase(uid: String) {
+    suspend fun updateFavoriteFirebase(db: FirebaseFirestore, uid: String) {
         val favorites = favoriteDao.getAllList()
         val docData: MutableMap<String, Any> = HashMap()
         LAST_EDIT_TIME_FAVORITES = Date()

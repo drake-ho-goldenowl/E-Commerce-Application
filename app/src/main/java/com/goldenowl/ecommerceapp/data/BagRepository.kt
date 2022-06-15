@@ -4,6 +4,7 @@ import android.util.Log
 import com.goldenowl.ecommerceapp.utilities.BAG_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.util.*
@@ -15,7 +16,6 @@ import javax.inject.Singleton
 class BagRepository @Inject constructor(
     private val bagDao: BagDao
 ) {
-    private val db = Firebase.firestore
 
     suspend fun insert(bag: Bag) = bagDao.insert(bag)
 
@@ -58,7 +58,7 @@ class BagRepository @Inject constructor(
     }
 
 
-    suspend fun updateBagFirebase(uid: String) {
+    suspend fun updateBagFirebase(db: FirebaseFirestore, uid: String) {
         val bags = bagDao.getAllList()
         val docData: MutableMap<String, Any> = HashMap()
         LAST_EDIT_TIME_BAG = Date()

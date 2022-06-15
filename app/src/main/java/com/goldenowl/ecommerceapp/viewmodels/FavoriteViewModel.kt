@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -19,6 +21,7 @@ class FavoriteViewModel @Inject constructor(
     val userManager: UserManager
 ) :
     BaseViewModel() {
+    private val db = Firebase.firestore
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = favoriteRepository.getAllCategory().asLiveData()
     val favoriteAndProducts: LiveData<List<FavoriteAndProduct>> = statusFilter.flatMapLatest {
@@ -73,7 +76,7 @@ class FavoriteViewModel @Inject constructor(
 
     fun updateFavoriteFirebase() {
         viewModelScope.launch {
-            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+            favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
         }
     }
 
@@ -87,9 +90,9 @@ class FavoriteViewModel @Inject constructor(
             )
             if(favorite != null){
                 favoriteRepository.updateIsBag(idProduct,size,color,true)
-                favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+                favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
             }
-            bagRepository.updateBagFirebase(userManager.getAccessToken())
+            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
         }
     }
 

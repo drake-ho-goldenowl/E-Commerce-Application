@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -20,6 +22,7 @@ class BagViewModel @Inject constructor(
     val userManager: UserManager
 ) :
     BaseViewModel() {
+    private val db = Firebase.firestore
     private val statusIdFavorite = MutableStateFlow(Triple("", "", ""))
     val favorite: LiveData<Favorite?> = statusIdFavorite.flatMapLatest {
         favoriteRepository.getFavorite(it.first, it.second, it.third)
@@ -45,7 +48,7 @@ class BagViewModel @Inject constructor(
 
     private fun updateBagFirebase() {
         viewModelScope.launch {
-            bagRepository.updateBagFirebase(userManager.getAccessToken())
+            bagRepository.updateBagFirebase(db,userManager.getAccessToken())
         }
     }
 
@@ -54,7 +57,7 @@ class BagViewModel @Inject constructor(
             val productNew = favoriteRepository.insertFavorite(product, size, color)
             favoriteRepository.updateIsBag(product.id, size, color, true)
             productRepository.update(productNew)
-            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+            favoriteRepository.updateFavoriteFirebase(db,userManager.getAccessToken())
         }
     }
 
@@ -63,7 +66,7 @@ class BagViewModel @Inject constructor(
             bagRepository.delete(bag)
             favoriteRepository.updateIsBag(bag.idProduct, bag.size, bag.color, false)
             updateBagFirebase()
-            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+            favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
         }
     }
 
@@ -95,7 +98,7 @@ class BagViewModel @Inject constructor(
             )
             if (favorite != null) {
                 favoriteRepository.updateIsBag(idProduct, size, color, true)
-                favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+                favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
             }
             updateBagFirebase()
             disMiss.postValue(true)
