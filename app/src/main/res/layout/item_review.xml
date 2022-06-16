@@ -29,7 +29,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
-                android:text="Kim Shine"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -50,6 +49,7 @@
                 app:layout_constraintTop_toBottomOf="@id/txtName" />
 
             <TextView
+                android:id="@+id/txtCreated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="18dp"
@@ -94,14 +94,17 @@
                 app:layout_constraintTop_toBottomOf="@id/recyclerViewImageReview">
 
                 <TextView
+                    android:id="@+id/txtHelpful"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="9dp"
+                    android:layout_gravity="center_vertical"
                     android:text="Helpful"
                     android:textColor="@color/grey3"
                     android:textSize="11sp" />
 
                 <ImageView
+                    android:id="@+id/ic_like"
+                    android:padding="9dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_like" />
@@ -119,7 +122,6 @@
         android:layout_marginStart="-20dp"
         android:layout_marginTop="-20dp"
         android:elevation="55dp"
-        android:src="@drawable/img_home"
         app:layout_constraintLeft_toLeftOf="@id/cardViewProduct"
         app:layout_constraintTop_toTopOf="@id/cardViewProduct" />
 

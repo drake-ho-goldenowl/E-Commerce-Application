@@ -114,7 +114,7 @@
         tools:layout="@layout/fragment_view_page_tutorial" />
     <fragment
         android:id="@+id/ratingProductFragment"
-        android:name="com.goldenowl.ecommerceapp.RatingProductFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.ReviewRating.RatingProductFragment"
         android:label="fragment_rating_product"
         tools:layout="@layout/fragment_rating_product" >
         <argument
