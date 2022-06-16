@@ -98,6 +98,9 @@
         <argument
             android:name="idProduct"
             app:argType="string" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_ratingProductFragment"
+            app:destination="@id/ratingProductFragment" />
     </fragment>
     <fragment
         android:id="@+id/warningFragment"
@@ -109,4 +112,13 @@
         android:name="com.goldenowl.ecommerceapp.ui.Tutorial.ViewPageTutorialFragment"
         android:label="fragment_view_page_tutorial"
         tools:layout="@layout/fragment_view_page_tutorial" />
+    <fragment
+        android:id="@+id/ratingProductFragment"
+        android:name="com.goldenowl.ecommerceapp.RatingProductFragment"
+        android:label="fragment_rating_product"
+        tools:layout="@layout/fragment_rating_product" >
+        <argument
+            android:name="idProduct"
+            app:argType="string" />
+    </fragment>
 </navigation>

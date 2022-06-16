@@ -232,6 +232,13 @@ class ProductDetailFragment : Fragment() {
                     }
                 }
             }
+
+            txtNumberVote.setOnClickListener {
+                val action = ProductDetailFragmentDirections.actionProductDetailFragmentToRatingProductFragment(
+                    idProduct = idProduct
+                )
+                findNavController().navigate(action)
+            }
         }
     }
 
