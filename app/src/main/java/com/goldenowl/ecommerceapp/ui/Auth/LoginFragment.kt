@@ -43,7 +43,7 @@ class LoginFragment : Fragment() {
 
     private fun bind() {
         binding.apply {
-            appBarLayout.topAppBar.title = "Login"
+            appBarLayout.topAppBar.title = R.string.login.toString()
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
@@ -69,7 +69,7 @@ class LoginFragment : Fragment() {
             }
             btnFacebook.setOnClickListener {
                 LoginManager.getInstance()
-                    .logInWithReadPermissions(requireActivity(), listOf("email"))
+                    .logInWithReadPermissions(requireActivity(), listOf(EMAIL))
                 authViewModel.loginWithFacebook()
             }
 
@@ -130,6 +130,10 @@ class LoginFragment : Fragment() {
                 txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_CUSTOM
             }
         }
+    }
+
+    companion object {
+        const val EMAIL = "email"
     }
 
 }

@@ -27,7 +27,6 @@ class ListPromotionAdapter(private val onApplyClicked: (Promotion) -> Unit) :
 
                 Glide.with(itemView.context)
                     .load(promotion.backgroundImage)
-//                        .error(R.drawable.img_sample_2)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgPromotion)
 

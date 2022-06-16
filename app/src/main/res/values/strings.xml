@@ -3,6 +3,7 @@
     <string name="home">Home</string>
     <string name="shop">Shop</string>
     <string name="bag">Bag</string>
+    <string name="login">login</string>
     <string name="favorites">Favorites</string>
     <string name="profile">Profile</string>
     <string name="facebook_app_id">5050456001727835</string>

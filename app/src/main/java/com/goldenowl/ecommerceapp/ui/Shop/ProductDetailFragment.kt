@@ -111,7 +111,8 @@ class ProductDetailFragment : Fragment() {
             }
             //Set Detail
             viewPagerImageProduct.apply {
-                if (NetworkHelper.isNetworkAvailable(requireContext())) {
+                val networkHelper = NetworkHelper()
+                if (networkHelper.isNetworkAvailable(requireContext())) {
                     val adapterImage =
                         ImageProductAdapter(this@ProductDetailFragment, product.images)
                     adapter = adapterImage
