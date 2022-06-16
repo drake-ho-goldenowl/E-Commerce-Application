@@ -26,10 +26,10 @@
             android:id="@+id/MaterialToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_collapseMode="pin"
             app:contentInsetStart="48dp"
-            app:title="TEST"
+            app:layout_collapseMode="pin"
             app:menu="@menu/top_app_bar"
+            app:title="TEST"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -48,7 +48,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="12dp"
             android:nestedScrollingEnabled="true"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

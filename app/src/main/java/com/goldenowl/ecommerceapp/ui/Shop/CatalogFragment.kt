@@ -17,6 +17,8 @@ import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
 import com.goldenowl.ecommerceapp.adapters.ListProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentCatalogBinding
+import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
+import com.goldenowl.ecommerceapp.ui.Home.HomeFragmentDirections
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,19 +49,29 @@ class CatalogFragment : Fragment() {
         viewModel.setSort(0)
 
 
-        adapterProduct = ListProductAdapter(this) {
-            val action = CatalogFragmentDirections.actionCatalogFragmentToProductDetailFragment(
+        adapterProduct = ListProductAdapter({
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }
+        }, {
+            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+        }, { view, product ->
+            viewModel.setButtonFavorite(requireContext(), view, product.id)
+        })
 
-        adapterProductGrid = ListProductGridAdapter(this) {
-            val action = CatalogFragmentDirections.actionCatalogFragmentToProductDetailFragment(
+        adapterProductGrid = ListProductGridAdapter({
+            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }
+        }, {
+            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+        }, { view, product ->
+            viewModel.setButtonFavorite(requireContext(), view, product.id)
+        })
 
         adapterCategory = ListCategoriesAdater { str ->
             if (binding.appBarLayout.topAppBar.title == str) {
@@ -79,14 +91,19 @@ class CatalogFragment : Fragment() {
     }
 
     private fun observeSetup() {
-        viewModel.allCategory.observe(this.viewLifecycleOwner) {
+        viewModel.allCategory.observe(viewLifecycleOwner) {
             adapterCategory.submitList(it)
         }
 
-        viewModel.products.observe(this.viewLifecycleOwner) {
+        viewModel.products.observe(viewLifecycleOwner) {
             val product = viewModel.filterSort(it)
             adapterProductGrid.submitList(product)
             adapterProduct.submitList(product)
+        }
+
+        viewModel.favorites.observe(viewLifecycleOwner) {
+            adapterProductGrid.notifyDataSetChanged()
+            adapterProduct.notifyDataSetChanged()
         }
     }
 
@@ -146,7 +163,7 @@ class CatalogFragment : Fragment() {
                             }
 
                             override fun onQueryTextChange(newText: String?): Boolean {
-                                if (newText!!.isNotEmpty()) {
+                                if (!newText.isNullOrEmpty()) {
                                     viewModel.setSearch(newText)
                                 } else {
                                     viewModel.setSearch("")

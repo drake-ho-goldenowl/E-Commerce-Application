@@ -5,8 +5,6 @@ import com.goldenowl.ecommerceapp.utilities.BAG_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,6 +27,10 @@ class BagRepository @Inject constructor(
 
     fun getAllBagAndProduct() = bagDao.getAllBagAndProduct()
 
+    suspend fun checkBagHaveFavorite(idProduct: String, color: String, size: String): Boolean {
+        return getBag(idProduct, color, size) != null
+    }
+
     suspend fun updateQuantity(idProduct: String, color: String, size: String, quantity: Long) =
         bagDao.updateQuantity(idProduct, color, size, quantity)
 
@@ -48,12 +50,11 @@ class BagRepository @Inject constructor(
 
     suspend fun insertBag(idProduct: String, color: String, size: String) {
         val bagTemp = getBag(idProduct, color, size)
-        if (bagTemp == null){
+        if (bagTemp == null) {
             val bag = createBag(idProduct, color, size)
             bagDao.insert(bag)
-        }
-        else{
-            bagDao.updateQuantity(idProduct,color,size,bagTemp.quantity+ 1)
+        } else {
+            bagDao.updateQuantity(idProduct, color, size, bagTemp.quantity + 1)
         }
     }
 
@@ -62,7 +63,7 @@ class BagRepository @Inject constructor(
         val bags = bagDao.getAllList()
         val docData: MutableMap<String, Any> = HashMap()
         LAST_EDIT_TIME_BAG = Date()
-        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_BAG!!
+        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_BAG ?: Date()
         docData[FavoriteViewModel.DATA] = bags
         db.collection(BAG_FIREBASE).document(uid)
             .set(docData)

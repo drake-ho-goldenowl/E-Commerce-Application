@@ -46,7 +46,6 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
 
 
         viewModel.promotions.observe(viewLifecycleOwner) {
-            println(it)
             adapter.submitList(it)
         }
 
@@ -55,11 +54,10 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
                 selectPromotion = it.id
                 salePercent = it.salePercent
                 binding.txtWrongCode.visibility = View.GONE
-            } else if(viewModel.statusPromotion.value.isNotBlank()) {
+            } else if (viewModel.statusPromotion.value.isNotBlank()) {
                 binding.txtWrongCode.visibility = View.VISIBLE
             }
         }
-
         bind()
         return binding.root
     }
@@ -89,8 +87,6 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
 
             })
         }
-
-
     }
 
     private fun sendData(select: String, sale: Long) {

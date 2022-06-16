@@ -1,17 +1,29 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
+import android.content.Context
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.data.FavoriteRepository
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.data.ProductRepository
+import com.goldenowl.ecommerceapp.data.UserManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
-class ShopViewModel @Inject constructor(private val productRepository: ProductRepository) :
+class ShopViewModel @Inject constructor(
+    private val productRepository: ProductRepository,
+    private val favoriteRepository: FavoriteRepository,
+    private val userManager: UserManager
+) :
     BaseViewModel() {
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = productRepository.getAllCategory().asLiveData()
@@ -31,6 +43,8 @@ class ShopViewModel @Inject constructor(private val productRepository: ProductRe
     val product: LiveData<Product> = statusIdProduct.flatMapLatest {
         productRepository.getProductFlow(it)
     }.asLiveData()
+
+    val favorites = favoriteRepository.getAll().asLiveData()
 
     fun setProduct(idProduct: String) {
         statusIdProduct.value = idProduct
@@ -72,10 +86,12 @@ class ShopViewModel @Inject constructor(private val productRepository: ProductRe
 
     fun getAllSize(): MutableList<String> {
         val sizes: MutableSet<String> = mutableSetOf()
-        for (color in product.value!!.colors) {
-            for (size in color.sizes) {
-                if (size.quantity > 0) {
-                    sizes.add(size.size)
+        product.value?.let {
+            for (color in it.colors) {
+                for (size in color.sizes) {
+                    if (size.quantity > 0) {
+                        sizes.add(size.size)
+                    }
                 }
             }
         }
@@ -84,9 +100,11 @@ class ShopViewModel @Inject constructor(private val productRepository: ProductRe
 
     fun getAllSizeOfColor(selectColor: Int): MutableList<String> {
         val sizes: MutableSet<String> = mutableSetOf()
-        for (size in product.value!!.colors[selectColor].sizes) {
-            if (size.quantity > 0) {
-                sizes.add(size.size)
+        product.value?.let {
+            for (size in it.colors[selectColor].sizes) {
+                if (size.quantity > 0) {
+                    sizes.add(size.size)
+                }
             }
         }
         return sizes.toMutableList()
@@ -95,25 +113,39 @@ class ShopViewModel @Inject constructor(private val productRepository: ProductRe
 
     fun getAllColor(): MutableList<String> {
         val colors: MutableSet<String> = mutableSetOf()
-        for (color in product.value!!.colors) {
-            colors.add(color.color!!)
+        product.value?.let {
+            for (color in it.colors) {
+                color.color?.let { str ->
+                    colors.add(str)
+                }
+            }
         }
         return colors.toMutableList()
+    }
+
+    fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {
+        if (!userManager.isLogged()) {
+            buttonView.visibility = View.GONE
+        } else {
+            buttonView.visibility = View.VISIBLE
+            viewModelScope.launch {
+                val isFavorite = favoriteRepository.checkProductHaveFavorite(idProduct)
+                if (isFavorite) {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_active
+                    )
+                } else {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_no_active
+                    )
+                }
+            }
+        }
     }
 
     companion object {
         const val TAG = "ShopViewModel"
     }
 }
-
-//class ShopViewModelFactory(
-//    private val productDao: ProductDao,
-//) : ViewModelProvider.Factory {
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(ShopViewModel::class.java)) {
-//            @Suppress("UNCHECKED_CAST")
-//            return ShopViewModel(productDao) as T
-//        }
-//        throw IllegalArgumentException("Unknown ViewModel class")
-//    }
-//}

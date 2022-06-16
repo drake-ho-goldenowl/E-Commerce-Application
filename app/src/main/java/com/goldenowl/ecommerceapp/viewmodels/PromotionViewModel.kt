@@ -35,10 +35,12 @@ class PromotionViewModel @Inject constructor(
                 Log.w(ShopViewModel.TAG, "Listen failed.", e)
                 return@addSnapshotListener
             }
-            for (doc in value!!) {
-                viewModelScope.launch {
-                    val promotion = doc.toObject<Promotion>()
-                    promotionRepository.insert(promotion)
+            value?.let {
+                for (doc in value) {
+                    viewModelScope.launch {
+                        val promotion = doc.toObject<Promotion>()
+                        promotionRepository.insert(promotion)
+                    }
                 }
             }
         }

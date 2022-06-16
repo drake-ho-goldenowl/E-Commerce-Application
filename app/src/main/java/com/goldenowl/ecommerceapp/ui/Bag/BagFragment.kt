@@ -22,8 +22,8 @@ class BagFragment : Fragment() {
 
     private lateinit var adapterBag: ListBagAdapter
     private lateinit var promotions: List<BagAndProduct>
-    private var salePercent : Long  = 0
-    private var idPromotion : String = ""
+    private var salePercent: Long = 0
+    private var idPromotion: String = ""
     private var isButtonRemove = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,13 +39,13 @@ class BagFragment : Fragment() {
                 idProduct = it.product.id
             )
             findNavController().navigate(action)
-        },{
-            viewModel.insertFavorite(it.product,it.bag.size,it.bag.color)
-        },{
+        }, {
+            viewModel.insertFavorite(it.product, it.bag.size, it.bag.color)
+        }, {
             viewModel.removeBag(it.bag)
-        },{
+        }, {
             viewModel.plusQuantity(it.bag)
-        },{
+        }, {
             viewModel.minusQuantity(it.bag)
         })
         viewModel.setSearch("")
@@ -57,18 +57,18 @@ class BagFragment : Fragment() {
         return binding.root
     }
 
-    private fun observeSetup(){
-        viewModel.bags.observe(viewLifecycleOwner){
+    private fun observeSetup() {
+        viewModel.bags.observe(viewLifecycleOwner) {
             adapterBag.submitList(it)
         }
 
-        viewModel.allBags.observe(viewLifecycleOwner){
-            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(it,salePercent)}\$"
+        viewModel.allBags.observe(viewLifecycleOwner) {
+            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(it, salePercent)}\$"
             promotions = it
         }
     }
 
-    fun bind(){
+    fun bind() {
         binding.apply {
             appBarLayout.topAppBar.title = "Bag"
 
@@ -86,10 +86,9 @@ class BagFragment : Fragment() {
                             }
 
                             override fun onQueryTextChange(newText: String?): Boolean {
-                                if (newText!!.isNotEmpty()) {
+                                if (!newText.isNullOrEmpty()) {
                                     viewModel.setSearch(newText)
-                                }
-                                else{
+                                } else {
                                     viewModel.setSearch("")
                                 }
                                 return true
@@ -103,16 +102,17 @@ class BagFragment : Fragment() {
 
             editPromoCode.setOnClickListener {
                 val bottomPromotion = BottomPromotion(idPromotion)
-                bottomPromotion.show(parentFragmentManager,BottomPromotion.TAG)
+                bottomPromotion.show(parentFragmentManager, BottomPromotion.TAG)
             }
 
-            btnRemove.setOnClickListener{
-                if(isButtonRemove){
+            btnRemove.setOnClickListener {
+                if (isButtonRemove) {
                     isButtonRemove = !isButtonRemove
                     binding.editPromoCode.setText("")
                     salePercent = 0
                     idPromotion = ""
-                    binding.txtPriceTotal.text = "${viewModel.calculatorTotal(promotions,salePercent)}\$"
+                    binding.txtPriceTotal.text =
+                        "${viewModel.calculatorTotal(promotions, salePercent)}\$"
                     btnRemove.setBackgroundResource(R.drawable.btn_arrow_forward)
                 }
             }
@@ -142,7 +142,7 @@ class BagFragment : Fragment() {
             salePercent = sale
             idPromotion = id ?: ""
             binding.editPromoCode.setText(idPromotion)
-            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(promotions,salePercent)}\$"
+            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(promotions, salePercent)}\$"
             binding.btnRemove.setBackgroundResource(R.drawable.ic_close)
             isButtonRemove = true
         }

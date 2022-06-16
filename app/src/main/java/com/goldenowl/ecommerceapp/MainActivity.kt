@@ -47,9 +47,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.bottomNavigation.setOnItemSelectedListener { item->
-            NavigationUI.onNavDestinationSelected(item,navController)
-            navController.popBackStack(item.itemId,inclusive = false)
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            NavigationUI.onNavDestinationSelected(item, navController)
+            navController.popBackStack(item.itemId, inclusive = false)
             true
         }
     }

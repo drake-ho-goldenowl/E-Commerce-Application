@@ -27,8 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:contentInsetStart="48dp"
-            app:menu="@menu/top_app_bar"
             app:layout_collapseMode="pin"
+            app:menu="@menu/top_app_bar"
             app:title="TEST"
             app:titleCentered="true" />
 

@@ -17,11 +17,6 @@ interface FavoriteDao {
     @Query("DELETE FROM favorite")
     suspend fun deleteAll()
 
-    @Query("SELECT COUNT(idProduct) FROM favorite WHERE idProduct = :idProduct")
-    suspend fun countFavoriteWithIdProduct(idProduct: String): Int
-
-    @Query("UPDATE favorite set isBag = :isBag WHERE idProduct = :idProduct AND size = :size AND color = :color")
-    suspend fun updateIsBag(idProduct: String, size: String, color: String,isBag: Boolean)
 
     @Query("SELECT idProduct FROM favorite WHERE idProduct = :id GROUP BY idProduct")
     fun getIdProduct(id: String): Flow<String>
@@ -40,6 +35,9 @@ interface FavoriteDao {
 
     @Query("SELECT * FROM favorite")
     fun getAllFavoriteAndProduct(): Flow<List<FavoriteAndProduct>>
+
+    @Query("SELECT * FROM favorite INNER JOIN product ON product.id = favorite.idProduct WHERE idProduct = :idProduct")
+    suspend fun checkProductHaveFavorite(idProduct: String): List<FavoriteAndProduct>
 
     //filter
     @Query("SELECT * FROM favorite INNER JOIN product ON product.id = favorite.idProduct WHERE category_name = :category")

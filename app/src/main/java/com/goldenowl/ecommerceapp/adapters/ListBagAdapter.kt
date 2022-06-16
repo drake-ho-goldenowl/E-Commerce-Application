@@ -1,7 +1,9 @@
 package com.goldenowl.ecommerceapp.adapters
 
 import android.content.Context
+import android.graphics.Paint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -43,8 +45,19 @@ class ListBagAdapter(
                 txtQuantity.text = bagAndProduct.bag.quantity.toString()
 
                 val size = bagAndProduct.product.getColorAndSize(bagAndProduct.bag.color,bagAndProduct.bag.size)
-                txtPrice.text = "${size!!.price}\$"
+                if (bagAndProduct.product.salePercent != null && size != null) {
+                    txtPrice.paintFlags = txtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    txtSalePrice.visibility = View.VISIBLE
+                    txtSalePercent.visibility = View.VISIBLE
+                    txtSalePercent.text = "-${bagAndProduct.product.salePercent}%"
+                    txtSalePrice.text =
+                        "${size.price * (100 - bagAndProduct.product.salePercent) / 100}\$"
+                } else {
+                    txtPrice.paintFlags = 0
+                    txtSalePercent.visibility = View.GONE
+                    txtSalePrice.visibility = View.GONE
 
+                }
 
                 btnMinus.setOnClickListener {
                     onMinusQuantityClicked(bagAndProduct)

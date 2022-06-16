@@ -16,7 +16,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class BottomSheetFavorite(private val product: Product,private val selectSizeInt: Int?, private var color: String?) : BottomSheetDialogFragment() {
+class BottomSheetFavorite(
+    private val product: Product,
+    private val selectSizeInt: Int?,
+    private var color: String?
+) : BottomSheetDialogFragment() {
     private val viewModel: FavoriteViewModel by viewModels()
     private var selectSize: String? = null
 
@@ -36,14 +40,14 @@ class BottomSheetFavorite(private val product: Product,private val selectSizeInt
         }
         adapter.submitList(listSize)
 
-        if(selectSizeInt != null){
+        if (selectSizeInt != null) {
             adapter.positionCurrent = selectSizeInt
             selectSize = listSize[selectSizeInt]
         }
         color = color ?: product.colors[0].color
 
-        viewModel.disMiss.observe(viewLifecycleOwner){
-            if(it){
+        viewModel.disMiss.observe(viewLifecycleOwner) {
+            if (it) {
                 dismiss()
             }
         }
@@ -53,7 +57,7 @@ class BottomSheetFavorite(private val product: Product,private val selectSizeInt
         return binding.root
     }
 
-    private fun observeSetup(){
+    private fun observeSetup() {
         viewModel.apply {
             toastMessage.observe(viewLifecycleOwner) { str ->
                 Toast.makeText(
@@ -81,7 +85,7 @@ class BottomSheetFavorite(private val product: Product,private val selectSizeInt
 
             btnAddToCart.setOnClickListener {
                 if (!selectSize.isNullOrBlank()) {
-                    viewModel.insertFavorite(product, selectSize.toString(),color.toString())
+                    viewModel.insertFavorite(product, selectSize.toString(), color.toString())
                 } else {
                     viewModel.toastMessage.postValue("Please select size")
                 }

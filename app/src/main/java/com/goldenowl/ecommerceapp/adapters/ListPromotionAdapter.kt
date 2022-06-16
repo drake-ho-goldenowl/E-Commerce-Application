@@ -35,8 +35,11 @@ class ListPromotionAdapter(private val onApplyClicked: (Promotion) -> Unit) :
                     onApplyClicked(promotion)
                 }
 
-                val diff: Long = promotion.endDate!!.time - Date().time
-                txtTimeRemaining.text = "${TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)} days remaining"
+                promotion.endDate?.let {
+                    val diff: Long = promotion.endDate.time - Date().time
+                    txtTimeRemaining.text =
+                        "${TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)} days remaining"
+                }
             }
         }
     }

@@ -5,8 +5,6 @@ import com.goldenowl.ecommerceapp.utilities.FAVORITE_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +14,6 @@ import javax.inject.Singleton
 class FavoriteRepository @Inject constructor(
     private val favoriteDao: FavoriteDao
 ) {
-
     suspend fun insert(favorite: Favorite) = favoriteDao.insert(favorite)
 
     suspend fun update(favorite: Favorite) = favoriteDao.update(favorite)
@@ -25,8 +22,6 @@ class FavoriteRepository @Inject constructor(
 
     suspend fun deleteAll() = favoriteDao.deleteAll()
 
-    suspend fun countFavoriteWithIdProduct(idProduct: String) =
-        favoriteDao.countFavoriteWithIdProduct(idProduct)
 
     fun getFavorite(idProduct: String, size: String, color: String) =
         favoriteDao.getFavorite(idProduct, size, color)
@@ -36,6 +31,10 @@ class FavoriteRepository @Inject constructor(
     fun getAll() = favoriteDao.getAll()
 
     fun getAllFavoriteAndProduct() = favoriteDao.getAllFavoriteAndProduct()
+
+    suspend fun checkProductHaveFavorite(idProduct: String): Boolean {
+        return favoriteDao.checkProductHaveFavorite(idProduct).isNotEmpty()
+    }
 
     fun filterByCategory(category: String) = favoriteDao.filterByCategory(category)
 
@@ -54,23 +53,16 @@ class FavoriteRepository @Inject constructor(
         )
     }
 
-    suspend fun updateIsBag(idProduct: String, size: String, color: String, isBag: Boolean) =
-        favoriteDao.updateIsBag(idProduct, size, color, isBag)
-
-
-    suspend fun insertFavorite(product: Product, size: String, color: String): Product {
+    suspend fun insertFavorite(product: Product, size: String, color: String) {
         val favorite = createFavorite(product.id, size, color)
-        product.isFavorite = true
         favoriteDao.insert(favorite)
-        return product
     }
-
 
     suspend fun updateFavoriteFirebase(db: FirebaseFirestore, uid: String) {
         val favorites = favoriteDao.getAllList()
         val docData: MutableMap<String, Any> = HashMap()
         LAST_EDIT_TIME_FAVORITES = Date()
-        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_FAVORITES!!
+        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_FAVORITES ?: Date()
         docData[FavoriteViewModel.DATA] = favorites
         db.collection(FAVORITE_FIREBASE).document(uid)
             .set(docData)

@@ -41,7 +41,7 @@ class LoginFragment : Fragment() {
     }
 
 
-    private fun bind(){
+    private fun bind() {
         binding.apply {
             appBarLayout.topAppBar.title = "Login"
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
@@ -68,13 +68,14 @@ class LoginFragment : Fragment() {
                 })
             }
             btnFacebook.setOnClickListener {
-                LoginManager.getInstance().logInWithReadPermissions(requireActivity(), listOf("email"))
+                LoginManager.getInstance()
+                    .logInWithReadPermissions(requireActivity(), listOf("email"))
                 authViewModel.loginWithFacebook()
             }
 
-            btnForgetPassword.setOnClickListener{
+            btnForgetPassword.setOnClickListener {
                 authViewModel.validEmail(editTextEmail.text.toString())
-                if(!binding.txtLayoutEmail.isErrorEnabled){
+                if (!binding.txtLayoutEmail.isErrorEnabled) {
                     authViewModel.forgotPassword(editTextEmail.text.toString())
                 }
             }
@@ -106,9 +107,9 @@ class LoginFragment : Fragment() {
         if (requestCode == REQUEST_SIGN_IN && resultCode == Activity.RESULT_OK && data != null) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val account = task.getResult(ApiException::class.java)!!
+                val account = task.getResult(ApiException::class.java)
 
-                authViewModel.firebaseAuthWithGoogle(account.idToken!!)
+                account.idToken?.let { authViewModel.firebaseAuthWithGoogle(it) }
 
             } catch (e: ApiException) {
                 Toast.makeText(this.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
@@ -116,7 +117,6 @@ class LoginFragment : Fragment() {
         }
         authViewModel.callbackManager.onActivityResult(requestCode, resultCode, data)
     }
-
 
 
     private fun alertEmail(alert: String?) {

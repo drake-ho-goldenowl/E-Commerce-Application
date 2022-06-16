@@ -1,9 +1,13 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
+import android.content.Context
 import android.util.Log
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.firestore.ktx.firestore
@@ -21,6 +25,7 @@ class HomeViewModel @Inject constructor(
     private val userManager: UserManager
 ) : ViewModel() {
     val product = productRepository.getAll().asLiveData()
+    val favorites = favoriteRepository.getAll().asLiveData()
     private val db = Firebase.firestore
 
     fun filterSale(products: List<Product>): List<Product> {
@@ -33,9 +38,7 @@ class HomeViewModel @Inject constructor(
 
     private var bags = Bags()
 
-
     init {
-        println("Run Home")
         if (!userManager.isLogged()) {
             viewModelScope.launch {
                 bagRepository.deleteAll()
@@ -53,10 +56,12 @@ class HomeViewModel @Inject constructor(
                 Log.w(ShopViewModel.TAG, "Listen failed.", e)
                 return@addSnapshotListener
             }
-            for (doc in value!!) {
-                viewModelScope.launch {
-                    val product = doc.toObject<Product>()
-                    productRepository.insert(product)
+            value?.let {
+                for (doc in value) {
+                    viewModelScope.launch {
+                        val product = doc.toObject<Product>()
+                        productRepository.insert(product)
+                    }
                 }
             }
         }
@@ -69,24 +74,35 @@ class HomeViewModel @Inject constructor(
         db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
             .get().addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    val favorites = documentSnapshot.toObject<Favorites>()!!
+                    val favorites = documentSnapshot.toObject<Favorites>()
 
-                    if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
-
-                        for (favorite in favorites.data!!) {
+                    favorites?.let {
+                        if (favorites.lastEdit == null) {
                             viewModelScope.launch {
-                                favoriteRepository.insert(favorite)
-                                productRepository.updateIsFavorite(favorite.idProduct,true)
+                                favoriteRepository.updateFavoriteFirebase(
+                                    db,
+                                    userManager.getAccessToken()
+                                )
                             }
-                        }
-                        LAST_EDIT_TIME_FAVORITES =
-                            documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
-                    } else if (favorites.lastEdit!! < LAST_EDIT_TIME_FAVORITES) {
-                        viewModelScope.launch {
-                            favoriteRepository.updateFavoriteFirebase(
-                                db,
-                                userManager.getAccessToken()
-                            )
+                        } else if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
+
+                            favorites.data?.let { list ->
+                                for (favorite in list) {
+                                    viewModelScope.launch {
+                                        favoriteRepository.insert(favorite)
+                                    }
+                                }
+                                LAST_EDIT_TIME_FAVORITES =
+                                    documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)
+                                        ?.toDate()
+                            }
+                        } else {
+                            viewModelScope.launch {
+                                favoriteRepository.updateFavoriteFirebase(
+                                    db,
+                                    userManager.getAccessToken()
+                                )
+                            }
                         }
                     }
                 }
@@ -106,16 +122,39 @@ class HomeViewModel @Inject constructor(
                 if (snapshot != null && snapshot.exists()) {
                     bags = snapshot.toObject<Bags>()!!
                     if (bags.lastEdit != LAST_EDIT_TIME_BAG) {
-
-                        for (bag in bags.data!!) {
-                            viewModelScope.launch {
-                                bagRepository.insert(bag)
+                        bags.data?.let {
+                            for (bag in it) {
+                                viewModelScope.launch {
+                                    bagRepository.insert(bag)
+                                }
                             }
+                            LAST_EDIT_TIME_BAG =
+                                snapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()
                         }
-                        LAST_EDIT_TIME_BAG =
-                            snapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
                     }
                 }
             }
+    }
+
+    fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {
+        if (!userManager.isLogged()) {
+            buttonView.visibility = View.GONE
+        } else {
+            buttonView.visibility = View.VISIBLE
+            viewModelScope.launch {
+                val isFavorite = favoriteRepository.checkProductHaveFavorite(idProduct)
+                if (isFavorite) {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_active
+                    )
+                } else {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_no_active
+                    )
+                }
+            }
+        }
     }
 }

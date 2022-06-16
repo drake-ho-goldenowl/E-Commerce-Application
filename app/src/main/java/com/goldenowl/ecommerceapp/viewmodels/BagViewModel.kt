@@ -16,7 +16,6 @@ import kotlin.math.roundToInt
 
 @HiltViewModel
 class BagViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
     private val bagRepository: BagRepository,
     private val favoriteRepository: FavoriteRepository,
     val userManager: UserManager
@@ -45,28 +44,23 @@ class BagViewModel @Inject constructor(
         statusIdFavorite.value = Triple(idProduct, size, color)
     }
 
-
     private fun updateBagFirebase() {
         viewModelScope.launch {
-            bagRepository.updateBagFirebase(db,userManager.getAccessToken())
+            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
         }
     }
 
     fun insertFavorite(product: Product, size: String, color: String) {
         viewModelScope.launch {
-            val productNew = favoriteRepository.insertFavorite(product, size, color)
-            favoriteRepository.updateIsBag(product.id, size, color, true)
-            productRepository.update(productNew)
-            favoriteRepository.updateFavoriteFirebase(db,userManager.getAccessToken())
+            favoriteRepository.insertFavorite(product, size, color)
+            favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
         }
     }
 
     fun removeBag(bag: Bag) {
         viewModelScope.launch {
             bagRepository.delete(bag)
-            favoriteRepository.updateIsBag(bag.idProduct, bag.size, bag.color, false)
             updateBagFirebase()
-            favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
         }
     }
 
@@ -89,17 +83,13 @@ class BagViewModel @Inject constructor(
     }
 
 
-    fun insertBag(idProduct: String, color: String, size: String, favorite: Favorite?) {
+    fun insertBag(idProduct: String, color: String, size: String) {
         viewModelScope.launch {
             bagRepository.insertBag(
                 idProduct,
                 color,
                 size
             )
-            if (favorite != null) {
-                favoriteRepository.updateIsBag(idProduct, size, color, true)
-                favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
-            }
             updateBagFirebase()
             disMiss.postValue(true)
         }
@@ -114,7 +104,12 @@ class BagViewModel @Inject constructor(
                     bagAndProduct.bag.size
                 )
                 if (size != null) {
-                    total += (size.price * bagAndProduct.bag.quantity)
+                    var salePercent = 0
+                    if(bagAndProduct.product.salePercent != null){
+                        salePercent = bagAndProduct.product.salePercent
+                    }
+                    val price = size.price * (100 - salePercent) / 100
+                    total += (price * bagAndProduct.bag.quantity)
                 }
             }
         }

@@ -10,13 +10,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ChangePasswordViewModel @Inject constructor(private val userManager: UserManager) : BaseViewModel() {
+class ChangePasswordViewModel @Inject constructor(private val userManager: UserManager) :
+    BaseViewModel() {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val validOldPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validNewPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validRepeatPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validChangePasswordLiveData: MutableLiveData<Boolean> = MutableLiveData()
-
 
     fun changePassword(
         newPasswordText: String,
@@ -40,7 +40,7 @@ class ChangePasswordViewModel @Inject constructor(private val userManager: UserM
             account.email, passwordOldText
         )
 
-        user!!.reauthenticate(credential).addOnCompleteListener { task ->
+        user?.reauthenticate(credential)?.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 user.updatePassword(newPasswordText).addOnCompleteListener {
                     if (it.isSuccessful) {

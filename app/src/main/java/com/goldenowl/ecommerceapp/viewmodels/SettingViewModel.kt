@@ -14,7 +14,7 @@ class SettingViewModel @Inject constructor(val userManager: UserManager) : BaseV
     private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
 
     fun updateName(nameText: String) {
-        if(!validName(nameText)) return
+        if (!validName(nameText)) return
         val user = userManager.getUser()
         user.name = nameText
         userManager.setName(nameText)

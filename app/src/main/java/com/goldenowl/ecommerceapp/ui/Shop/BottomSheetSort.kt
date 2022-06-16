@@ -25,23 +25,23 @@ class BottomSheetSort(private val select: Int) : BottomSheetDialogFragment() {
 
         binding.apply {
             btnPopular.setOnClickListener {
-                sendData(btnPopular.text.toString(),0)
+                sendData(btnPopular.text.toString(), 0)
                 dismiss()
             }
             btnNewest.setOnClickListener {
-                sendData(btnNewest.text.toString(),1)
+                sendData(btnNewest.text.toString(), 1)
                 dismiss()
             }
             btnCustomerReview.setOnClickListener {
-                sendData(btnCustomerReview.text.toString(),2)
+                sendData(btnCustomerReview.text.toString(), 2)
                 dismiss()
             }
             binding.btnLowestToHigh.setOnClickListener {
-                sendData(btnLowestToHigh.text.toString(),3)
+                sendData(btnLowestToHigh.text.toString(), 3)
                 dismiss()
             }
             binding.btnHighestToLow.setOnClickListener {
-                sendData(btnHighestToLow.text.toString(),4)
+                sendData(btnHighestToLow.text.toString(), 4)
                 dismiss()
             }
             when (select) {
@@ -55,14 +55,18 @@ class BottomSheetSort(private val select: Int) : BottomSheetDialogFragment() {
         return binding.root
     }
 
-    private fun setColorSelected(button: TextView){
+    private fun setColorSelected(button: TextView) {
         button.background =
             ContextCompat.getDrawable(requireContext(), R.color.colorPrimary)
-        button.setTextColor(ContextCompat.getColor(requireContext(),R.color.white))
-        button.setTypeface(button.typeface,Typeface.BOLD)
+        button.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        button.setTypeface(button.typeface, Typeface.BOLD)
     }
-    private fun sendData(select: String,position: Int) {
-        setFragmentResult(REQUEST_KEY, bundleOf(BUNDLE_KEY_NAME to select, BUNDLE_KEY_POSITION to position))
+
+    private fun sendData(select: String, position: Int) {
+        setFragmentResult(
+            REQUEST_KEY,
+            bundleOf(BUNDLE_KEY_NAME to select, BUNDLE_KEY_POSITION to position)
+        )
     }
 
     companion object {

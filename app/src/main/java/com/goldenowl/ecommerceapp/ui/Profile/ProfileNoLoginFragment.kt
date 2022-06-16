@@ -17,7 +17,7 @@ class ProfileNoLoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentProfileNoLoginBinding.inflate(inflater,container,false)
+        binding = FragmentProfileNoLoginBinding.inflate(inflater, container, false)
 
         binding.profileNoLoginLayout.setOnClickListener {
             startActivity(Intent(activity, AuthActivity::class.java))

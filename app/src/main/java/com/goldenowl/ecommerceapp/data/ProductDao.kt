@@ -18,7 +18,7 @@ interface ProductDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM product where id = :id")
-    fun getProductFlow(id : String): Flow<Product>
+    fun getProductFlow(id: String): Flow<Product>
 
     @Query("SELECT * FROM product")
     fun getAll(): Flow<List<Product>>
@@ -37,7 +37,4 @@ interface ProductDao {
         search: String,
         category: String,
     ): Flow<List<Product>>
-
-    @Query("UPDATE product set isFavorite = :isFavorite WHERE id = :id")
-    suspend fun updateIsFavorite(id: String,isFavorite: Boolean)
 }

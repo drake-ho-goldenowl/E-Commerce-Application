@@ -27,7 +27,7 @@ class ShopFragment : Fragment() {
         binding = FragmentShopBinding.inflate(inflater, container, false)
         arguments?.let {
             val selectCategory = it.getString(NAME_CATEGORY)
-            if(selectCategory != null){
+            if (selectCategory != null) {
                 val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
                     nameCategories = selectCategory
                 )
@@ -62,7 +62,7 @@ class ShopFragment : Fragment() {
         return binding.root
     }
 
-    companion object{
+    companion object {
         const val NAME_CATEGORY = "nameCategories"
     }
 

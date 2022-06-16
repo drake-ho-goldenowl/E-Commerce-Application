@@ -48,8 +48,8 @@ class BottomSheetCart(
         adapter.positionCurrent = selectSizeInt
         selectSize = listSize[selectSizeInt]
 
-        viewModel.disMiss.observe(viewLifecycleOwner){
-            if(it){
+        viewModel.disMiss.observe(viewLifecycleOwner) {
+            if (it) {
                 dismiss()
             }
         }
@@ -87,7 +87,6 @@ class BottomSheetCart(
                         product.id,
                         product.colors[selectColorInt].color.toString(),
                         selectSize.toString(),
-                        favorite
                     )
                     viewModel.toastMessage.postValue("Add to Cart Success")
                 } else {

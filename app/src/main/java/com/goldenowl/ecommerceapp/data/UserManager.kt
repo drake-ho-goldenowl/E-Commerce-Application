@@ -5,34 +5,11 @@ import android.accounts.AccountManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 
 class UserManager(context: Context) {
     private val accountManager: AccountManager = AccountManager.get(context)
     private val db = FirebaseFirestore.getInstance()
-
-//    fun addAccount(
-//        name: String,
-//        email: String,
-//        password: String,
-//        access_token: String,
-//        dob: String = "",
-//        avatar: String = "",
-//    ) {
-//        val data = Bundle()
-//            .apply {
-//                this.putString(NAME, name)
-//                this.putString(EMAIL, email)
-//                this.putString(PASSWORD, password)
-//                this.putString(DOB, dob)
-//                this.putString(TOKEN, access_token)
-//                this.putString(AVATAR, avatar)
-//            }
-//        val account = Account(email, ACCOUNT_TYPE)
-//        accountManager.addAccountExplicitly(account, access_token, data)
-//        accountManager.setAuthToken(account, AUTH_TOKEN_TYPE, access_token)
-//    }
 
     fun addAccount(
         user: User
@@ -107,7 +84,7 @@ class UserManager(context: Context) {
     }
 
     fun getAvatar(): String {
-        return accountManager.getUserData(getAccount(), AVATAR)?: ""
+        return accountManager.getUserData(getAccount(), AVATAR) ?: ""
     }
 
     fun setName(name: String) {
@@ -129,12 +106,6 @@ class UserManager(context: Context) {
     fun writeProfile(user: User) {
         db.collection("users").document(user.token)
             .set(user)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot added")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
     }
 
     companion object {
@@ -147,6 +118,7 @@ class UserManager(context: Context) {
         const val DOB = "Date_of_birth"
         const val AVATAR = "avatar"
         const val TAG = "USER_MANAGER"
+
         @Volatile
         private var instance: UserManager? = null
 

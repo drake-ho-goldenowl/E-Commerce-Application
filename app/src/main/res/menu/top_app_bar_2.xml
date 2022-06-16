@@ -5,5 +5,5 @@
         android:id="@+id/btnShare"
         android:icon="@drawable/ic_baseline_share"
         android:title="share"
-        app:showAsAction="ifRoom|collapseActionView"/>
+        app:showAsAction="ifRoom|collapseActionView" />
 </menu>
