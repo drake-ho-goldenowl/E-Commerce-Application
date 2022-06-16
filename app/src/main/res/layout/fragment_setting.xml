@@ -14,8 +14,9 @@
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="-100dp">
 
-        <include android:id="@+id/appBarLayout"
-            layout="@layout/fragment_action_bar_2"/>
+        <include
+            android:id="@+id/appBarLayout"
+            layout="@layout/fragment_action_bar_2" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

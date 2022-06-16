@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.Bag.BagFragment">
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,31 +15,109 @@
             android:id="@+id/appBarLayout"
             layout="@layout/fragment_action_bar_3" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:nestedScrollingEnabled="true"
+            android:orientation="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewProduct"
+                android:id="@+id/recyclerViewBag"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="match_parent"
                 android:background="@color/grey2"
                 android:foregroundGravity="center"
-                android:paddingBottom="80dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+                android:layout_marginBottom="260dp"/>
+        </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutCheckout"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:background="@color/colorOnPrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <Button
+                android:id="@+id/btnCheckOut"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="80dp"
+                android:background="@drawable/btn_custom"
+                android:gravity="center"
+                android:text="Check out"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="26dp"
+                android:text="Total amount:"
+                android:textColor="@color/grey3"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/btnCheckOut"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <TextView
+                android:id="@+id/txtPriceTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="24dp"
+                android:text="124$"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/btnCheckOut"
+                app:layout_constraintRight_toRightOf="parent" />
+
+
+            <EditText
+                android:id="@+id/editPromoCode"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="28dp"
+                android:background="@drawable/edit_txt_custom"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:hint="Enter your promo code"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="22dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@id/txtPriceTotal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+
+            <ImageButton
+                android:id="@+id/btnRemove"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/btn_arrow_forward"
+                app:layout_constraintBottom_toBottomOf="@id/editPromoCode"
+                app:layout_constraintRight_toRightOf="@id/editPromoCode" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </FrameLayout>

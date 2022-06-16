@@ -1,9 +1,13 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
+import android.content.Context
 import android.util.Log
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.firestore.ktx.firestore
@@ -11,7 +15,6 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +25,7 @@ class HomeViewModel @Inject constructor(
     private val userManager: UserManager
 ) : ViewModel() {
     val product = productRepository.getAll().asLiveData()
+    val favorites = favoriteRepository.getAll().asLiveData()
     private val db = Firebase.firestore
 
     fun filterSale(products: List<Product>): List<Product> {
@@ -34,9 +38,7 @@ class HomeViewModel @Inject constructor(
 
     private var bags = Bags()
 
-
     init {
-        println("Run Home")
         if (!userManager.isLogged()) {
             viewModelScope.launch {
                 bagRepository.deleteAll()
@@ -54,13 +56,12 @@ class HomeViewModel @Inject constructor(
                 Log.w(ShopViewModel.TAG, "Listen failed.", e)
                 return@addSnapshotListener
             }
-            viewModelScope.launch {
-                for (doc in value!!) {
-                    val product = doc.toObject<Product>()
-                    if (favoriteRepository.countFavorite() > 0) {
-                        product.isFavorite = checkFavorite(favoriteRepository.getAllIdProduct(), product)
+            value?.let {
+                for (doc in value) {
+                    viewModelScope.launch {
+                        val product = doc.toObject<Product>()
+                        productRepository.insert(product)
                     }
-                    productRepository.insert(product)
                 }
             }
         }
@@ -70,28 +71,38 @@ class HomeViewModel @Inject constructor(
         if (!userManager.isLogged()) {
             return
         }
-        var favorites: Favorites
         db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
             .get().addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    favorites = documentSnapshot.toObject<Favorites>()!!
+                    val favorites = documentSnapshot.toObject<Favorites>()
 
-                    if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
-                        viewModelScope.launch {
-                            for (favorite in favorites.data!!) {
-                                val product = productRepository.getProduct(favorite.idProduct)
-                                if (product.isFavorite) {
-                                    favoriteRepository.insert(favorite)
-                                } else {
-                                    insertFavorite(product, favorite)
-                                }
+                    favorites?.let {
+                        if (favorites.lastEdit == null) {
+                            viewModelScope.launch {
+                                favoriteRepository.updateFavoriteFirebase(
+                                    db,
+                                    userManager.getAccessToken()
+                                )
                             }
-                        }
-                        LAST_EDIT_TIME_FAVORITES =
-                            documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
-                    } else if (favorites.lastEdit!! < LAST_EDIT_TIME_FAVORITES) {
-                        viewModelScope.launch {
-                            updateFavoriteFirebase(favoriteRepository.getAllList())
+                        } else if (LAST_EDIT_TIME_FAVORITES == null || favorites.lastEdit!! > LAST_EDIT_TIME_FAVORITES) {
+
+                            favorites.data?.let { list ->
+                                for (favorite in list) {
+                                    viewModelScope.launch {
+                                        favoriteRepository.insert(favorite)
+                                    }
+                                }
+                                LAST_EDIT_TIME_FAVORITES =
+                                    documentSnapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)
+                                        ?.toDate()
+                            }
+                        } else {
+                            viewModelScope.launch {
+                                favoriteRepository.updateFavoriteFirebase(
+                                    db,
+                                    userManager.getAccessToken()
+                                )
+                            }
                         }
                     }
                 }
@@ -111,48 +122,39 @@ class HomeViewModel @Inject constructor(
                 if (snapshot != null && snapshot.exists()) {
                     bags = snapshot.toObject<Bags>()!!
                     if (bags.lastEdit != LAST_EDIT_TIME_BAG) {
-                        viewModelScope.launch {
-                            for (bag in bags.data!!) {
-                                bagRepository.insert(bag)
+                        bags.data?.let {
+                            for (bag in it) {
+                                viewModelScope.launch {
+                                    bagRepository.insert(bag)
+                                }
                             }
+                            LAST_EDIT_TIME_BAG =
+                                snapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()
                         }
-                        LAST_EDIT_TIME_BAG =
-                            snapshot.getTimestamp(FavoriteViewModel.LAST_EDIT)?.toDate()!!
                     }
                 }
             }
     }
 
-    private fun updateFavoriteFirebase(favorites: List<Favorite>) {
-        val docData: MutableMap<String, Any> = HashMap()
-        LAST_EDIT_TIME_FAVORITES = Date()
-        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_FAVORITES!!
-        docData[FavoriteViewModel.DATA] = favorites
-        db.collection(FAVORITE_FIREBASE).document(userManager.getAccessToken())
-            .set(docData)
-            .addOnSuccessListener {
-                Log.d(UserManager.TAG, "DocumentSnapshot added")
-            }
-            .addOnFailureListener { e ->
-                Log.w(UserManager.TAG, "Error adding document", e)
-            }
-    }
-
-
-    private fun insertFavorite(product: Product, favorite: Favorite) {
-        viewModelScope.launch {
-            favoriteRepository.insert(favorite)
-            product.isFavorite = true
-            productRepository.update(product)
-        }
-    }
-
-    private fun checkFavorite(favorites: List<String>, product: Product): Boolean {
-        for (favorite in favorites) {
-            if (product.id == favorite) {
-                return true
+    fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {
+        if (!userManager.isLogged()) {
+            buttonView.visibility = View.GONE
+        } else {
+            buttonView.visibility = View.VISIBLE
+            viewModelScope.launch {
+                val isFavorite = favoriteRepository.checkProductHaveFavorite(idProduct)
+                if (isFavorite) {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_active
+                    )
+                } else {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_no_active
+                    )
+                }
             }
         }
-        return false
     }
 }

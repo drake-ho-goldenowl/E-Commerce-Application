@@ -14,11 +14,11 @@ interface ProductDao {
     @Delete
     suspend fun delete(product: Product)
 
-    @Query("SELECT * FROM product where id = :id")
-    suspend fun getProduct(id : String): Product
+    @Query("DELETE FROM product")
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM product where id = :id")
-    fun getProductFlow(id : String): Flow<Product>
+    fun getProductFlow(id: String): Flow<Product>
 
     @Query("SELECT * FROM product")
     fun getAll(): Flow<List<Product>>
@@ -37,5 +37,4 @@ interface ProductDao {
         search: String,
         category: String,
     ): Flow<List<Product>>
-
 }

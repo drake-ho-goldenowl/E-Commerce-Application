@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="1dp"
+    android:layout_gravity="center"
     android:layout_marginStart="16dp"
-    android:layout_marginBottom="7dp"
     android:layout_marginTop="17dp"
-    android:layout_gravity="center">
+    android:layout_marginEnd="1dp"
+    android:layout_marginBottom="7dp">
 
 
     <androidx.cardview.widget.CardView
@@ -61,8 +61,8 @@
         android:layout_marginTop="8dp"
         android:numStars="5"
         android:progressTint="@color/yellow"
-        android:secondaryProgressTint="@color/transparent"
         android:rating="5"
+        android:secondaryProgressTint="@color/transparent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardViewImgProduct" />
 
@@ -75,8 +75,8 @@
         android:text="(10)"
         android:textColor="@color/grey3"
         android:textSize="11sp"
-        app:layout_constraintLeft_toRightOf="@id/ratingBar"
-        app:layout_constraintBottom_toBottomOf="@+id/ratingBar" />
+        app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
+        app:layout_constraintLeft_toRightOf="@id/ratingBar" />
 
     <TextView
         android:id="@+id/txtBrandName"

@@ -15,6 +15,7 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageHomeAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
+import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.IS_FIRST
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
 import com.goldenowl.ecommerceapp.viewmodels.HomeViewModel
@@ -47,24 +48,39 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
 
-        adapterSale = ListProductGridAdapter(this) {
+        adapterSale = ListProductGridAdapter({
             val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }
+        }, {
+            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+        }, { view, product ->
+            viewModel.setButtonFavorite(requireContext(), view, product.id)
+        })
 
-        adapterNew = ListProductGridAdapter(this) {
+        adapterNew = ListProductGridAdapter({
             val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }
+        }, {
+            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+        }, { view, product ->
+            viewModel.setButtonFavorite(requireContext(), view, product.id)
+        })
 
 
         viewModel.product.observe(viewLifecycleOwner) {
             adapterSale.submitList(viewModel.filterSale(it))
             adapterNew.submitList(viewModel.filterNew(it))
+        }
+
+        viewModel.favorites.observe(viewLifecycleOwner) {
+            adapterSale.notifyDataSetChanged()
+            adapterNew.notifyDataSetChanged()
         }
 
 
@@ -91,7 +107,8 @@ class HomeFragment : Fragment() {
             //set viewPager
             viewPagerHome.apply {
                 val adapterImage: ImageHomeAdapter
-                if (NetworkHelper.isNetworkAvailable(requireContext())) {
+                val networkHelper = NetworkHelper()
+                if (networkHelper.isNetworkAvailable(requireContext())) {
                     adapterImage =
                         ImageHomeAdapter(this@HomeFragment, listImage, listTitle)
                     adapter = adapterImage
@@ -137,7 +154,8 @@ class HomeFragment : Fragment() {
 
         }
     }
-    private fun autoScroll(){
+
+    private fun autoScroll() {
         handlerFragment.removeMessages(0)
         handlerFragment.postDelayed({
             binding.viewPagerHome.setCurrentItem(binding.viewPagerHome.currentItem + 1, true)

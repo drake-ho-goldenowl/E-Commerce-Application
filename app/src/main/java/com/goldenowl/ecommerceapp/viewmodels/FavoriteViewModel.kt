@@ -1,9 +1,16 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
+import android.content.Context
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -12,12 +19,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoriteViewModel @Inject constructor(
-    private val productRepository: ProductRepository,
     private val favoriteRepository: FavoriteRepository,
     private val bagRepository: BagRepository,
     val userManager: UserManager
 ) :
     BaseViewModel() {
+    private val db = Firebase.firestore
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = favoriteRepository.getAllCategory().asLiveData()
     val favoriteAndProducts: LiveData<List<FavoriteAndProduct>> = statusFilter.flatMapLatest {
@@ -31,6 +38,9 @@ class FavoriteViewModel @Inject constructor(
             favoriteRepository.getAllFavoriteAndProduct()
         }
     }.asLiveData()
+
+    val bags = bagRepository.getAll().asLiveData()
+    val disMiss: MutableLiveData<Boolean> = MutableLiveData()
 
     fun filterSort(favorites: List<FavoriteAndProduct>): List<FavoriteAndProduct> {
         return when (statusFilter.value.third) {
@@ -68,27 +78,21 @@ class FavoriteViewModel @Inject constructor(
         statusFilter.value = Triple(statusFilter.value.first, statusFilter.value.second, select)
     }
 
-    fun updateFavoriteFirebase() {
+    private fun updateFavoriteFirebase() {
         viewModelScope.launch {
-            favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
+            favoriteRepository.updateFavoriteFirebase(db,userManager.getAccessToken())
         }
     }
 
 
-    fun insertBag(idProduct: String, color: String, size: String, favorite: Favorite?) {
+    fun insertBag(idProduct: String, color: String, size: String) {
         viewModelScope.launch {
-            val favoriteNew = bagRepository.insertBag(
+            bagRepository.insertBag(
                 idProduct,
                 color,
                 size,
-                favorite,
-                userManager.getAccessToken()
             )
-            if (favoriteNew != null) {
-                favoriteRepository.update(favoriteNew)
-                favoriteRepository.updateFavoriteFirebase(userManager.getAccessToken())
-            }
-            bagRepository.updateBagFirebase(userManager.getAccessToken())
+            bagRepository.updateBagFirebase(db,userManager.getAccessToken())
         }
     }
 
@@ -96,27 +100,39 @@ class FavoriteViewModel @Inject constructor(
     fun removeFavorite(favorite: Favorite) {
         viewModelScope.launch {
             favoriteRepository.delete(favorite)
-            checkFavorites(favorite)
             updateFavoriteFirebase()
         }
     }
 
-    fun insertFavorite(product: Product,size: String,color: String){
+    fun insertFavorite(product: Product, size: String, color: String) {
         viewModelScope.launch {
-            val productNew = favoriteRepository.insertFavorite(product, size,color)
-            productRepository.update(productNew)
+            favoriteRepository.insertFavorite(product, size, color)
+            updateFavoriteFirebase()
+            disMiss.postValue(true)
         }
     }
 
-    private suspend fun checkFavorites(favorite: Favorite) {
-        val id = favoriteRepository.getIdProduct(favorite.idProduct)
-        if (id.isNullOrBlank()) {
-            val product = productRepository.getProduct(favorite.idProduct)
-            product.isFavorite = false
-            productRepository.update(product)
+
+    fun setButtonBag(context: Context, buttonView: View, favorite: Favorite) {
+        viewModelScope.launch {
+            val isBag = bagRepository.checkBagHaveFavorite(
+                favorite.idProduct,
+                favorite.color,
+                favorite.size
+            )
+            if (isBag) {
+                buttonView.background = ContextCompat.getDrawable(
+                    context,
+                    R.drawable.btn_bag_active
+                )
+            } else {
+                buttonView.background = ContextCompat.getDrawable(
+                    context,
+                    R.drawable.btn_bag_no_active
+                )
+            }
         }
     }
-
 
     companion object {
         const val LAST_EDIT = "lastEdit"

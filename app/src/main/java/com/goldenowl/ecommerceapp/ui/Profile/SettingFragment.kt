@@ -27,12 +27,13 @@ class SettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSettingBinding.inflate(inflater,container,false)
+        binding = FragmentSettingBinding.inflate(inflater, container, false)
 
         bind()
         observeSetup()
         return binding.root
     }
+
     private fun bind() {
         binding.apply {
             appBarLayout.topAppBar.title = "Setting"
@@ -61,7 +62,7 @@ class SettingFragment : Fragment() {
                 }
             })
 
-            editTextFullName.setOnFocusChangeListener { v, hasFocus ->
+            editTextFullName.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     viewModel.updateName(
                         editTextFullName.text.toString()
@@ -70,7 +71,8 @@ class SettingFragment : Fragment() {
             }
 
             editTextDateOfBirth.setOnClickListener {
-                val newFragment = DatePickerFragment(editTextDateOfBirth, viewModel.userManager.getDOB())
+                val newFragment =
+                    DatePickerFragment(editTextDateOfBirth, viewModel.userManager.getDOB())
                 newFragment.show(parentFragmentManager, "datePicker")
             }
 

@@ -8,6 +8,7 @@ const val USER_FIREBASE = "users"
 const val PRODUCT_FIREBASE = "products"
 const val FAVORITE_FIREBASE = "favorites"
 const val BAG_FIREBASE = "bags"
+const val PROMOTION_FIREBASE = "promotions"
 
 var LAST_EDIT_TIME_FAVORITES: Date? = null
 var LAST_EDIT_TIME_BAG: Date? = null

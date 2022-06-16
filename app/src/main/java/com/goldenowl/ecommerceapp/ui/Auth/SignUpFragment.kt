@@ -34,13 +34,6 @@ class SignUpFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSignUpBinding.inflate(inflater, container, false)
-//        val factory = AuthViewModelFactory(this.requireActivity().application, object:
-//            OnSignInStartedListener {
-//            override fun onSignInStarted(client: GoogleSignInClient?) {
-//                startActivityForResult(client?.signInIntent, REQUEST_SIGN_IN)
-//            }
-//        })
-//        authViewModel = ViewModelProvider(this, factory)[AuthViewModel::class.java]
         observeSetup()
         bind()
         return binding.root
@@ -110,95 +103,94 @@ class SignUpFragment : Fragment() {
                 })
             }
 
-                btnFacebook.setOnClickListener {
-                    LoginManager.getInstance()
-                        .logInWithReadPermissions(requireActivity(), listOf("email"))
-                    authViewModel.loginWithFacebook()
-                }
+            btnFacebook.setOnClickListener {
+                LoginManager.getInstance()
+                    .logInWithReadPermissions(requireActivity(), listOf("email"))
+                authViewModel.loginWithFacebook()
+            }
+        }
+    }
+
+    private fun observeSetup() {
+        authViewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
+            Toast.makeText(
+                this.context,
+                str,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        authViewModel.userLiveData.observe(this.viewLifecycleOwner) {
+            if (it != null) {
+                startActivity(Intent(activity, MainActivity::class.java))
+                activity?.finish()
             }
         }
 
-        private fun observeSetup() {
-            authViewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
-                Toast.makeText(
-                    this.context,
-                    str,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            authViewModel.userLiveData.observe(this.viewLifecycleOwner) {
-                if (it != null) {
-                    startActivity(Intent(activity, MainActivity::class.java))
-                    activity?.finish()
-                }
-            }
-
-            authViewModel.validNameLiveData.observe(this.viewLifecycleOwner) {
-                alertName(it)
-            }
-
-            authViewModel.validEmailLiveData.observe(this.viewLifecycleOwner) {
-                alertEmail(it)
-            }
-
-            authViewModel.validPasswordLiveData.observe(this.viewLifecycleOwner) {
-                alertPassword(it)
-            }
+        authViewModel.validNameLiveData.observe(this.viewLifecycleOwner) {
+            alertName(it)
         }
 
-        @Deprecated("Deprecated in Java")
-        override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-            if (requestCode == REQUEST_SIGN_IN && resultCode == Activity.RESULT_OK && data != null) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                try {
-                    val account = task.getResult(ApiException::class.java)!!
-
-                    authViewModel.firebaseAuthWithGoogle(account.idToken!!)
-
-                } catch (e: ApiException) {
-                    Toast.makeText(this.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
-                }
-            }
-            authViewModel.callbackManager.onActivityResult(requestCode, resultCode, data)
+        authViewModel.validEmailLiveData.observe(this.viewLifecycleOwner) {
+            alertEmail(it)
         }
 
+        authViewModel.validPasswordLiveData.observe(this.viewLifecycleOwner) {
+            alertPassword(it)
+        }
+    }
 
-        private fun alertName(alert: String) {
-            binding.apply {
-                if (!alert.isNullOrEmpty()) {
-                    txtLayoutName.isErrorEnabled = true
-                    txtLayoutName.error = alert
-                    txtLayoutName.endIconMode = TextInputLayout.END_ICON_NONE
-                } else {
-                    txtLayoutName.isErrorEnabled = false
-                    txtLayoutName.endIconMode = TextInputLayout.END_ICON_CUSTOM
-                }
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_SIGN_IN && resultCode == Activity.RESULT_OK && data != null) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+
+                account.idToken?.let { authViewModel.firebaseAuthWithGoogle(it) }
+            } catch (e: ApiException) {
+                Toast.makeText(this.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
+        authViewModel.callbackManager.onActivityResult(requestCode, resultCode, data)
+    }
 
-        private fun alertEmail(alert: String) {
-            binding.apply {
-                if (!alert.isNullOrEmpty()) {
-                    txtLayoutEmail.isErrorEnabled = true
-                    txtLayoutEmail.error = alert
-                    txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_NONE
-                } else {
-                    txtLayoutEmail.isErrorEnabled = false
-                    txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_CUSTOM
-                }
+
+    private fun alertName(alert: String) {
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutName.isErrorEnabled = true
+                txtLayoutName.error = alert
+                txtLayoutName.endIconMode = TextInputLayout.END_ICON_NONE
+            } else {
+                txtLayoutName.isErrorEnabled = false
+                txtLayoutName.endIconMode = TextInputLayout.END_ICON_CUSTOM
             }
-
         }
+    }
 
-        private fun alertPassword(alert: String) {
-            binding.apply {
-                if (!alert.isNullOrEmpty()) {
-                    txtLayoutPassword.isErrorEnabled = true
-                    txtLayoutPassword.error = alert
-                } else {
-                    txtLayoutPassword.isErrorEnabled = false
-                }
+    private fun alertEmail(alert: String) {
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutEmail.isErrorEnabled = true
+                txtLayoutEmail.error = alert
+                txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_NONE
+            } else {
+                txtLayoutEmail.isErrorEnabled = false
+                txtLayoutEmail.endIconMode = TextInputLayout.END_ICON_CUSTOM
             }
         }
 
     }
+
+    private fun alertPassword(alert: String) {
+        binding.apply {
+            if (!alert.isNullOrEmpty()) {
+                txtLayoutPassword.isErrorEnabled = true
+                txtLayoutPassword.error = alert
+            } else {
+                txtLayoutPassword.isErrorEnabled = false
+            }
+        }
+    }
+
+}

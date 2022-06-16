@@ -48,11 +48,6 @@ class AuthViewModel @Inject constructor(
         if (firebaseAuth.currentUser != null) {
             userLiveData.postValue(firebaseAuth.currentUser)
         }
-//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//            .requestIdToken("901780403692-v39fpjhl0hj5rpur16nadpeemee34psf.apps.googleusercontent.com")
-//            .requestEmail()
-//            .build()
-//        googleSignInClient = GoogleSignIn.getClient(application, gso)
     }
 
     fun signUp(name: String, email: String, password: String) {
@@ -292,20 +287,4 @@ class AuthViewModel @Inject constructor(
     companion object {
         const val LOGIN_SUCCESS = "Login Success"
     }
-
 }
-
-
-//class AuthViewModelFactory(
-//    private val application: Application,
-//    private val listener: OnSignInStartedListener
-//) : ViewModelProvider.Factory {
-//
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
-//            @Suppress("UNCHECKED_CAST")
-//            return AuthViewModel(application, listener) as T
-//        }
-//        throw IllegalAccessException("Unknown ViewModel class")
-//    }
-//}

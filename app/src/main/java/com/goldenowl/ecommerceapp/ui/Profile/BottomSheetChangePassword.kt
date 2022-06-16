@@ -43,7 +43,7 @@ class BottomSheetChangePassword : BottomSheetDialogFragment() {
                 viewModel.forgotPassword()
             }
 
-            editTextOldPassword.setOnFocusChangeListener { v, hasFocus ->
+            editTextOldPassword.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     viewModel.checkOldPassword(editTextOldPassword.text.toString())
                 }
@@ -65,7 +65,7 @@ class BottomSheetChangePassword : BottomSheetDialogFragment() {
                 }
             })
 
-            editTextRepeatNewPassword.setOnFocusChangeListener { v, hasFocus ->
+            editTextRepeatNewPassword.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     viewModel.checkRepeatPassword(
                         editTextRepeatNewPassword.text.toString(),

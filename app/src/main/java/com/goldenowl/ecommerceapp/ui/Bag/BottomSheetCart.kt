@@ -6,14 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
 import com.goldenowl.ecommerceapp.viewmodels.BagViewModel
-import com.google.android.flexbox.AlignItems
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,11 +23,12 @@ class BottomSheetCart(
     private val selectColorInt: Int
 ) : BottomSheetDialogFragment() {
     private val viewModel: BagViewModel by viewModels()
-
     private lateinit var binding: BottomLayoutSelectSizeBinding
-    private var selectSize: String? = null
     private lateinit var adapter: ListSizeAdapter
+
+    private var selectSize: String? = null
     private var favorite: Favorite? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,14 +37,22 @@ class BottomSheetCart(
         binding = BottomLayoutSelectSizeBinding.inflate(inflater, container, false)
         val listSize = product.getAllSize()
         val color = product.colors[selectColorInt]
-        viewModel.setFavorite(product.id, color.sizes[selectSizeInt].size,color.color.toString())
+        viewModel.setFavorite(product.id, color.sizes[selectSizeInt].size, color.color.toString())
         adapter = ListSizeAdapter {
             selectSize = it
         }
+
+        viewModel.disMiss.postValue(false)
         adapter.submitList(listSize)
 
         adapter.positionCurrent = selectSizeInt
         selectSize = listSize[selectSizeInt]
+
+        viewModel.disMiss.observe(viewLifecycleOwner) {
+            if (it) {
+                dismiss()
+            }
+        }
 
         viewModel.toastMessage.observe(viewLifecycleOwner) { str ->
             Toast.makeText(
@@ -55,9 +62,9 @@ class BottomSheetCart(
             ).show()
         }
 
-//        viewModel.favorite.observe(viewLifecycleOwner) {
-//            favorite = it
-//        }
+        viewModel.favorite.observe(viewLifecycleOwner) {
+            favorite = it
+        }
 
         bind()
         return binding.root
@@ -65,23 +72,22 @@ class BottomSheetCart(
 
     fun bind() {
         binding.apply {
-            val layoutManager = FlexboxLayoutManager(requireContext())
-            layoutManager.flexDirection = FlexDirection.ROW
-//        layoutManager.justifyContent = JustifyContent.CENTER
-            layoutManager.alignItems = AlignItems.CENTER
-            recyclerViewSize.layoutManager = layoutManager
+            recyclerViewSize.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
 
             recyclerViewSize.adapter = adapter
             btnAddToCart.text = "Add to Cart"
             btnAddToCart.setOnClickListener {
                 if (!selectSize.isNullOrBlank()) {
+                    viewModel.setFavorite(
+                        product.id,
+                        selectSize.toString(),
+                        product.colors[selectColorInt].color.toString()
+                    )
                     viewModel.insertBag(
                         product.id,
                         product.colors[selectColorInt].color.toString(),
                         selectSize.toString(),
-                        favorite
                     )
-                    dismiss()
                     viewModel.toastMessage.postValue("Add to Cart Success")
                 } else {
                     viewModel.toastMessage.postValue("Please select size")
@@ -93,6 +99,7 @@ class BottomSheetCart(
 
 
     companion object {
+        const val GRIDVIEW_SPAN_COUNT = 3
         const val TAG = "BOTTOM_SHEET_SIZE"
     }
 }

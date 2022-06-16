@@ -2,6 +2,9 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/imgProductDetail"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_gravity="center_horizontal"
+    android:fitsSystemWindows="true"
+    android:scaleType="centerCrop">
 
 </ImageView>

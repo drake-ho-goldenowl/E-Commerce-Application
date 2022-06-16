@@ -4,8 +4,7 @@ import android.util.Log
 import com.goldenowl.ecommerceapp.utilities.BAG_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
 import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -15,7 +14,6 @@ import javax.inject.Singleton
 class BagRepository @Inject constructor(
     private val bagDao: BagDao
 ) {
-    private val db = Firebase.firestore
 
     suspend fun insert(bag: Bag) = bagDao.insert(bag)
 
@@ -27,36 +25,45 @@ class BagRepository @Inject constructor(
 
     fun getAll() = bagDao.getAll()
 
-    suspend fun getAllList() = bagDao.getAllList()
+    fun getAllBagAndProduct() = bagDao.getAllBagAndProduct()
 
-    suspend fun getBag(idProduct: String, color: String, size: String) =
+    suspend fun checkBagHaveFavorite(idProduct: String, color: String, size: String): Boolean {
+        return getBag(idProduct, color, size) != null
+    }
+
+    suspend fun updateQuantity(idProduct: String, color: String, size: String, quantity: Long) =
+        bagDao.updateQuantity(idProduct, color, size, quantity)
+
+    private suspend fun getBag(idProduct: String, color: String, size: String) =
         bagDao.getBag(idProduct, color, size)
+
+    fun filterBySearch(search: String) = bagDao.filterBySearch(search)
 
     private fun createBag(idProduct: String, color: String, size: String): Bag {
         return Bag(
             size = size,
             color = color,
-            idProduct =  idProduct,
+            idProduct = idProduct,
             quantity = 1
         )
     }
 
-    suspend fun insertBag(idProduct: String, color: String, size: String,favorite: Favorite?,uid: String): Favorite?{
-        val bag = createBag(idProduct, color, size)
+    suspend fun insertBag(idProduct: String, color: String, size: String) {
+        val bagTemp = getBag(idProduct, color, size)
+        if (bagTemp == null) {
+            val bag = createBag(idProduct, color, size)
             bagDao.insert(bag)
-            if(favorite != null) {
-                favorite.isBag = true
-            }
-        updateBagFirebase(uid)
-        return favorite
+        } else {
+            bagDao.updateQuantity(idProduct, color, size, bagTemp.quantity + 1)
+        }
     }
 
 
-    suspend fun updateBagFirebase(uid: String) {
+    suspend fun updateBagFirebase(db: FirebaseFirestore, uid: String) {
         val bags = bagDao.getAllList()
         val docData: MutableMap<String, Any> = HashMap()
         LAST_EDIT_TIME_BAG = Date()
-        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_BAG!!
+        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_BAG ?: Date()
         docData[FavoriteViewModel.DATA] = bags
         db.collection(BAG_FIREBASE).document(uid)
             .set(docData)

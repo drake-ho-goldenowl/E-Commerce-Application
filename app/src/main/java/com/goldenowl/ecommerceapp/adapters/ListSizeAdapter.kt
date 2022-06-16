@@ -24,11 +24,11 @@ class ListSizeAdapter(private val onItemClicked: (String) -> Unit) :
 
                 if (position == positionCurrent) {
                     txtSize.setTextColor(ContextCompat.getColor(context, R.color.white))
-                    layoutItemSize.background =
+                    txtSize.background =
                         ContextCompat.getDrawable(context, R.drawable.btn_size_custom_1)
                 } else {
                     txtSize.setTextColor(ContextCompat.getColor(context, R.color.black))
-                    layoutItemSize.background =
+                    txtSize.background =
                         ContextCompat.getDrawable(context, R.drawable.btn_size_custom_2)
                 }
             }

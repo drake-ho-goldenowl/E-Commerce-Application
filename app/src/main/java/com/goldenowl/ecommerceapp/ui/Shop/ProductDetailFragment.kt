@@ -7,13 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.adapters.SpinnerAdapter
@@ -53,12 +51,17 @@ class ProductDetailFragment : Fragment() {
 
         viewModel.setProduct(idProduct)
 
-        adapterRelated = ListProductGridAdapter(this) {
+        adapterRelated = ListProductGridAdapter({
             viewModel.setProduct(it.id)
             binding.nestedScrollView.apply {
                 scrollTo(0, 0)
             }
-        }
+        }, {
+            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+        }, { view, product ->
+            viewModel.setButtonFavorite(requireContext(), view, product.id)
+        })
 
         observeSetup()
         return binding.root
@@ -93,6 +96,10 @@ class ProductDetailFragment : Fragment() {
             adapterRelated.submitList(it)
             binding.txtNumberRelated.text = "${it.size} items"
         }
+
+        viewModel.favorites.observe(viewLifecycleOwner) {
+            viewModel.setButtonFavorite(requireContext(), binding.btnFavorite, product.id)
+        }
     }
 
     fun bind() {
@@ -104,7 +111,8 @@ class ProductDetailFragment : Fragment() {
             }
             //Set Detail
             viewPagerImageProduct.apply {
-                if (NetworkHelper.isNetworkAvailable(requireContext())) {
+                val networkHelper = NetworkHelper()
+                if (networkHelper.isNetworkAvailable(requireContext())) {
                     val adapterImage =
                         ImageProductAdapter(this@ProductDetailFragment, product.images)
                     adapter = adapterImage
@@ -186,7 +194,7 @@ class ProductDetailFragment : Fragment() {
                     } else {
                         position
                     }
-                    if(selectColor != null){
+                    if (selectColor != null) {
                         sizes = viewModel.getAllSizeOfColor(selectColor!!)
                         sizes.add(DEFAULT_COLOR)
                         adapterSize = SpinnerAdapter(requireContext(), sizes)
@@ -210,24 +218,23 @@ class ProductDetailFragment : Fragment() {
 
 
             //Set Button Favorite
-            setButtonFavorite(btnFavorite,product.isFavorite)
+            viewModel.setButtonFavorite(requireContext(), btnFavorite, product.id)
 
             btnFavorite.setOnClickListener {
-                val select = selectColor?: 0
-                val bottomSheetSize = BottomSheetFavorite(product,selectSize,product.colors[select].color)
+                val select = selectColor ?: 0
+                val bottomSheetSize =
+                    BottomSheetFavorite(product, selectSize, product.colors[select].color)
                 bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
             }
 
             btnAddToCart.setOnClickListener {
-                if(selectColor != null && selectSize != null){
-                    val bottomSheetCart = BottomSheetCart(product,selectSize!!,selectColor!!)
+                if (selectColor != null && selectSize != null) {
+                    val bottomSheetCart = BottomSheetCart(product, selectSize!!, selectColor!!)
                     bottomSheetCart.show(parentFragmentManager, BottomSheetCart.TAG)
-                }
-                else{
-                    if (selectSize == null){
+                } else {
+                    if (selectSize == null) {
                         viewModel.toastMessage.postValue("Please select size")
-                    }
-                    else{
+                    } else {
                         viewModel.toastMessage.postValue("Please select color")
                     }
                 }
@@ -235,26 +242,14 @@ class ProductDetailFragment : Fragment() {
         }
     }
 
-    private fun setButtonFavorite(buttonView: View, isFavorite: Boolean){
-        if (isFavorite) {
-            buttonView.background = ContextCompat.getDrawable(
-                requireContext(),
-                R.drawable.btn_favorite_active
-            )
-        }
-        else{
-            buttonView.background = ContextCompat.getDrawable(
-                requireContext(),
-                R.drawable.btn_favorite_no_active
-            )
-        }
-    }
 
-
-    private fun autoScroll(){
+    private fun autoScroll() {
         handlerFragment.removeMessages(0)
         handlerFragment.postDelayed({
-            binding.viewPagerImageProduct.setCurrentItem(binding.viewPagerImageProduct.currentItem + 1, true)
+            binding.viewPagerImageProduct.setCurrentItem(
+                binding.viewPagerImageProduct.currentItem + 1,
+                true
+            )
         }, 5000)
     }
 

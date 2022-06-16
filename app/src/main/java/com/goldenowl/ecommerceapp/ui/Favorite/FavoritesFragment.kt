@@ -24,20 +24,12 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment() {
-
     private val viewModel: FavoriteViewModel by viewModels()
-//    private val viewModel: FavoriteViewModel by activityViewModels {
-//        FavoriteViewModelFactory(
-//            (activity?.application as EcommerceApplication).database.productDao(),
-//            (activity?.application as EcommerceApplication).database.favoriteDao(),
-//            (activity?.application as EcommerceApplication).userManager
-//        )
-//    }
-
     private lateinit var adapterFavorite: ListFavoriteAdapter
     private lateinit var adapterFavoriteGrid: ListFavoriteGridAdapter
     private lateinit var adapterCategory: ListCategoriesAdater
     private var isLinearLayoutManager = true
+    private var isFilterCategory = true
     private lateinit var binding: FragmentFavoritesBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +41,7 @@ class FavoritesFragment : Fragment() {
         binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         viewModel.setSearch("")
         viewModel.setSort(0)
+        viewModel.setCategory("")
 
         adapterCategory = ListCategoriesAdater { str ->
             if (viewModel.statusFilter.value.first == str) {
@@ -58,7 +51,7 @@ class FavoritesFragment : Fragment() {
             }
         }
 
-        adapterFavorite = ListFavoriteAdapter(this, {
+        adapterFavorite = ListFavoriteAdapter({
             viewModel.removeFavorite(it.favorite)
         }, {
             val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailFragment(
@@ -70,11 +63,12 @@ class FavoritesFragment : Fragment() {
                 it.product.id,
                 it.product.colors[0].color.toString(),
                 it.favorite.size,
-                it.favorite
             )
+        }, { view, favorite ->
+            viewModel.setButtonBag(requireContext(), view, favorite)
         })
 
-        adapterFavoriteGrid = ListFavoriteGridAdapter(this, {
+        adapterFavoriteGrid = ListFavoriteGridAdapter({
             viewModel.removeFavorite(it.favorite)
         }, {
             val action = FavoritesFragmentDirections.actionFavoritesFragmentToProductDetailFragment(
@@ -86,10 +80,10 @@ class FavoritesFragment : Fragment() {
                 it.product.id,
                 it.product.colors[0].color.toString(),
                 it.favorite.size,
-                it.favorite
             )
+        }, { view, favorite ->
+            viewModel.setButtonBag(requireContext(), view, favorite)
         })
-
 
         observeSetup()
         bind()
@@ -133,6 +127,15 @@ class FavoritesFragment : Fragment() {
                 bottomSheetSort.show(parentFragmentManager, BottomSheetSort.TAG)
             }
 
+            appBarLayout.btnFilter.setOnClickListener {
+                isFilterCategory = !isFilterCategory
+                if (isFilterCategory) {
+                    appBarLayout.recyclerViewCategories.visibility = View.VISIBLE
+                } else {
+                    appBarLayout.recyclerViewCategories.visibility = View.GONE
+                }
+            }
+
             // Handle Search Bar
             appBarLayout.MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -144,9 +147,10 @@ class FavoritesFragment : Fragment() {
                             }
 
                             override fun onQueryTextChange(newText: String?): Boolean {
-                                if (newText!!.isNotEmpty()) {
-                                    println(viewModel.statusFilter.value.second)
+                                if (!newText.isNullOrEmpty()) {
                                     viewModel.setSearch(newText)
+                                } else {
+                                    viewModel.setSearch("")
                                 }
                                 return true
                             }
@@ -171,14 +175,19 @@ class FavoritesFragment : Fragment() {
 
 
     private fun observeSetup() {
-        viewModel.allCategory.observe(this.viewLifecycleOwner) {
+        viewModel.allCategory.observe(viewLifecycleOwner) {
             adapterCategory.submitList(it)
         }
 
-        viewModel.favoriteAndProducts.observe(this.viewLifecycleOwner) {
+        viewModel.favoriteAndProducts.observe(viewLifecycleOwner) {
             val favorites = viewModel.filterSort(it)
             adapterFavoriteGrid.submitList(favorites)
             adapterFavorite.submitList(favorites)
+        }
+
+        viewModel.bags.observe(viewLifecycleOwner) {
+            adapterFavorite.notifyDataSetChanged()
+            adapterFavoriteGrid.notifyDataSetChanged()
         }
     }
 

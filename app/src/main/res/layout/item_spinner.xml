@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:gravity="left|center_vertical"
         android:padding="12dp"
-        android:textSize="14sp"
         android:text="XL"
+        android:textSize="14sp"
         android:textStyle="bold" />
 </LinearLayout>

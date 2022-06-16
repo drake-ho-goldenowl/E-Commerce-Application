@@ -17,23 +17,23 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileLoginFragment : Fragment() {
-    private lateinit var binding:FragmentProfileLoginBinding
+    private lateinit var binding: FragmentProfileLoginBinding
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentProfileLoginBinding.inflate(inflater,container,false)
+        binding = FragmentProfileLoginBinding.inflate(inflater, container, false)
 
         bind()
         return binding.root
     }
 
-    private fun bind(){
+    private fun bind() {
         binding.apply {
-            if(authViewModel.userManager.isLogged()){
-                txtName.text =  authViewModel.userManager.getName()
+            if (authViewModel.userManager.isLogged()) {
+                txtName.text = authViewModel.userManager.getName()
                 txtEmail.text = authViewModel.userManager.getEmail()
                 Glide.with(requireActivity())
                     .load(authViewModel.userManager.getAvatar())
@@ -41,13 +41,13 @@ class ProfileLoginFragment : Fragment() {
                     .into(binding.imgAvatar)
             }
 
-            btnLogout.setOnClickListener{
+            btnLogout.setOnClickListener {
                 authViewModel.userManager.logOut()
                 authViewModel.logOut()
                 startActivity(Intent(activity, AuthActivity::class.java))
                 activity?.finish()
             }
-            settingLayout.setOnClickListener{
+            settingLayout.setOnClickListener {
                 findNavController().navigate(R.id.action_profileFragment_to_settingFragment)
             }
         }
@@ -56,8 +56,8 @@ class ProfileLoginFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         authViewModel.apply {
-            if(userManager.isLogged()){
-                binding.txtName.text =  userManager.getName()
+            if (userManager.isLogged()) {
+                binding.txtName.text = userManager.getName()
                 binding.txtEmail.text = userManager.getEmail()
                 Glide.with(this@ProfileLoginFragment)
                     .load(userManager.getAvatar())

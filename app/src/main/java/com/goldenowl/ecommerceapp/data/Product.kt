@@ -36,8 +36,6 @@ data class Product(
     val description: String = "",
     @NonNull @ColumnInfo(name = "tags")
     val tags: List<Tag> = emptyList(),
-    @field:JvmField
-    var isFavorite: Boolean = false
 ) {
     fun getAllSize(): List<String> {
         val sizes: MutableSet<String> = mutableSetOf()
@@ -51,16 +49,24 @@ data class Product(
         return sizes.toList()
     }
 
-    fun getSize(sizeStr: String) : Size?{
-        for (size in this.colors[0].sizes){
-            if(sizeStr == size.size){
+    fun getSize(sizeStr: String): Size? {
+        for (size in this.colors[0].sizes) {
+            if (sizeStr == size.size) {
                 return size
             }
         }
         return null
     }
+
+    fun getColorAndSize(colorStr: String, sizeStr: String): Size? {
+        for (color in this.colors) {
+            if (color.color == colorStr) {
+                for (size in color.sizes) {
+                    if (sizeStr == size.size)
+                        return size
+                }
+            }
+        }
+        return null
+    }
 }
-
-
-
-
