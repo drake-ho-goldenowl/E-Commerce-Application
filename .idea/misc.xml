@@ -64,6 +64,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_intro4.xml" value="0.1515" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_like.xml" value="0.1485" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_like2.xml" value="0.1485" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_linear_layout.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_minus.xml" value="0.173" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_no_login.xml" value="0.1" />
@@ -162,7 +163,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product_favorite.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product_favorite_2.xml" value="0.40214477211796246" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_promotion.xml" value="0.335" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_review.xml" value="0.2682291666666667" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_review.xml" value="1.5" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_size.xml" value="0.759493670886076" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_spinner.xml" value="0.2682291666666667" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_view_pager_home.xml" value="0.26927083333333335" />
