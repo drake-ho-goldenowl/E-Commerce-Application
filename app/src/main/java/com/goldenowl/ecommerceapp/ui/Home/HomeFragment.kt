@@ -107,7 +107,8 @@ class HomeFragment : Fragment() {
             //set viewPager
             viewPagerHome.apply {
                 val adapterImage: ImageHomeAdapter
-                if (NetworkHelper.isNetworkAvailable(requireContext())) {
+                val networkHelper = NetworkHelper()
+                if (networkHelper.isNetworkAvailable(requireContext())) {
                     adapterImage =
                         ImageHomeAdapter(this@HomeFragment, listImage, listTitle)
                     adapter = adapterImage
