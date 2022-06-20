@@ -3,6 +3,8 @@ package com.goldenowl.ecommerceapp.viewmodels
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.data.UserManager
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,27 +14,27 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(val userManager: UserManager) : BaseViewModel() {
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
     private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
-
+    private val db = Firebase.firestore
     fun updateName(nameText: String) {
         if (!validName(nameText)) return
         val user = userManager.getUser()
         user.name = nameText
         userManager.setName(nameText)
-        userManager.writeProfile(user)
+        userManager.writeProfile(db, user)
     }
 
     fun updateDOB(dobText: String) {
         val user = userManager.getUser()
         user.dob = dobText
         userManager.setDOB(dobText)
-        userManager.writeProfile(user)
+        userManager.writeProfile(db, user)
     }
 
     private fun updateAvatar(avatarURL: String) {
         val user = userManager.getUser()
         user.avatar = avatarURL
         userManager.setAvatar(avatarURL)
-        userManager.writeProfile(user)
+        userManager.writeProfile(db, user)
     }
 
     private fun isLettersOrDigit(string: String): Boolean {

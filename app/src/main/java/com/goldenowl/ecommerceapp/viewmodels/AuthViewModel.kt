@@ -72,7 +72,7 @@ class AuthViewModel @Inject constructor(
                             ""
                         )
                         userManager.addAccount(account)
-                        userManager.writeProfile(account)
+                        userManager.writeProfile(db, account)
                         toastMessage.postValue("Registration Success")
                     }
                 } else {
@@ -121,7 +121,7 @@ class AuthViewModel @Inject constructor(
                     account?.let {
                         if (password != null && account.password != Hash.hashSHA256(password)) {
                             account.password = Hash.hashSHA256(password)
-                            userManager.writeProfile(account)
+                            userManager.writeProfile(db, account)
                         }
                         userManager.addAccount(account)
                     }
@@ -217,7 +217,7 @@ class AuthViewModel @Inject constructor(
             user.photoUrl.toString()
         )
         userManager.addAccount(account)
-        userManager.writeProfile(account)
+        userManager.writeProfile(db, account)
     }
 
     private fun isLettersOrDigit(string: String): Boolean {

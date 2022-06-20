@@ -15,14 +15,17 @@ import java.text.SimpleDateFormat
 class ListReviewAdapter(
     private val onItemClicked: (Review) -> Unit,
     private val setNameAndAvatar: (TextView, CircleImageView, String) -> Unit,
-    private val onHelpfulClicked: (Review) -> Unit,
+    private val onHelpfulClicked: (Review,TextView,ImageView) -> Unit,
     private val setHelpfulButton: (Review,TextView, ImageView) -> Unit,
-) :
+    private val setRecyclerVIew: (RecyclerView, Review) -> Unit,
+    ) :
     ListAdapter<Review, ListReviewAdapter.ItemViewHolder>(DiffCallback) {
+    var isHelpful = false
     class ItemViewHolder(
         private val setNameAndAvatar: (TextView, CircleImageView, String) -> Unit,
-        private val onHelpfulClicked: (Review) -> Unit,
+        private val onHelpfulClicked: (Review,TextView,ImageView) -> Unit,
         private val setHelpfulButton: (Review,TextView, ImageView) -> Unit,
+        private val setRecyclerVIew: (RecyclerView, Review) -> Unit,
         private var binding: ItemReviewBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
@@ -41,9 +44,9 @@ class ListReviewAdapter(
                 }
 
                 setHelpfulButton(review,txtHelpful, icLike)
-
+                setRecyclerVIew(recyclerViewImageReview,review)
                 btnHelpful.setOnClickListener {
-                    onHelpfulClicked(review)
+                    onHelpfulClicked(review,txtHelpful,icLike)
                 }
             }
         }
@@ -54,6 +57,7 @@ class ListReviewAdapter(
             setNameAndAvatar,
             onHelpfulClicked,
             setHelpfulButton,
+            setRecyclerVIew,
             ItemReviewBinding.inflate(
                 LayoutInflater.from(
                     parent.context

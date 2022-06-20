@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -11,7 +13,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.adapters.ListImageReview
 import com.goldenowl.ecommerceapp.adapters.ListReviewAdapter
+import com.goldenowl.ecommerceapp.data.RatingProduct
 import com.goldenowl.ecommerceapp.databinding.FragmentRatingProductBinding
 import com.goldenowl.ecommerceapp.viewmodels.ReviewRatingViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +37,7 @@ class RatingProductFragment : Fragment() {
 
         if (idProduct.isNotBlank()) {
             viewModel.getDataLive(idProduct)
+            viewModel.statusRatingProduct.value = idProduct
         }
 
         adapterReview = ListReviewAdapter({
@@ -46,44 +51,98 @@ class RatingProductFragment : Fragment() {
                     .error(R.drawable.img_sample_2)
                     .into(imgAvatar)
             }
-        }, {
-            viewModel.updateHelpful(it, "v5Q20ZPTbaPMiY4Eq4YRQh4Opez2")
         }, { review, txtHelpful, icLike ->
-            viewModel.checkHelpfulForUser(review, "v5Q20ZPTbaPMiY4Eq4YRQh4Opez2")
+            if (adapterReview.isHelpful) {
+                viewModel.removeHelpful(review)
+                adapterReview.isHelpful = false
+            } else {
+                viewModel.addHelpful(review)
+                adapterReview.isHelpful = true
+            }
+            setColorHelpful(adapterReview.isHelpful, txtHelpful, icLike)
+        }, { review, txtHelpful, icLike ->
+            viewModel.checkHelpfulForUser(review)
                 .observe(viewLifecycleOwner) {
-                    if (it) {
-                        txtHelpful.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.colorPrimary
-                            )
-                        )
-                        icLike.setImageDrawable(
-                            ContextCompat.getDrawable(requireContext(), R.drawable.ic_like2)
-                        )
-                    } else {
-                        txtHelpful.setTextColor(
-                            ContextCompat.getColor(
-                                requireContext(),
-                                R.color.black
-                            )
-                        )
-                        icLike.setImageDrawable(
-                            ContextCompat.getDrawable(requireContext(), R.drawable.ic_like)
-                        )
-                    }
+                    adapterReview.isHelpful = it
+                    setColorHelpful(it, txtHelpful, icLike)
                 }
+        }, { recyclerView, review ->
+
+            val adapter = ListImageReview(this@RatingProductFragment, false, {}, {})
+            adapter.dataSet = review.listImage
+            adapter.notifyDataSetChanged()
+
+            recyclerView.layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.HORIZONTAL, false
+            )
+            recyclerView.adapter = adapter
         })
 
-        viewModel.listReview.observe(viewLifecycleOwner) {
-            adapterReview.submitList(it)
-        }
+        setupObserve()
         bind()
         return binding.root
     }
 
+    private fun setColorHelpful(isHelpful: Boolean, txtHelpful: TextView, icLike: ImageView) {
+        if (isHelpful) {
+            txtHelpful.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.colorPrimary
+                )
+            )
+            icLike.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_like2)
+            )
+        } else {
+            txtHelpful.setTextColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.black
+                )
+            )
+            icLike.setImageDrawable(
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_like)
+            )
+        }
+    }
+
+    private fun setupObserve() {
+        viewModel.listReview.observe(viewLifecycleOwner) {
+            adapterReview.submitList(it)
+            viewModel.fetchRatingProduct(idProduct)
+            binding.txtNumberReview.text = "${it.size} reviews"
+        }
+        viewModel.ratingProduct.observe(viewLifecycleOwner) {
+            if (it != null) {
+                setupRatingStatistics(it)
+            }
+        }
+    }
+
+    private fun setupRatingStatistics(ratingProduct: RatingProduct) {
+        binding.apply {
+            val totalRating = ratingProduct.getTotalRating()
+            txtRatingAverage.text = ratingProduct.getAverageRating().toString()
+            txtNumberRating.text = "$totalRating ratings"
+            progressBar1.progress = ((ratingProduct.rating[0] / totalRating) * 100).toInt()
+            progressBar2.progress = ((ratingProduct.rating[1] / totalRating) * 100).toInt()
+            progressBar3.progress = ((ratingProduct.rating[2] / totalRating) * 100).toInt()
+            progressBar4.progress = ((ratingProduct.rating[3] / totalRating) * 100).toInt()
+            progressBar5.progress = ((ratingProduct.rating[4] / totalRating) * 100).toInt()
+
+            txtNumberRating1.text = ratingProduct.rating[0].toString()
+            txtNumberRating2.text = ratingProduct.rating[1].toString()
+            txtNumberRating3.text = ratingProduct.rating[2].toString()
+            txtNumberRating4.text = ratingProduct.rating[3].toString()
+            txtNumberRating5.text = ratingProduct.rating[4].toString()
+        }
+    }
+
     fun bind() {
         binding.apply {
+            appBarLayout.MaterialToolbar.title = getString(R.string.ratingandreviews)
             btnAddReview.setOnClickListener {
                 val bottomAddReview = BottomAddReview(idProduct)
                 bottomAddReview.show(parentFragmentManager, BottomAddReview.TAG)
@@ -93,6 +152,14 @@ class RatingProductFragment : Fragment() {
 
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
+            }
+
+            checkboxWithPhoto.setOnClickListener {
+                viewModel.filterImage(checkboxWithPhoto.isChecked)
+            }
+
+            if (!viewModel.userManager.isLogged()) {
+                btnAddReview.visibility = View.GONE
             }
         }
     }

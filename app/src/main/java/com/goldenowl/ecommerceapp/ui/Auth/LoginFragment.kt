@@ -43,7 +43,7 @@ class LoginFragment : Fragment() {
 
     private fun bind() {
         binding.apply {
-            appBarLayout.topAppBar.title = R.string.login.toString()
+            appBarLayout.topAppBar.title = getString(R.string.login)
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }

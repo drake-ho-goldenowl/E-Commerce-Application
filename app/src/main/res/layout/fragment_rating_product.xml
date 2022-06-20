@@ -71,11 +71,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ProgressBar
+                        android:id="@+id/progressBar5"
                         style="@android:style/Widget.ProgressBar.Horizontal"
                         android:layout_width="114dp"
                         android:layout_height="8dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
+                        android:max="100"
                         android:progress="100"
                         android:progressDrawable="@drawable/progressbar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -83,11 +85,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/txtNumberRating5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="30dp"
+                        android:gravity="center_horizontal"
                         android:text="12"
                         android:textColor="@color/grey3"
                         android:textSize="14dp"
@@ -122,11 +126,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ProgressBar
+                        android:id="@+id/progressBar4"
                         style="@android:style/Widget.ProgressBar.Horizontal"
                         android:layout_width="114dp"
                         android:layout_height="8dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
+                        android:max="100"
                         android:progress="40"
                         android:progressDrawable="@drawable/progressbar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -134,11 +140,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/txtNumberRating4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="30dp"
+                        android:gravity="center_horizontal"
                         android:text="12"
                         android:textColor="@color/grey3"
                         android:textSize="14dp"
@@ -173,11 +181,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ProgressBar
+                        android:id="@+id/progressBar3"
                         style="@android:style/Widget.ProgressBar.Horizontal"
                         android:layout_width="114dp"
                         android:layout_height="8dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
+                        android:max="100"
                         android:progress="30"
                         android:progressDrawable="@drawable/progressbar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -185,11 +195,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/txtNumberRating3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="30dp"
+                        android:gravity="center_horizontal"
                         android:text="12"
                         android:textColor="@color/grey3"
                         android:textSize="14dp"
@@ -222,11 +234,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ProgressBar
+                        android:id="@+id/progressBar2"
                         style="@android:style/Widget.ProgressBar.Horizontal"
                         android:layout_width="114dp"
                         android:layout_height="8dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
+                        android:max="100"
                         android:progress="20"
                         android:progressDrawable="@drawable/progressbar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -234,12 +248,15 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/txtNumberRating2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="30dp"
+                        android:gravity="center_horizontal"
                         android:text="12"
+
                         android:textColor="@color/grey3"
                         android:textSize="14dp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -271,11 +288,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ProgressBar
+                        android:id="@+id/progressBar1"
                         style="@android:style/Widget.ProgressBar.Horizontal"
                         android:layout_width="114dp"
                         android:layout_height="8dp"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
+                        android:max="100"
                         android:progress="10"
                         android:progressDrawable="@drawable/progressbar_custom"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -283,11 +302,13 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/txtNumberRating1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="30dp"
+                        android:gravity="center_horizontal"
                         android:text="12"
                         android:textColor="@color/grey3"
                         android:textSize="14dp"
@@ -309,27 +330,18 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layoutRating1" />
 
-                <TextView
-                    android:id="@+id/txtWithPhoto"
+                <CheckBox
+                    android:id="@+id/checkboxWithPhoto"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="20dp"
                     android:layout_marginTop="36dp"
                     android:layout_marginEnd="30dp"
+                    android:backgroundTint="@color/black"
+                    android:buttonTint="@color/black"
                     android:text="With photo"
                     android:textColor="@color/grey3"
                     android:textSize="14dp"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/layoutRating1" />
-
-
-                <CheckBox
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="36dp"
-                    android:layout_marginEnd="13dp"
-                    android:buttonTint="@color/black"
-                    android:backgroundTint="@color/black"
-                    app:layout_constraintRight_toLeftOf="@id/txtWithPhoto"
                     app:layout_constraintTop_toBottomOf="@id/layoutRating1" />
 
                 <androidx.recyclerview.widget.RecyclerView

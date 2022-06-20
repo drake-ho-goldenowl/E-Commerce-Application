@@ -16,6 +16,8 @@
         android:theme="@style/Theme.ECommerceApp" >
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="fullSensor"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Theme.App.SplashScreen"
             android:exported="true" >
             <intent-filter>

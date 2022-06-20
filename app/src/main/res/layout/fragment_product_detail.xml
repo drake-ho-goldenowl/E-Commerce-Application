@@ -125,31 +125,39 @@
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/layoutSizeColor" />
 
-                    <RatingBar
-                        android:id="@+id/ratingBar"
-                        style="?android:attr/ratingBarStyleSmall"
-                        android:layout_width="wrap_content"
-                        android:layout_height="14dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="9dp"
-                        android:numStars="5"
-                        android:progressTint="@color/yellow"
-                        android:rating="5"
-                        android:secondaryProgressTint="@color/transparent"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/txtTitle" />
-
-                    <TextView
-                        android:id="@+id/txtNumberVote"
+                    <LinearLayout
+                        android:id="@+id/btnRatingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="2.5dp"
-                        android:gravity="center"
-                        android:text="(10)"
-                        android:textColor="@color/grey3"
-                        android:textSize="11sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
-                        app:layout_constraintLeft_toRightOf="@id/ratingBar" />
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="9dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/txtTitle">
+
+                        <RatingBar
+                            android:id="@+id/ratingBar"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="14dp"
+
+                            android:numStars="5"
+                            android:progressTint="@color/yellow"
+                            android:rating="5"
+                            android:secondaryProgressTint="@color/transparent" />
+
+                        <TextView
+                            android:id="@+id/txtNumberVote"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2.5dp"
+                            android:gravity="end"
+                            android:text="(10)"
+                            android:textColor="@color/grey3"
+                            android:textSize="11sp" />
+
+                    </LinearLayout>
+
 
                     <TextView
                         android:id="@+id/txtDescription"
@@ -160,7 +168,7 @@
                         android:text="Short dress in soft cotton jersey with decorative buttons down the front and a wide, frill-trimmed square neckline with concealed elastication. Elasticated seam under the bust and short puff sleeves with a small frill trim."
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/ratingBar" />
+                        app:layout_constraintTop_toBottomOf="@id/btnRatingBar" />
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout

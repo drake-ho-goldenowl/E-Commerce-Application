@@ -9,8 +9,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class UserManager(context: Context) {
     private val accountManager: AccountManager = AccountManager.get(context)
-    private val db = FirebaseFirestore.getInstance()
-
     fun addAccount(
         user: User
     ) {
@@ -63,6 +61,12 @@ class UserManager(context: Context) {
         }
     }
 
+    fun writeProfile(db: FirebaseFirestore, user: User) {
+        db.collection("users").document(user.token)
+            .set(user)
+    }
+
+
     fun getAccessToken(): String {
         return accountManager.getUserData(getAccount(), TOKEN) ?: ""
     }
@@ -101,11 +105,6 @@ class UserManager(context: Context) {
 
     fun setAvatar(avatar: String) {
         accountManager.setUserData(getAccount(), AVATAR, avatar)
-    }
-
-    fun writeProfile(user: User) {
-        db.collection("users").document(user.token)
-            .set(user)
     }
 
     companion object {

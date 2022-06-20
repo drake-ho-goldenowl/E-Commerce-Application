@@ -27,6 +27,16 @@ class Converters  {
     }
 
     @TypeConverter
+    fun ratingToJson(value: List<Long>?): String?{
+        return Gson().toJson(value)
+    }
+
+    @TypeConverter
+    fun jsonToRating(value: String?): List<Long>{
+        return Gson().fromJson(value,Array<Long>::class.java).toList()
+    }
+
+    @TypeConverter
     fun colorToJson(value: List<Color>): String? {
         return Gson().toJson(value)
     }

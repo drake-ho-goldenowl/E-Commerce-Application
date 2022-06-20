@@ -8,6 +8,5 @@ data class Review(
     val description: String = "",
     val star: Long = 0,
     val createdTimer: Timestamp? = Timestamp.now(),
-    val helpful: List<String> = emptyList(),
-    val listImage: List<String> = emptyList()
+    var listImage: List<String> = emptyList()
 )
