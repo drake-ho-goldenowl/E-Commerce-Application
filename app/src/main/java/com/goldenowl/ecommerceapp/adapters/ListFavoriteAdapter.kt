@@ -75,7 +75,6 @@ class ListFavoriteAdapter(
                     onCloseClicked(favoriteAndProduct)
                 }
 
-
                 setButtonBag(binding.btnBag, favoriteAndProduct.favorite)
                 btnBag.setOnClickListener {
                     onBagClicked(favoriteAndProduct)

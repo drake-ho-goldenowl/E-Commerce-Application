@@ -41,7 +41,7 @@ class ShopViewModel @Inject constructor(
 
     private val statusIdProduct = MutableStateFlow("")
     val product: LiveData<Product> = statusIdProduct.flatMapLatest {
-        productRepository.getProductFlow(it)
+        productRepository.getProduct(it)
     }.asLiveData()
 
     val favorites = favoriteRepository.getAll().asLiveData()

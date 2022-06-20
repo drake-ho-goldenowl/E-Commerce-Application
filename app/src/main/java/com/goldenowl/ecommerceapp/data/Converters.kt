@@ -27,16 +27,6 @@ class Converters  {
     }
 
     @TypeConverter
-    fun ratingToJson(value: List<Long>?): String?{
-        return Gson().toJson(value)
-    }
-
-    @TypeConverter
-    fun jsonToRating(value: String?): List<Long>{
-        return Gson().fromJson(value,Array<Long>::class.java).toList()
-    }
-
-    @TypeConverter
     fun colorToJson(value: List<Color>): String? {
         return Gson().toJson(value)
     }
@@ -54,15 +44,5 @@ class Converters  {
     @TypeConverter
     fun jsonToTags(value: String?): List<Tag>{
         return Gson().fromJson(value,Array<Tag>::class.java).toList()
-    }
-
-    @TypeConverter
-    fun sizeToJson(value: Size): String? {
-        return Gson().toJson(value)
-    }
-
-    @TypeConverter
-    fun jsonToSize(value: String?): Size{
-        return Gson().fromJson(value,Size::class.java)
     }
 }

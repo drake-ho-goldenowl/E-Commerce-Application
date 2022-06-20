@@ -14,7 +14,7 @@ class ProductRepository @Inject constructor(
 
     suspend fun delete(product: Product) = productDao.delete(product)
 
-    fun getProductFlow(id: String) = productDao.getProductFlow(id)
+    fun getProduct(id: String) = productDao.getProduct(id)
 
     fun getAll() = productDao.getAll()
 

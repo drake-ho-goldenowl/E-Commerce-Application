@@ -5,6 +5,7 @@ import android.accounts.AccountManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
 
 class UserManager(context: Context) {
@@ -62,7 +63,7 @@ class UserManager(context: Context) {
     }
 
     fun writeProfile(db: FirebaseFirestore, user: User) {
-        db.collection("users").document(user.token)
+        db.collection(USER_FIREBASE).document(user.token)
             .set(user)
     }
 

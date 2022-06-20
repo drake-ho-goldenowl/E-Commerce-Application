@@ -43,11 +43,6 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideRatingProduct(appDatabase: AppDatabase): RatingProductDao{
-        return appDatabase.ratingProductDao()
-    }
-
-    @Provides
     fun provideUserManager(@ApplicationContext context: Context): UserManager{
         return UserManager.getInstance(context)
     }

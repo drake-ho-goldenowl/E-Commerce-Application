@@ -16,8 +16,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -25,47 +23,49 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReviewRatingViewModel @Inject constructor(
-    private val ratingProductRepository: RatingProductRepository,
+    private val productRepository: ProductRepository,
     val userManager: UserManager
 ) :
     BaseViewModel() {
     val db = Firebase.firestore
     val listReview: MutableLiveData<List<Review>> = MutableLiveData()
+    val listRating: MutableLiveData<List<Int>> = MutableLiveData()
     val alertStar: MutableLiveData<Boolean> = MutableLiveData(false)
     val alertDescription: MutableLiveData<Boolean> = MutableLiveData(false)
     val dismiss: MutableLiveData<Boolean> = MutableLiveData(false)
-    val statusRatingProduct = MutableStateFlow("")
     private val idUser = if (userManager.isLogged()) {
         userManager.getAccessToken()
     } else {
         null
     }
     private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
-    private lateinit var allReview: List<Review>
+    var allReview: List<Review>? = null
+    val statusFilterImage: MutableLiveData<Boolean> = MutableLiveData(false)
+    lateinit var product: MutableLiveData<Product>
 
-    val ratingProduct: LiveData<RatingProduct> = statusRatingProduct.flatMapLatest {
-        ratingProductRepository.getRatingProduct(it)
-    }.asLiveData()
-
-    fun fetchRatingProduct(idProduct: String) {
-        db.collection(REVIEW_FIREBASE).whereEqualTo("idProduct", idProduct).get()
+    fun fetchRatingProduct(product: Product) {
+        db.collection(REVIEW_FIREBASE).whereEqualTo(ID_PRODUCT, product.id).get()
             .addOnSuccessListener { documents ->
                 viewModelScope.launch {
-                    ratingProductRepository.deleteAll()
-                    val listRating: MutableList<Long> = mutableListOf(0, 0, 0, 0, 0)
+                    val list: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0)
                     for (document in documents) {
                         val review = document.toObject<Review>()
                         if (review.star in 1..5) {
-                            listRating[review.star.toInt() - 1]++
+                            list[review.star.toInt() - 1]++
                         }
                     }
-                    ratingProductRepository.insert(RatingProduct(idProduct, listRating))
+                    product.numberReviews = product.getTotalRating(list)
+                    product.reviewStars = product.getAverageRating(list)
+                    listRating.postValue(list)
+                    productRepository.update(product)
                 }
             }
     }
 
     fun getDataLive(idProduct: String) {
         viewModelScope.launch {
+            product =
+                productRepository.getProduct(idProduct).asLiveData() as MutableLiveData<Product>
             db.collection(REVIEW_FIREBASE).whereEqualTo("idProduct", idProduct)
                 .addSnapshotListener { value, e ->
                     if (e != null) {
@@ -77,7 +77,7 @@ class ReviewRatingViewModel @Inject constructor(
                         list.add(doc.toObject())
                     }
                     allReview = list
-                    listReview.postValue(allReview)
+                    filterImage(statusFilterImage.value ?: false)
                 }
         }
     }
@@ -209,5 +209,6 @@ class ReviewRatingViewModel @Inject constructor(
     companion object {
         const val TAG = "REVIEW_RATING_VIEW_MODEL"
         const val HELPFUL = "helpful"
+        const val ID_PRODUCT = "idProduct"
     }
 }

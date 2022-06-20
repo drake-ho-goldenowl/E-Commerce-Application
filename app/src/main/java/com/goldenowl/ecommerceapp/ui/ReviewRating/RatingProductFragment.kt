@@ -15,10 +15,11 @@ import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListImageReview
 import com.goldenowl.ecommerceapp.adapters.ListReviewAdapter
-import com.goldenowl.ecommerceapp.data.RatingProduct
+import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentRatingProductBinding
 import com.goldenowl.ecommerceapp.viewmodels.ReviewRatingViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class RatingProductFragment : Fragment() {
@@ -37,7 +38,6 @@ class RatingProductFragment : Fragment() {
 
         if (idProduct.isNotBlank()) {
             viewModel.getDataLive(idProduct)
-            viewModel.statusRatingProduct.value = idProduct
         }
 
         adapterReview = ListReviewAdapter({
@@ -111,32 +111,41 @@ class RatingProductFragment : Fragment() {
     private fun setupObserve() {
         viewModel.listReview.observe(viewLifecycleOwner) {
             adapterReview.submitList(it)
-            viewModel.fetchRatingProduct(idProduct)
+            viewModel.product.value?.let { product ->
+                viewModel.fetchRatingProduct(product)
+            }
             binding.txtNumberReview.text = "${it.size} reviews"
         }
-        viewModel.ratingProduct.observe(viewLifecycleOwner) {
-            if (it != null) {
-                setupRatingStatistics(it)
+        viewModel.product.observe(viewLifecycleOwner) { product ->
+            if (product != null) {
+                viewModel.listRating.value?.let { list ->
+                    setupRatingStatistics(product, list)
+                }
+            }
+        }
+        viewModel.statusFilterImage.observe(viewLifecycleOwner){
+            if(viewModel.allReview != null ){
+                viewModel.filterImage(it)
             }
         }
     }
 
-    private fun setupRatingStatistics(ratingProduct: RatingProduct) {
+    private fun setupRatingStatistics(product: Product, ratingProduct: List<Int>) {
         binding.apply {
-            val totalRating = ratingProduct.getTotalRating()
-            txtRatingAverage.text = ratingProduct.getAverageRating().toString()
-            txtNumberRating.text = "$totalRating ratings"
-            progressBar1.progress = ((ratingProduct.rating[0] / totalRating) * 100).toInt()
-            progressBar2.progress = ((ratingProduct.rating[1] / totalRating) * 100).toInt()
-            progressBar3.progress = ((ratingProduct.rating[2] / totalRating) * 100).toInt()
-            progressBar4.progress = ((ratingProduct.rating[3] / totalRating) * 100).toInt()
-            progressBar5.progress = ((ratingProduct.rating[4] / totalRating) * 100).toInt()
+            val totalRating = product.numberReviews.toFloat()
+            txtRatingAverage.text = product.reviewStars.toString()
+            txtNumberRating.text = "${totalRating.roundToInt()} ratings"
+            progressBar1.progress = ((ratingProduct[0] / totalRating) * 100).toInt()
+            progressBar2.progress = ((ratingProduct[1] / totalRating) * 100).toInt()
+            progressBar3.progress = ((ratingProduct[2] / totalRating) * 100).toInt()
+            progressBar4.progress = ((ratingProduct[3] / totalRating) * 100).toInt()
+            progressBar5.progress = ((ratingProduct[4] / totalRating) * 100).toInt()
 
-            txtNumberRating1.text = ratingProduct.rating[0].toString()
-            txtNumberRating2.text = ratingProduct.rating[1].toString()
-            txtNumberRating3.text = ratingProduct.rating[2].toString()
-            txtNumberRating4.text = ratingProduct.rating[3].toString()
-            txtNumberRating5.text = ratingProduct.rating[4].toString()
+            txtNumberRating1.text = ratingProduct[0].toString()
+            txtNumberRating2.text = ratingProduct[1].toString()
+            txtNumberRating3.text = ratingProduct[2].toString()
+            txtNumberRating4.text = ratingProduct[3].toString()
+            txtNumberRating5.text = ratingProduct[4].toString()
         }
     }
 
@@ -155,7 +164,7 @@ class RatingProductFragment : Fragment() {
             }
 
             checkboxWithPhoto.setOnClickListener {
-                viewModel.filterImage(checkboxWithPhoto.isChecked)
+                viewModel.statusFilterImage.postValue(checkboxWithPhoto.isChecked)
             }
 
             if (!viewModel.userManager.isLogged()) {

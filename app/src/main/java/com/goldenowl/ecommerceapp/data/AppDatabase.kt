@@ -7,15 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 
-@Database(entities = [Product::class, Favorite::class, Bag::class,Promotion::class, RatingProduct::class], version = 3, exportSchema = false)
+@Database(entities = [Product::class, Favorite::class, Bag::class,Promotion::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun productDao(): ProductDao
     abstract fun favoriteDao(): FavoriteDao
     abstract fun bagDao(): BagDao
     abstract fun promotionDao(): PromotionDao
-    abstract fun ratingProductDao(): RatingProductDao
-
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
