@@ -133,7 +133,6 @@ class FavoriteViewModel @Inject constructor(
             }
         }
     }
-
     companion object {
         const val LAST_EDIT = "lastEdit"
         const val DATA = "data"

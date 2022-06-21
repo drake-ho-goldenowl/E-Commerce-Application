@@ -6,6 +6,8 @@ import com.goldenowl.ecommerceapp.utilities.Hash
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -13,6 +15,7 @@ import javax.inject.Inject
 class ChangePasswordViewModel @Inject constructor(private val userManager: UserManager) :
     BaseViewModel() {
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val db = Firebase.firestore
     val validOldPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validNewPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validRepeatPasswordLiveData: MutableLiveData<String> = MutableLiveData()
@@ -45,7 +48,7 @@ class ChangePasswordViewModel @Inject constructor(private val userManager: UserM
                 user.updatePassword(newPasswordText).addOnCompleteListener {
                     if (it.isSuccessful) {
                         userManager.setPassword(newPasswordText)
-                        userManager.writeProfile(account)
+                        userManager.writeProfile(db, account)
                         toastMessage.postValue("User password updated")
                         validChangePasswordLiveData.postValue(true)
                     }

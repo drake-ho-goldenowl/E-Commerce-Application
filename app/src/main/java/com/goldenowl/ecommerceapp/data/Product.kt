@@ -7,6 +7,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
+import kotlin.math.roundToInt
 
 @Entity
 data class Product(
@@ -25,9 +26,9 @@ data class Product(
     @field:JvmField @ColumnInfo(name = "is_popular")
     val isPopular: Boolean = false,
     @NonNull @ColumnInfo(name = "number_reviews")
-    val numberReviews: Int = 0,
+    var numberReviews: Int = 0,
     @NonNull @ColumnInfo(name = "review_stars")
-    val reviewStars: Int = 0,
+    var reviewStars: Float = 0F,
     @NonNull @ColumnInfo(name = "category_name")
     val categoryName: String = "",
     @NonNull @ColumnInfo(name = "colors")
@@ -68,5 +69,24 @@ data class Product(
             }
         }
         return null
+    }
+    fun getAverageRating(rates: List<Int>): Float {
+        var result = 0F
+        var totalHaveRating = 0
+        for ((index, value) in rates.withIndex()) {
+            if(value > 0) totalHaveRating += value
+            result += value * (index + 1)
+        }
+        if(totalHaveRating == 0) totalHaveRating = 1
+        result /= totalHaveRating
+        return ((result * 10).roundToInt() / 10).toFloat()
+    }
+
+    fun getTotalRating(rates: List<Int>): Int {
+        var result = 0
+        for (rate in rates) {
+            result += rate
+        }
+        return result
     }
 }

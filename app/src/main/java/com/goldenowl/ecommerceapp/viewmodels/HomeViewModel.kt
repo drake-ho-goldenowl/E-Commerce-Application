@@ -60,11 +60,29 @@ class HomeViewModel @Inject constructor(
                 for (doc in value) {
                     viewModelScope.launch {
                         val product = doc.toObject<Product>()
-                        productRepository.insert(product)
+                        fetchRatingProduct(product)
                     }
                 }
             }
         }
+    }
+
+    private fun fetchRatingProduct(product: Product) {
+        db.collection(REVIEW_FIREBASE).whereEqualTo(ID_PRODUCT, product.id).get()
+            .addOnSuccessListener { documents ->
+                viewModelScope.launch {
+                    val listRating: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0)
+                    for (document in documents) {
+                        val review = document.toObject<Review>()
+                        if (review.star in 1..5) {
+                            listRating[review.star.toInt() - 1]++
+                        }
+                    }
+                    product.numberReviews = product.getTotalRating(listRating)
+                    product.reviewStars = product.getAverageRating(listRating)
+                    productRepository.insert(product)
+                }
+            }
     }
 
     private fun fetchFavorites() {
@@ -156,5 +174,8 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+    companion object{
+        const val ID_PRODUCT = "idProduct"
     }
 }

@@ -70,7 +70,7 @@ class BagFragment : Fragment() {
 
     fun bind() {
         binding.apply {
-            appBarLayout.topAppBar.title = R.string.bag.toString()
+            appBarLayout.topAppBar.title =  getString(R.string.bag)
 
             recyclerViewBag.layoutManager = LinearLayoutManager(context)
             recyclerViewBag.adapter = adapterBag

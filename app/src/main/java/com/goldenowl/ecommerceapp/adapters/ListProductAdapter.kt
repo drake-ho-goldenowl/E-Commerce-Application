@@ -53,7 +53,6 @@ class ListProductAdapter(
                     txtSalePercent.visibility = View.GONE
                     txtSalePrice.visibility = View.GONE
                 }
-
                 setFavoriteButton(btnFavorite, product)
                 btnFavorite.setOnClickListener {
                     onFavoriteClick(product)

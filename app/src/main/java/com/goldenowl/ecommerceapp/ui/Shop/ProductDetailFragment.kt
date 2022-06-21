@@ -98,7 +98,7 @@ class ProductDetailFragment : Fragment() {
         }
 
         viewModel.favorites.observe(viewLifecycleOwner) {
-            viewModel.setButtonFavorite(requireContext(), binding.btnFavorite, product.id)
+            viewModel.setButtonFavorite(requireContext(), binding.btnFavorite, idProduct)
         }
     }
 
@@ -238,6 +238,14 @@ class ProductDetailFragment : Fragment() {
                         viewModel.toastMessage.postValue("Please select color")
                     }
                 }
+            }
+
+            btnRatingBar.setOnClickListener {
+                val action =
+                    ProductDetailFragmentDirections.actionProductDetailFragmentToRatingProductFragment(
+                        idProduct = idProduct
+                    )
+                findNavController().navigate(action)
             }
         }
     }
