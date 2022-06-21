@@ -15,17 +15,19 @@ import java.text.SimpleDateFormat
 class ListReviewAdapter(
     private val onItemClicked: (Review) -> Unit,
     private val setNameAndAvatar: (TextView, CircleImageView, String) -> Unit,
-    private val onHelpfulClicked: (Review,TextView,ImageView) -> Unit,
-    private val setHelpfulButton: (Review,TextView, ImageView) -> Unit,
-    private val setRecyclerVIew: (RecyclerView, Review) -> Unit,
-    ) :
+    private val onHelpfulClicked: (Review, TextView, ImageView, Boolean) -> Unit,
+    private val setHelpfulButton: (Review, TextView, ImageView) -> Unit,
+    private val setRecyclerView: (RecyclerView, Review) -> Unit,
+) :
     ListAdapter<Review, ListReviewAdapter.ItemViewHolder>(DiffCallback) {
-    var isHelpful = false
+    private var isHelpful = false
+
     class ItemViewHolder(
         private val setNameAndAvatar: (TextView, CircleImageView, String) -> Unit,
-        private val onHelpfulClicked: (Review,TextView,ImageView) -> Unit,
-        private val setHelpfulButton: (Review,TextView, ImageView) -> Unit,
+        private val onHelpfulClicked: (Review, TextView, ImageView, Boolean) -> Unit,
+        private val setHelpfulButton: (Review, TextView, ImageView) -> Unit,
         private val setRecyclerVIew: (RecyclerView, Review) -> Unit,
+        private var isHelpful: Boolean,
         private var binding: ItemReviewBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
@@ -43,13 +45,17 @@ class ListReviewAdapter(
                     txtCreated.text = simpleDate.format(it).toString()
                 }
 
-                setHelpfulButton(review,txtHelpful, icLike)
-                setRecyclerVIew(recyclerViewImageReview,review)
+                setHelpfulButton(review, txtHelpful, icLike)
+                setRecyclerVIew(recyclerViewImageReview, review)
                 btnHelpful.setOnClickListener {
-                    onHelpfulClicked(review,txtHelpful,icLike)
+                    onHelpfulClicked(review, txtHelpful, icLike, isHelpful)
                 }
             }
         }
+    }
+
+    fun setIsHelpful(isHelpful: Boolean) {
+        this.isHelpful = isHelpful
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
@@ -57,7 +63,8 @@ class ListReviewAdapter(
             setNameAndAvatar,
             onHelpfulClicked,
             setHelpfulButton,
-            setRecyclerVIew,
+            setRecyclerView,
+            isHelpful,
             ItemReviewBinding.inflate(
                 LayoutInflater.from(
                     parent.context

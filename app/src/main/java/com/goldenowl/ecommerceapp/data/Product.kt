@@ -72,11 +72,14 @@ data class Product(
     }
     fun getAverageRating(rates: List<Int>): Float {
         var result = 0F
+        var totalHaveRating = 0
         for ((index, value) in rates.withIndex()) {
+            if(value > 0) totalHaveRating += value
             result += value * (index + 1)
         }
-        result /= 5
-        return ((result * 10.0).roundToInt() / 10).toFloat()
+        if(totalHaveRating == 0) totalHaveRating = 1
+        result /= totalHaveRating
+        return ((result * 10).roundToInt() / 10).toFloat()
     }
 
     fun getTotalRating(rates: List<Int>): Int {

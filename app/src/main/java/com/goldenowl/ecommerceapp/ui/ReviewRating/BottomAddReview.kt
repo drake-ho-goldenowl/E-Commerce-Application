@@ -177,9 +177,9 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
                 FileUtil.from(requireContext(), it).let { file ->
                     lifecycleScope.launch {
                         Compressor.compress(requireContext(), file) {
-                            quality(80)
+                            quality(QUALITY)
                             format(Bitmap.CompressFormat.JPEG)
-                            size(1_000_000) // 1 MB
+                            size(MAXSIZE.toLong()) // 1 MB
                         }.let { newFile ->
                             listImage.add(newFile.toString())
                             adapter.dataSet = listImage.toList()
@@ -197,5 +197,7 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
         const val PICK_IMAGE_REQUEST = 100
         const val SUCCESS = "Upload success"
         const val FAILURE = "Upload failure"
+        const val QUALITY = 80
+        const val MAXSIZE = 1_000_000
     }
 }

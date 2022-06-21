@@ -51,19 +51,19 @@ class RatingProductFragment : Fragment() {
                     .error(R.drawable.img_sample_2)
                     .into(imgAvatar)
             }
-        }, { review, txtHelpful, icLike ->
-            if (adapterReview.isHelpful) {
+        }, { review, txtHelpful, icLike, isHelpful ->
+            if (isHelpful) {
                 viewModel.removeHelpful(review)
-                adapterReview.isHelpful = false
+
             } else {
                 viewModel.addHelpful(review)
-                adapterReview.isHelpful = true
+                adapterReview.setIsHelpful(true)
             }
-            setColorHelpful(adapterReview.isHelpful, txtHelpful, icLike)
+            setColorHelpful(isHelpful, txtHelpful, icLike)
         }, { review, txtHelpful, icLike ->
             viewModel.checkHelpfulForUser(review)
                 .observe(viewLifecycleOwner) {
-                    adapterReview.isHelpful = it
+                    adapterReview.setIsHelpful(it)
                     setColorHelpful(it, txtHelpful, icLike)
                 }
         }, { recyclerView, review ->
@@ -123,8 +123,8 @@ class RatingProductFragment : Fragment() {
                 }
             }
         }
-        viewModel.statusFilterImage.observe(viewLifecycleOwner){
-            if(viewModel.allReview != null ){
+        viewModel.statusFilterImage.observe(viewLifecycleOwner) {
+            if (viewModel.allReview != null) {
                 viewModel.filterImage(it)
             }
         }
