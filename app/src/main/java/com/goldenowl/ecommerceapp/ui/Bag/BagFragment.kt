@@ -2,6 +2,7 @@ package com.goldenowl.ecommerceapp.ui.Bag
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -65,6 +66,10 @@ class BagFragment : Fragment() {
         viewModel.allBags.observe(viewLifecycleOwner) {
             binding.txtPriceTotal.text = "${viewModel.calculatorTotal(it, salePercent)}\$"
             bags = it
+        }
+
+        viewModel.toastMessage.observe(viewLifecycleOwner){
+            Toast.makeText(context,it,Toast.LENGTH_LONG).show()
         }
     }
 
