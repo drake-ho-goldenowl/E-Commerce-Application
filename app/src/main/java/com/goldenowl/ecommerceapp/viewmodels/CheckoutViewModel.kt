@@ -36,15 +36,16 @@ class CheckoutViewModel @Inject constructor(
     private fun getPayment(idPayment: String): LiveData<Card> {
         val result = MutableLiveData<Card>()
         if (idPayment.isNullOrBlank()) {
-            return result
-        }
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
-            PAYMENT_USER
-        ).document(idPayment).get().addOnSuccessListener { documentSnapShpt ->
-            val card = documentSnapShpt.toObject<Card>()
-            card?.let {
-                it.number = rsa.decrypt(it.number)
-                result.postValue(it)
+            result.postValue(null)
+        } else {
+            db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
+                PAYMENT_USER
+            ).document(idPayment).get().addOnSuccessListener { documentSnapShpt ->
+                val card = documentSnapShpt.toObject<Card>()
+                card?.let {
+                    it.number = rsa.decrypt(it.number)
+                    result.postValue(it)
+                }
             }
         }
         return result

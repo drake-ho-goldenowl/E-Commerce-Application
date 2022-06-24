@@ -33,6 +33,10 @@ class PaymentMethodFragment : Fragment() {
                 viewModel.setDefaultPayment(card.id)
                 adapter.notifyDataSetChanged()
             }
+            else{
+                viewModel.removeDefaultPayment()
+                adapter.notifyDataSetChanged()
+            }
         },{ checkBox, card ->
             checkBox.isChecked = viewModel.checkDefaultCard(card.id)
         })

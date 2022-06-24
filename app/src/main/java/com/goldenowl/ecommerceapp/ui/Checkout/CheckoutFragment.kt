@@ -106,8 +106,8 @@ class CheckoutFragment : Fragment() {
                         txtNumberCard.text =
                             "* * * *  * * * *  * * * *  ${it.number.substring(it.number.length - 4)}"
                     }
+                    card = it
                 }
-                card = it
             }
 
             toastMessage.observe(viewLifecycleOwner) {
@@ -155,6 +155,10 @@ class CheckoutFragment : Fragment() {
             }
 
             txtChangePayment.setOnClickListener {
+                findNavController().navigate(R.id.paymentMethodFragment)
+            }
+
+            btnAddPayment.setOnClickListener {
                 findNavController().navigate(R.id.paymentMethodFragment)
             }
 

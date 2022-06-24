@@ -46,6 +46,11 @@ class ShippingAddressViewModel @Inject constructor(
         userManager.writeProfile(db, userManager.getUser())
     }
 
+    fun removeDefaultAddress() {
+        userManager.setAddress("")
+        userManager.writeProfile(db, userManager.getUser())
+    }
+
     private fun createShippingAddress(
         fullName: String,
         address: String,

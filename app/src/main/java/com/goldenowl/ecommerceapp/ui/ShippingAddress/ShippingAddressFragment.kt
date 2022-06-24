@@ -35,6 +35,10 @@ class ShippingAddressFragment : Fragment() {
                 viewModel.setDefaultAddress(shippingAddress.id.toString())
                 listAddressAdapter.notifyDataSetChanged()
             }
+            else{
+                viewModel.removeDefaultAddress()
+                listAddressAdapter.notifyDataSetChanged()
+            }
         })
         viewModel.listAll.observe(viewLifecycleOwner) {
             listAddressAdapter.submitList(it)

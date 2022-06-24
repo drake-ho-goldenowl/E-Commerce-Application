@@ -104,6 +104,11 @@ class PaymentViewModel @Inject constructor(
         userManager.writeProfile(db, userManager.getUser())
     }
 
+    fun removeDefaultPayment(){
+        userManager.setPayment("")
+        userManager.writeProfile(db, userManager.getUser())
+    }
+
     private fun checkName(name: String): Boolean {
         if (name.length <= 2) {
             alertName.postValue(true)
