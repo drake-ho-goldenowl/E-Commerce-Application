@@ -21,7 +21,7 @@ class BagFragment : Fragment() {
     private val viewModel: BagViewModel by viewModels()
 
     private lateinit var adapterBag: ListBagAdapter
-    private lateinit var promotions: List<BagAndProduct>
+    private lateinit var bags: List<BagAndProduct>
     private var salePercent: Long = 0
     private var idPromotion: String = ""
     private var isButtonRemove = false
@@ -64,13 +64,13 @@ class BagFragment : Fragment() {
 
         viewModel.allBags.observe(viewLifecycleOwner) {
             binding.txtPriceTotal.text = "${viewModel.calculatorTotal(it, salePercent)}\$"
-            promotions = it
+            bags = it
         }
     }
 
     fun bind() {
         binding.apply {
-            appBarLayout.topAppBar.title =  getString(R.string.bag)
+            appBarLayout.topAppBar.title = getString(R.string.bag)
 
             recyclerViewBag.layoutManager = LinearLayoutManager(context)
             recyclerViewBag.adapter = adapterBag
@@ -112,8 +112,19 @@ class BagFragment : Fragment() {
                     salePercent = 0
                     idPromotion = ""
                     binding.txtPriceTotal.text =
-                        "${viewModel.calculatorTotal(promotions, salePercent)}\$"
+                        "${viewModel.calculatorTotal(bags, salePercent)}\$"
                     btnRemove.setBackgroundResource(R.drawable.btn_arrow_forward)
+                }
+            }
+
+            btnCheckOut.setOnClickListener {
+                if (bags.isEmpty()) {
+                    viewModel.toastMessage.postValue(ALERT_CHECKOUT)
+                } else {
+                    val action = BagFragmentDirections.actionBagFragmentToCheckoutFragment(
+                        idPromotion = idPromotion
+                    )
+                    findNavController().navigate(action)
                 }
             }
         }
@@ -142,7 +153,7 @@ class BagFragment : Fragment() {
             salePercent = sale
             idPromotion = id ?: ""
             binding.editPromoCode.setText(idPromotion)
-            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(promotions, salePercent)}\$"
+            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(bags, salePercent)}\$"
             binding.btnRemove.setBackgroundResource(R.drawable.ic_close)
             isButtonRemove = true
         }
@@ -152,5 +163,6 @@ class BagFragment : Fragment() {
         const val REQUEST_KEY = "request"
         const val BUNDLE_KEY_NAME = "bundle_name_promotion"
         const val BUNDLE_KEY_SALE = "bundle_sale"
+        const val ALERT_CHECKOUT = "Please choose one product"
     }
 }

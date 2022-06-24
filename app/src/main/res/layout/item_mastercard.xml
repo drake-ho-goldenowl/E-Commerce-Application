@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="29dp"
+    android:layout_marginEnd="15dp"
+    android:layout_marginBottom="10dp"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="216dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutPayment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black2">
+
+            <ImageView
+                android:id="@+id/imgChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="34dp"
+                android:src="@drawable/ic_chip"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txtNumberCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="30dp"
+                android:text="* * * *  * * * *  * * * *  3947"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imgChip" />
+
+
+            <TextView
+                android:id="@+id/txtHolder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="Card Holder Name"
+                android:textColor="@color/grey2"
+                android:textSize="10dp"
+                app:layout_constraintBottom_toTopOf="@id/txtHolderName"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <TextView
+                android:id="@+id/txtHolderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginBottom="23dp"
+                android:text="Jennyfer Doe"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:text="Expiry Date"
+                android:textColor="@color/grey2"
+                android:textSize="10dp"
+                app:layout_constraintBottom_toTopOf="@id/txtExpiryDate"
+                app:layout_constraintLeft_toRightOf="@id/txtHolder" />
+
+            <TextView
+                android:id="@+id/txtExpiryDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="70dp"
+                android:layout_marginBottom="23dp"
+                android:text="05/23"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/txtHolder" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="25dp"
+                android:layout_marginBottom="32dp"
+                android:src="@drawable/ic_mastercard2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <CheckBox
+        android:id="@+id/checkboxDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginTop="25dp"
+        android:backgroundTint="@color/black"
+        android:buttonTint="@color/black"
+        android:text="Use as default payment method"
+        android:textColor="@color/black2"
+        android:textSize="14dp" />
+
+</LinearLayout>

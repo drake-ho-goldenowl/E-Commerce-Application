@@ -38,6 +38,9 @@
         <action
             android:id="@+id/action_bagFragment_to_productDetailFragment"
             app:destination="@id/productDetailFragment" />
+        <action
+            android:id="@+id/action_bagFragment_to_checkoutFragment"
+            app:destination="@id/checkoutFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
@@ -121,4 +124,39 @@
             android:name="idProduct"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/checkoutFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Checkout.CheckoutFragment"
+        android:label="fragment_checkout"
+        tools:layout="@layout/fragment_checkout" >
+        <argument
+            android:name="idPromotion"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/addShippingAddressFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.ShippingAddress.AddShippingAddressFragment"
+        android:label="fragment_add_shipping_address"
+        tools:layout="@layout/fragment_add_shipping_address" >
+        <argument
+            android:name="idAdress"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/shippingAddressFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.ShippingAddress.ShippingAddressFragment"
+        android:label="fragment_shipping_address"
+        tools:layout="@layout/fragment_shipping_address" />
+    <fragment
+        android:id="@+id/paymentMethodFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.PaymentMethod.PaymentMethodFragment"
+        android:label="fragment_payment_method"
+        tools:layout="@layout/fragment_payment_method" />
+    <fragment
+        android:id="@+id/successFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Checkout.SuccessFragment"
+        android:label="fragment_success"
+        tools:layout="@layout/fragment_success" />
 </navigation>

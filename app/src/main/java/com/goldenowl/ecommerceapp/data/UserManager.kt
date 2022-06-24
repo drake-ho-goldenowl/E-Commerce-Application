@@ -21,6 +21,8 @@ class UserManager(context: Context) {
                 this.putString(DOB, user.dob)
                 this.putString(TOKEN, user.token)
                 this.putString(AVATAR, user.avatar)
+                this.putString(ADDRESS, user.defaultAddress)
+                this.putString(PAYMENT, user.defaultPayment)
             }
         val account = Account(user.email, ACCOUNT_TYPE)
         accountManager.addAccountExplicitly(account, user.token, data)
@@ -43,6 +45,8 @@ class UserManager(context: Context) {
             getAccessToken(),
             getDOB(),
             getAvatar(),
+            getAddress(),
+            getPayment()
         )
     }
 
@@ -108,6 +112,23 @@ class UserManager(context: Context) {
         accountManager.setUserData(getAccount(), AVATAR, avatar)
     }
 
+
+    fun getAddress(): String {
+        return accountManager.getUserData(getAccount(), ADDRESS) ?: ""
+    }
+
+    fun setAddress(idAddress: String) {
+        accountManager.setUserData(getAccount(), ADDRESS, idAddress)
+    }
+
+    fun getPayment(): String {
+        return accountManager.getUserData(getAccount(), PAYMENT) ?: ""
+    }
+
+    fun setPayment(idPayment: String) {
+        accountManager.setUserData(getAccount(), PAYMENT, idPayment)
+    }
+
     companion object {
         const val AUTH_TOKEN_TYPE = "com.goldenowl.ecommerceapp"
         const val ACCOUNT_TYPE = "com.goldenowl.ecommerceapp"
@@ -118,6 +139,8 @@ class UserManager(context: Context) {
         const val DOB = "Date_of_birth"
         const val AVATAR = "avatar"
         const val TAG = "USER_MANAGER"
+        const val ADDRESS = "address"
+        const val PAYMENT = "payment"
 
         @Volatile
         private var instance: UserManager? = null
