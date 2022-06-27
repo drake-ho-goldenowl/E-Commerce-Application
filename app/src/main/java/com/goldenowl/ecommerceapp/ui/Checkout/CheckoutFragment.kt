@@ -90,7 +90,7 @@ class CheckoutFragment : Fragment() {
 
             payment.observe(viewLifecycleOwner) {
                 binding.apply {
-                    if (it == null) {
+                    if (it == null || it.id.isBlank()) {
                         itemPayment.visibility = View.INVISIBLE
                         btnAddPayment.visibility = View.VISIBLE
                     } else if (it.number[0] == '4') {

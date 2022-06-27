@@ -35,9 +35,7 @@ class CheckoutViewModel @Inject constructor(
 
     private fun getPayment(idPayment: String): LiveData<Card> {
         val result = MutableLiveData<Card>()
-        if (idPayment.isNullOrBlank()) {
-            result.postValue(null)
-        } else {
+        if (!idPayment.isNullOrBlank()) {
             db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
                 PAYMENT_USER
             ).document(idPayment).get().addOnSuccessListener { documentSnapShpt ->
@@ -47,6 +45,9 @@ class CheckoutViewModel @Inject constructor(
                     result.postValue(it)
                 }
             }
+        }
+        else{
+            result.postValue(Card())
         }
         return result
     }
