@@ -39,14 +39,24 @@ class PaymentViewModel @Inject constructor(
             .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
     }
 
+    private fun deletePaymentOnFirebase(card: Card) {
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(PAYMENT_USER)
+            .document(card.id).delete()
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(PAYMENT_USER)
+            .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
+    }
+
     fun fetchData() {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
-            PAYMENT_USER
-        ).get()
-            .addOnSuccessListener { result ->
-                viewModelScope.launch {
+        viewModelScope.launch {
+            db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
+                PAYMENT_USER
+            ).addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
                     val list: MutableList<Card> = mutableListOf()
-                    for (document in result) {
+                    for (document in snapshot) {
                         if (document.id != LAST_EDIT) {
                             val card = document.toObject<Card>()
                             card.name = rsa.decrypt(card.name)
@@ -59,6 +69,7 @@ class PaymentViewModel @Inject constructor(
                     listCard.postValue(list)
                 }
             }
+        }
     }
 
     private fun createCard(
@@ -104,7 +115,7 @@ class PaymentViewModel @Inject constructor(
         userManager.writeProfile(db, userManager.getUser())
     }
 
-    fun removeDefaultPayment(){
+    fun removeDefaultPayment() {
         userManager.setPayment("")
         userManager.writeProfile(db, userManager.getUser())
     }
@@ -158,6 +169,15 @@ class PaymentViewModel @Inject constructor(
 
     fun checkDefaultCard(idCard: String): Boolean {
         return userManager.getPayment() == idCard
+    }
+
+    fun deleteCard(card: Card) {
+        viewModelScope.launch {
+            if (checkDefaultCard(card.id)) {
+                removeDefaultPayment()
+            }
+            deletePaymentOnFirebase(card)
+        }
     }
 
     companion object {

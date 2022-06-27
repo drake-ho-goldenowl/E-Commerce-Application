@@ -1,15 +1,18 @@
 package com.goldenowl.ecommerceapp.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ShippingAddressDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(shippingAddress: ShippingAddress)
+
+    @Update
+    suspend fun update(shippingAddress: ShippingAddress)
+
+    @Delete
+    suspend fun delete(shippingAddress: ShippingAddress)
 
     @Query("DELETE FROM ShippingAddress")
     suspend fun deleteAll()

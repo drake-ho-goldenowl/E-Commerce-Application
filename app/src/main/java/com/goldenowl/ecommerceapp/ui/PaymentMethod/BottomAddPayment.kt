@@ -83,7 +83,6 @@ class BottomAddPayment : BottomSheetDialogFragment() {
 
             dismiss.observe(viewLifecycleOwner) {
                 if (it) {
-                    fetchData()
                     dismiss()
                 }
             }

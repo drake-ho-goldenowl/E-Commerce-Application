@@ -10,6 +10,12 @@ class ShippingAddressRepository @Inject constructor(
     suspend fun insert(shippingAddress: ShippingAddress) =
         shippingAddressDao.insert(shippingAddress)
 
+    suspend fun update(shippingAddress: ShippingAddress) =
+        shippingAddressDao.update(shippingAddress)
+
+    suspend fun delete(shippingAddress: ShippingAddress) =
+        shippingAddressDao.delete(shippingAddress)
+
     suspend fun deleteAll() = shippingAddressDao.deleteAll()
 
     fun getAll() = shippingAddressDao.getAll()

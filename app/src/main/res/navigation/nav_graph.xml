@@ -140,7 +140,7 @@
         android:label="fragment_add_shipping_address"
         tools:layout="@layout/fragment_add_shipping_address" >
         <argument
-            android:name="idAdress"
+            android:name="idAddress"
             app:argType="string"
             app:nullable="true" />
     </fragment>
@@ -148,7 +148,11 @@
         android:id="@+id/shippingAddressFragment"
         android:name="com.goldenowl.ecommerceapp.ui.ShippingAddress.ShippingAddressFragment"
         android:label="fragment_shipping_address"
-        tools:layout="@layout/fragment_shipping_address" />
+        tools:layout="@layout/fragment_shipping_address" >
+        <action
+            android:id="@+id/action_shippingAddressFragment_to_addShippingAddressFragment"
+            app:destination="@id/addShippingAddressFragment" />
+    </fragment>
     <fragment
         android:id="@+id/paymentMethodFragment"
         android:name="com.goldenowl.ecommerceapp.ui.PaymentMethod.PaymentMethodFragment"

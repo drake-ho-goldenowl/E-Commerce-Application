@@ -10,15 +10,18 @@ import com.goldenowl.ecommerceapp.data.ShippingAddress
 import com.goldenowl.ecommerceapp.databinding.ItemAddressBinding
 
 class ListAddressAdapter(
-    private val onItemClicked: (ShippingAddress) -> Unit,
     private val setDefault: (CheckBox, ShippingAddress) -> Unit,
-    private val onDefaultClicked: (CheckBox, ShippingAddress) -> Unit
+    private val onDefaultClicked: (CheckBox, ShippingAddress) -> Unit,
+    private val onEditClicked: (ShippingAddress) -> Unit,
+    private val onRemoveClicked: (ShippingAddress) -> Unit
 ) :
     ListAdapter<ShippingAddress, ListAddressAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(
         private val setDefault: (CheckBox, ShippingAddress) -> Unit,
         private val onDefaultClicked: (CheckBox, ShippingAddress) -> Unit,
+        private val onEditClicked: (ShippingAddress) -> Unit,
+        private val onRemoveClicked: (ShippingAddress) -> Unit,
         private var binding: ItemAddressBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
@@ -31,6 +34,12 @@ class ListAddressAdapter(
                     checkboxDefault.setOnClickListener {
                         onDefaultClicked(checkboxDefault, shippingAddress)
                     }
+                    txtEdit.setOnClickListener {
+                        onEditClicked(shippingAddress)
+                    }
+                    btnRemoveAddress.setOnClickListener {
+                        onRemoveClicked(shippingAddress)
+                    }
                 }
             }
         }
@@ -40,6 +49,8 @@ class ListAddressAdapter(
         return ItemViewHolder(
             setDefault,
             onDefaultClicked,
+            onEditClicked,
+            onRemoveClicked,
             ItemAddressBinding.inflate(
                 LayoutInflater.from(
                     parent.context
@@ -52,9 +63,6 @@ class ListAddressAdapter(
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val current = getItem(position)
-        holder.itemView.setOnClickListener {
-            onItemClicked(current)
-        }
         holder.bind(current)
     }
 

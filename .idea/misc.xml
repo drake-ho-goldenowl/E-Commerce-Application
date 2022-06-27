@@ -52,6 +52,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_swap_vert.xml" value="0.1695" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_chip.xml" value="0.1325" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_close.xml" value="0.173" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_close2.xml" value="0.1655" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_dhl.xml" value="0.1485" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_dot_custome.xml" value="0.1515" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_dot_default.xml" value="0.1515" />
@@ -173,7 +174,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_tutorial.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_view_page_tutorial.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_warning.xml" value="0.26927083333333335" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_address.xml" value="0.2324074074074074" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_address.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_bag.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_button_add_image.xml" value="0.2682291666666667" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_categories.xml" value="0.4868421052631579" />

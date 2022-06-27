@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCardAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentPaymentMethodBinding
+import com.goldenowl.ecommerceapp.ui.ConfirmDialog
 import com.goldenowl.ecommerceapp.viewmodels.PaymentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,30 +19,30 @@ import dagger.hilt.android.AndroidEntryPoint
 class PaymentMethodFragment : Fragment() {
     private lateinit var binding: FragmentPaymentMethodBinding
     private lateinit var adapter: ListCardAdapter
-    private val viewModel : PaymentViewModel by viewModels()
+    private val viewModel: PaymentViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPaymentMethodBinding.inflate(inflater,container,false)
+        binding = FragmentPaymentMethodBinding.inflate(inflater, container, false)
         viewModel.fetchData()
-
-        adapter = ListCardAdapter({
-
-        },{ checkBox, card ->
-            if(checkBox.isChecked){
+        adapter = ListCardAdapter({ checkBox, card ->
+            if (checkBox.isChecked) {
                 viewModel.setDefaultPayment(card.id)
                 adapter.notifyDataSetChanged()
-            }
-            else{
+            } else {
                 viewModel.removeDefaultPayment()
                 adapter.notifyDataSetChanged()
             }
-        },{ checkBox, card ->
+        }, { checkBox, card ->
             checkBox.isChecked = viewModel.checkDefaultCard(card.id)
+        }, {
+            ConfirmDialog(this) {
+                viewModel.deleteCard(it)
+            }.show()
         })
 
-        viewModel.listCard.observe(viewLifecycleOwner){
+        viewModel.listCard.observe(viewLifecycleOwner) {
             adapter.dataSet = it
             adapter.notifyDataSetChanged()
         }

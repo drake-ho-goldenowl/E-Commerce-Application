@@ -11,9 +11,9 @@ import com.goldenowl.ecommerceapp.databinding.ItemMastercardBinding
 import com.goldenowl.ecommerceapp.databinding.ItemVisacardBinding
 
 class ListCardAdapter(
-    private val onItemClicked: (Card) -> Unit,
     private val onDefaultClicked: (CheckBox, Card) -> Unit,
-    private val setDefaultButton: (CheckBox, Card) -> Unit
+    private val setDefaultButton: (CheckBox, Card) -> Unit,
+    private val onRemoveClicked: (Card) -> Unit,
 ) :
     RecyclerView.Adapter<ListCardAdapter.ListCardViewHolder>() {
     var dataSet: List<Card> = listOf()
@@ -23,6 +23,7 @@ class ListCardAdapter(
             R.layout.item_visacard -> ListCardViewHolder.VisaItemViewHolder(
                 onDefaultClicked,
                 setDefaultButton,
+                onRemoveClicked,
                 ItemVisacardBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -34,6 +35,7 @@ class ListCardAdapter(
             R.layout.item_mastercard -> ListCardViewHolder.MasterCardItemViewHolder(
                 onDefaultClicked,
                 setDefaultButton,
+                onRemoveClicked,
                 ItemMastercardBinding.inflate(
                     LayoutInflater.from(
                         parent.context
@@ -76,6 +78,7 @@ class ListCardAdapter(
         class VisaItemViewHolder(
             private val onDefaultClicked: (CheckBox, Card) -> Unit,
             private val setDefaultButton: (CheckBox, Card) -> Unit,
+            private val onRemoveClicked: (Card) -> Unit,
             private var binding: ItemVisacardBinding
         ) :
             ListCardViewHolder(binding) {
@@ -89,6 +92,9 @@ class ListCardAdapter(
                     checkboxDefault.setOnClickListener {
                         onDefaultClicked(checkboxDefault, card)
                     }
+                    btnRemoveCard.setOnClickListener {
+                        onRemoveClicked(card)
+                    }
                 }
             }
         }
@@ -96,6 +102,7 @@ class ListCardAdapter(
         class MasterCardItemViewHolder(
             private val onDefaultClicked: (CheckBox, Card) -> Unit,
             private val setDefaultButton: (CheckBox, Card) -> Unit,
+            private val onRemoveClicked: (Card) -> Unit,
             private var binding: ItemMastercardBinding
         ) :
             ListCardViewHolder(binding) {
@@ -108,6 +115,9 @@ class ListCardAdapter(
                     setDefaultButton(checkboxDefault, card)
                     checkboxDefault.setOnClickListener {
                         onDefaultClicked(checkboxDefault, card)
+                    }
+                    btnRemoveCard.setOnClickListener {
+                        onRemoveClicked(card)
                     }
                 }
             }

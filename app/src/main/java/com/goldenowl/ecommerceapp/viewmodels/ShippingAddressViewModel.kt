@@ -13,6 +13,8 @@ import com.goldenowl.ecommerceapp.utilities.VALUE_LAST_EDIT
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -31,11 +33,25 @@ class ShippingAddressViewModel @Inject constructor(
     val alertZipCode: MutableLiveData<Boolean> = MutableLiveData(false)
     val alertCountry: MutableLiveData<Boolean> = MutableLiveData(false)
     val dismiss: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val statusIdAddress = MutableStateFlow("")
+    val address = statusIdAddress.flatMapLatest {
+        shippingAddressRepository.getShippingAddress(it)
+    }.asLiveData()
 
+    fun setIdAddress(id: String) {
+        statusIdAddress.value = id
+    }
 
     private fun setAddressOnFirebase(address: ShippingAddress) {
         db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
             .document(address.id.toString()).set(address)
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
+            .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
+    }
+
+    private fun deleteAddressOnFirebase(address: ShippingAddress) {
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
+            .document(address.id.toString()).delete()
         db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
             .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
     }
@@ -91,6 +107,39 @@ class ShippingAddressViewModel @Inject constructor(
                 shippingAddressRepository.insert(shippingAddress)
                 setAddressOnFirebase(shippingAddress)
                 toastMessage.postValue(SUCCESS)
+                dismiss.postValue(true)
+            }
+        }
+    }
+
+    fun updateShippingAddress(
+        shippingAddress: ShippingAddress,
+        fullName: String,
+        address: String,
+        city: String,
+        state: String,
+        zipCode: String,
+        country: String,
+    ) {
+        if (checkFullName(fullName) &&
+            checkAddress(address) &&
+            checkCity(city) &&
+            checkState(state) &&
+            checkZipCode(zipCode) &&
+            checkCountry(country)
+        ) {
+            viewModelScope.launch {
+                shippingAddress.apply {
+                    this.fullName = fullName
+                    this.address = address
+                    this.city = city
+                    this.state = state
+                    this.zipCode = zipCode
+                    this.country = country
+                }
+                shippingAddressRepository.update(shippingAddress)
+                setAddressOnFirebase(shippingAddress)
+                toastMessage.postValue(SUCCESS_EDIT)
                 dismiss.postValue(true)
             }
         }
@@ -154,7 +203,18 @@ class ShippingAddressViewModel @Inject constructor(
         return userManager.getAddress() == idAddress
     }
 
+    fun deleteShippingAddress(shippingAddress: ShippingAddress) {
+        viewModelScope.launch {
+            if (checkDefaultShippingAddress(shippingAddress.id.toString())) {
+                removeDefaultAddress()
+            }
+            shippingAddressRepository.delete(shippingAddress)
+            deleteAddressOnFirebase(shippingAddress)
+        }
+    }
+
     companion object {
         const val SUCCESS = "Add success"
+        const val SUCCESS_EDIT = "Edit success"
     }
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListAddressAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentShippingAddressBinding
+import com.goldenowl.ecommerceapp.ui.ConfirmDialog
 import com.goldenowl.ecommerceapp.viewmodels.ShippingAddressViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,20 +26,27 @@ class ShippingAddressFragment : Fragment() {
     ): View {
         binding = FragmentShippingAddressBinding.inflate(inflater, container, false)
 
-        listAddressAdapter = ListAddressAdapter({
-
-        }, { checkBox, shippingAddress ->
+        listAddressAdapter = ListAddressAdapter({ checkBox, shippingAddress ->
             checkBox.isChecked =
                 viewModel.checkDefaultShippingAddress(shippingAddress.id.toString())
         }, { checkBox, shippingAddress ->
             if (checkBox.isChecked) {
                 viewModel.setDefaultAddress(shippingAddress.id.toString())
                 listAddressAdapter.notifyDataSetChanged()
-            }
-            else{
+            } else {
                 viewModel.removeDefaultAddress()
                 listAddressAdapter.notifyDataSetChanged()
             }
+        }, {
+            val action =
+                ShippingAddressFragmentDirections.actionShippingAddressFragmentToAddShippingAddressFragment(
+                    idAddress = it.id.toString()
+                )
+            findNavController().navigate(action)
+        }, {
+            ConfirmDialog(this) {
+                viewModel.deleteShippingAddress(it)
+            }.show()
         })
         viewModel.listAll.observe(viewLifecycleOwner) {
             listAddressAdapter.submitList(it)

@@ -10,6 +10,7 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.data.ShippingAddress
 import com.goldenowl.ecommerceapp.databinding.FragmentAddShippingAddressBinding
 import com.goldenowl.ecommerceapp.viewmodels.ShippingAddressViewModel
 import com.google.android.material.textfield.TextInputLayout
@@ -19,11 +20,17 @@ import dagger.hilt.android.AndroidEntryPoint
 class AddShippingAddressFragment : Fragment() {
     private lateinit var binding: FragmentAddShippingAddressBinding
     private val viewModel: ShippingAddressViewModel by viewModels()
-
+    private var shippingAddress: ShippingAddress? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        arguments?.let { it ->
+            val idAddress = it.getString(ID_ADDRESS).toString()
+            if (idAddress.isNotBlank()) {
+                viewModel.setIdAddress(idAddress)
+            }
+        }
         binding = FragmentAddShippingAddressBinding.inflate(inflater, container, false)
         setupObserve()
         bind()
@@ -112,6 +119,20 @@ class AddShippingAddressFragment : Fragment() {
                     }
                 }
             }
+            address.observe(viewLifecycleOwner) {
+                it?.let { shipping ->
+                    binding.apply {
+                        shippingAddress = shipping
+                        editTextFullName.setText(shipping.fullName)
+                        editTextAddress.setText(shipping.address)
+                        editTextCity.setText(shipping.city)
+                        editTextState.setText(shipping.state)
+                        editTextZipCode.setText(shipping.zipCode)
+                        editTextCountry.setText(shipping.country)
+                    }
+                }
+
+            }
         }
     }
 
@@ -158,14 +179,29 @@ class AddShippingAddressFragment : Fragment() {
             }
 
             btnSaveAddress.setOnClickListener {
-                viewModel.insertShippingAddress(
-                    editTextFullName.text.toString(),
-                    editTextAddress.text.toString(),
-                    editTextCity.text.toString(),
-                    editTextState.text.toString(),
-                    editTextZipCode.text.toString(),
-                    editTextCountry.text.toString()
-                )
+                if (shippingAddress != null) {
+                    shippingAddress?.let {
+                        viewModel.updateShippingAddress(
+                            it,
+                            editTextFullName.text.toString(),
+                            editTextAddress.text.toString(),
+                            editTextCity.text.toString(),
+                            editTextState.text.toString(),
+                            editTextZipCode.text.toString(),
+                            editTextCountry.text.toString(),
+                        )
+                    }
+                } else {
+                    viewModel.insertShippingAddress(
+                        editTextFullName.text.toString(),
+                        editTextAddress.text.toString(),
+                        editTextCity.text.toString(),
+                        editTextState.text.toString(),
+                        editTextZipCode.text.toString(),
+                        editTextCountry.text.toString()
+                    )
+                }
+
             }
         }
     }
@@ -188,5 +224,6 @@ class AddShippingAddressFragment : Fragment() {
         const val ALERT_COUNTRY = "Please choose country"
         const val REQUEST_KEY = "request_key_country"
         const val BUNDLE_KEY_NAME = "bundle_name_country"
+        const val ID_ADDRESS = "idAddress"
     }
 }

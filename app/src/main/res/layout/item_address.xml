@@ -55,6 +55,7 @@
 
 
         <TextView
+            android:id="@+id/txtEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
@@ -64,6 +65,15 @@
             android:textSize="14sp"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/btnRemoveAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_close"
+            app:layout_constraintRight_toRightOf="@id/txtEdit"
+            app:layout_constraintTop_toBottomOf="@id/txtEdit" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
