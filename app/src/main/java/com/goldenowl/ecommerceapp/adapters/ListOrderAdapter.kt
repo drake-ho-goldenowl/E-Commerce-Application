@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goldenowl.ecommerceapp.data.Order
 import com.goldenowl.ecommerceapp.databinding.ItemOrderBinding
 import java.text.SimpleDateFormat
+import kotlin.math.roundToInt
 
 class ListOrderAdapter(
     private val onDetailClicked: (String) -> Unit,
@@ -32,9 +33,9 @@ class ListOrderAdapter(
                         txtTimeCreated.text = simpleDate.format(it).toString()
                     }
 
-                    txtTotalAmount.text = "${total}\$"
+                    txtTotalAmount.text = "${total.roundToInt()}\$"
 
-//                    txtQuantityNumber.text = ""
+                    txtQuantityNumber.text = "${order.getUnits()}"
                     setStatus(order, txtStatus)
                     btnDetail.setOnClickListener {
                         onDetailClicked(id)

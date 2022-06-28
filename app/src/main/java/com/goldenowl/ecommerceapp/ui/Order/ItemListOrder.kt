@@ -21,9 +21,10 @@ class ItemListOrder(private val statusType: Int) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         adapter = ListOrderAdapter({
-            viewModel.getOrder(it)
+            viewModel.setIdOrder(it)
             viewModel.order.observe(viewLifecycleOwner) { order ->
                 if (it == order.id) {
+                    viewModel.dismiss.postValue(false)
                     findNavController().navigate(R.id.orderDetailFragment)
                 }
             }

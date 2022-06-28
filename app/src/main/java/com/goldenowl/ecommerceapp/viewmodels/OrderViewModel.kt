@@ -6,41 +6,33 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.R
-import com.goldenowl.ecommerceapp.data.Order
-import com.goldenowl.ecommerceapp.data.UserManager
-import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
+import com.goldenowl.ecommerceapp.data.*
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OrderViewModel @Inject constructor(
+    private val bagRepository: BagRepository,
+    private val orderRepository: OrderRepository,
     private val userManager: UserManager
 ) : BaseViewModel() {
     private val db = Firebase.firestore
-    val allOrder: MutableLiveData<List<Order>> = MutableLiveData()
-    val order: MutableLiveData<Order> = MutableLiveData()
-    fun fetchData() {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection("order")
-            .get().addOnSuccessListener { result ->
-                val list: MutableList<Order> = mutableListOf()
-                for (document in result) {
-                    if (document.id != "LAST_EDIT") {
-                        list.add(document.toObject())
-                    }
-                }
-                allOrder.postValue(list)
-            }
-    }
-
-    fun getOrder(idOrder: String) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection("order")
-            .document(idOrder).get().addOnSuccessListener { documentSnapshot ->
-                order.postValue(documentSnapshot.toObject<Order>())
-            }
+    private val statusIdOrder = MutableStateFlow("")
+    val allOrder = orderRepository.getAll().asLiveData()
+    val order = statusIdOrder.flatMapLatest {
+        orderRepository.getOrder(it)
+    }.asLiveData()
+    val dismiss = MutableLiveData(false)
+    fun setIdOrder(id: String) {
+        statusIdOrder.value = id
     }
 
     fun filterStatus(data: List<Order>, status: Int): LiveData<List<Order>> {
@@ -60,9 +52,28 @@ class OrderViewModel @Inject constructor(
                 textView.setTextColor(ContextCompat.getColor(context, R.color.yellow))
             }
             CANCELLED -> {
-                textView.text = statuses[0]
+                textView.text = statuses[2]
                 textView.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary))
             }
+        }
+    }
+
+    fun reOrder(list: List<ProductOrder>) {
+        viewModelScope.launch {
+            for (productOrder in list) {
+                productOrder.apply {
+                    bagRepository.insert(
+                        Bag(
+                            size = size,
+                            color = color,
+                            idProduct = idProduct,
+                            quantity = units.toLong(),
+                        )
+                    )
+                }
+            }
+            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
+            dismiss.postValue(true)
         }
     }
 

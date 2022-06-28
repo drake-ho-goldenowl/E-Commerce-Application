@@ -1,6 +1,7 @@
 package com.goldenowl.ecommerceapp.data
 
 data class ProductOrder(
+    val idProduct: String = "",
     val image: String = "",
     val title: String = "",
     val brandName: String = "",

@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 
 
 @Database(
-    entities = [Product::class, Favorite::class, Bag::class, Promotion::class, ShippingAddress::class],
+    entities = [Product::class, Favorite::class, Bag::class, Promotion::class, ShippingAddress::class,Order::class],
     version = 1,
     exportSchema = false
 )
@@ -19,6 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun bagDao(): BagDao
     abstract fun promotionDao(): PromotionDao
     abstract fun shippingAddressDao(): ShippingAddressDao
+    abstract fun orderDao(): OrderDao
 
     companion object {
         @Volatile

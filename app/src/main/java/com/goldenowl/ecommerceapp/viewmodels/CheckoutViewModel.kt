@@ -16,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
     private val shippingAddressRepository: ShippingAddressRepository,
+    private val orderRepository: OrderRepository,
     private val bagRepository: BagRepository,
     private val rsa: RSA,
     private val userManager: UserManager
@@ -45,8 +46,7 @@ class CheckoutViewModel @Inject constructor(
                     result.postValue(it)
                 }
             }
-        }
-        else{
+        } else {
             result.postValue(Card())
         }
         return result
@@ -97,6 +97,7 @@ class CheckoutViewModel @Inject constructor(
         )
         viewModelScope.launch {
             setOrderOnFirebase(order)
+            orderRepository.insert(order)
             bagRepository.deleteAll()
             bagRepository.updateBagFirebase(db, userManager.getAccessToken())
             success.postValue(true)
@@ -104,7 +105,7 @@ class CheckoutViewModel @Inject constructor(
     }
 
     private fun createOrder(
-        product: List<Bag>,
+        product: List<ProductOrder>,
         total: Float,
         shippingAddress: String,
         payment: String,
@@ -122,10 +123,36 @@ class CheckoutViewModel @Inject constructor(
         promotion = promotion,
     )
 
-    private fun getBag(bagAndProduct: List<BagAndProduct>): MutableList<Bag> {
-        val list: MutableList<Bag> = mutableListOf()
-        for (bag in bagAndProduct) {
-            list.add(bag.bag)
+    private fun getBag(bagAndProducts: List<BagAndProduct>): MutableList<ProductOrder> {
+        val list: MutableList<ProductOrder> = mutableListOf()
+        for (bagAndProduct in bagAndProducts) {
+            bagAndProduct.apply {
+                val size = product.getColorAndSize(
+                    bag.color,
+                    bag.size
+                )
+                var price: Long = 0
+                size?.let {
+                    var salePercent = 0
+                    if (product.salePercent != null) {
+                        salePercent = product.salePercent
+                    }
+                    price = size.price * (100 - salePercent) / 100
+                }
+
+                list.add(
+                    ProductOrder(
+                        idProduct = product.id,
+                        image = product.images[0],
+                        title = product.title,
+                        brandName = product.brandName,
+                        size = bag.size,
+                        color = bag.color,
+                        units = bag.quantity.toInt(),
+                        price = price.toFloat(),
+                    )
+                )
+            }
         }
         return list
     }

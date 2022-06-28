@@ -59,6 +59,11 @@ class DatabaseModule {
     }
 
     @Provides
+    fun provideOrderDao(appDatabase: AppDatabase): OrderDao {
+        return appDatabase.orderDao()
+    }
+
+    @Provides
     fun provideUserManager(@ApplicationContext context: Context): UserManager {
         return UserManager.getInstance(context)
     }
@@ -71,6 +76,4 @@ class DatabaseModule {
             .build()
         return GoogleSignIn.getClient(context, gso)
     }
-
-
 }

@@ -10,6 +10,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.ProductOrder
 import com.goldenowl.ecommerceapp.databinding.ItemProductOrderBinding
+import kotlin.math.roundToInt
 
 class ListProductOrderAdapter :
     ListAdapter<ProductOrder, ListProductOrderAdapter.ItemViewHolder>(DiffCallback) {
@@ -29,8 +30,8 @@ class ListProductOrderAdapter :
                 txtBrandName.text = product.brandName
                 txtColorInput.text = product.color
                 txtSizeInput.text = product.size
-                txtPrice.text = "${product.price}\$"
-                txtUnit.text = product.units.toString()
+                txtPrice.text = "${product.price.roundToInt()}\$"
+                txtUnitInput.text = product.units.toString()
             }
         }
     }

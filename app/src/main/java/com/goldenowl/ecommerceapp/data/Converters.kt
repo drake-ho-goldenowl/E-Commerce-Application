@@ -37,6 +37,26 @@ class Converters  {
     }
 
     @TypeConverter
+    fun deliveryToJson(value: Delivery): String? {
+        return Gson().toJson(value)
+    }
+
+    @TypeConverter
+    fun jsonToDelivery(value: String?): Delivery{
+        return Gson().fromJson(value,Delivery::class.java)
+    }
+
+    @TypeConverter
+    fun productOrderToJson(value: List<ProductOrder>): String? {
+        return Gson().toJson(value)
+    }
+
+    @TypeConverter
+    fun jsonToProductOrder(value: String?): List<ProductOrder>{
+        return Gson().fromJson(value,Array<ProductOrder>::class.java).toList()
+    }
+
+    @TypeConverter
     fun tagsToJson(value: List<Tag>?): String?{
         return Gson().toJson(value)
     }

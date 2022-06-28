@@ -281,6 +281,7 @@
 
 
                 <Button
+                    android:id="@+id/btnReOrder"
                     android:layout_width="match_parent"
                     android:layout_height="36dp"
                     android:layout_marginStart="16dp"
