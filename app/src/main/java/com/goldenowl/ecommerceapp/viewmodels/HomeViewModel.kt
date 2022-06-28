@@ -10,9 +10,8 @@ import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.utilities.*
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,11 +23,11 @@ class HomeViewModel @Inject constructor(
     private val bagRepository: BagRepository,
     private val shippingAddressRepository: ShippingAddressRepository,
     private val orderRepository: OrderRepository,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val db : FirebaseFirestore,
 ) : ViewModel() {
     val product = productRepository.getAll().asLiveData()
     val favorites = favoriteRepository.getAll().asLiveData()
-    private val db = Firebase.firestore
 
     fun filterSale(products: List<Product>): List<Product> {
         return products.filter { it.salePercent != null }
