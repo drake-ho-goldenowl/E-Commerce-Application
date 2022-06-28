@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@color/transparent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:src="@drawable/rectangle" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="26dp"
+        android:fontFamily="@font/metropolis_bold"
+        android:text="Add new card"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtLayoutNameCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/edit_txt_custom"
+        android:elevation="8dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextNameCard"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/edit_txt_custom"
+            android:hint="Name on card"
+            android:inputType="text"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtLayoutCardNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/edit_txt_custom"
+        android:elevation="8dp"
+        android:paddingEnd="12dp"
+        app:boxStrokeWidth="0dp"
+        app:endIconTintMode="multiply"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconDrawable="@null"
+        app:endIconMode="custom"
+        app:endIconTint="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextCardNumber"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/edit_txt_custom"
+            android:hint="Card Number"
+            android:inputType="numberPassword"
+            android:maxLength="19"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtLayoutExpireDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/edit_txt_custom"
+        android:elevation="8dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextExpireDate"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/edit_txt_custom"
+            android:hint="Expire Date"
+            android:inputType="numberPassword"
+            android:maxLength="5"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtLayoutCVV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/edit_txt_custom"
+        android:elevation="8dp"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextCVV"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@drawable/edit_txt_custom"
+            android:hint="CVV"
+            android:inputType="numberPassword"
+            android:maxLength="3"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <CheckBox
+        android:id="@+id/checkboxDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="29dp"
+        android:backgroundTint="@color/black"
+        android:buttonTint="@color/black"
+        android:text="Use as default payment method"
+        android:textColor="@color/black2"
+        android:textSize="14dp" />
+
+    <Button
+        android:id="@+id/btnAddCard"
+        style="@style/buttonTheme"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="48dp"
+        android:fontFamily="@font/metropolis_bold"
+        android:text="Add card"
+        android:textAllCaps="true" />
+
+</LinearLayout>

@@ -22,6 +22,7 @@ class HomeViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val favoriteRepository: FavoriteRepository,
     private val bagRepository: BagRepository,
+    private val shippingAddressRepository: ShippingAddressRepository,
     private val userManager: UserManager
 ) : ViewModel() {
     val product = productRepository.getAll().asLiveData()
@@ -43,10 +44,12 @@ class HomeViewModel @Inject constructor(
             viewModelScope.launch {
                 bagRepository.deleteAll()
                 favoriteRepository.deleteAll()
+                shippingAddressRepository.deleteAll()
             }
         }
         fetchProduct()
         fetchFavorites()
+        fetchAddress()
         fetchBag()
     }
 
@@ -154,6 +157,26 @@ class HomeViewModel @Inject constructor(
             }
     }
 
+    private fun fetchAddress() {
+        if (!userManager.isLogged()) {
+            return
+        }
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
+            ADDRESS_USER
+        ).get()
+            .addOnSuccessListener { result ->
+                viewModelScope.launch {
+                    shippingAddressRepository.deleteAll()
+                    for (document in result) {
+                        if (document.id != LAST_EDIT) {
+                            val shippingAddress = document.toObject<ShippingAddress>()
+                            shippingAddressRepository.insert(shippingAddress)
+                        }
+                    }
+                }
+            }
+    }
+
     fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {
         if (!userManager.isLogged()) {
             buttonView.visibility = View.GONE
@@ -175,7 +198,8 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    companion object{
+
+    companion object {
         const val ID_PRODUCT = "idProduct"
     }
 }

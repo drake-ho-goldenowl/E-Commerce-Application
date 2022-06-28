@@ -8,6 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.roundToInt
 
 
 @Singleton
@@ -73,6 +74,26 @@ class BagRepository @Inject constructor(
             .addOnFailureListener { e ->
                 Log.w(UserManager.TAG, "Error adding document", e)
             }
+    }
+
+    fun calculatorTotal(lists: List<BagAndProduct>, sale: Long): Int {
+        var total = 0.0
+        for (bagAndProduct in lists) {
+            val size = bagAndProduct.product.getColorAndSize(
+                bagAndProduct.bag.color,
+                bagAndProduct.bag.size
+            )
+            if (size != null) {
+                var salePercent = 0
+                if (bagAndProduct.product.salePercent != null) {
+                    salePercent = bagAndProduct.product.salePercent
+                }
+                val price = size.price * (100 - salePercent) / 100
+                total += (price * bagAndProduct.bag.quantity)
+            }
+        }
+        total -= (sale * total / 100)
+        return total.roundToInt()
     }
 
 }

@@ -7,4 +7,6 @@ class User(
     val token: String = "",
     var dob: String = "",
     var avatar: String = "",
+    var defaultAddress: String = "",
+    var defaultPayment: String = "",
 )
