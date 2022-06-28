@@ -251,5 +251,6 @@
         <item>Zambia</item>
         <item>Zimbabwe</item>
     </string-array>
-
+    <string name="order_details">Order Details</string>
+    <string name="my_orders">My Orders</string>
 </resources>
