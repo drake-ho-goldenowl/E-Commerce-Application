@@ -19,5 +19,7 @@
     <color name="grey3">#FF9B9B9B</color>
     <color name="yellow">#FFFFBA49</color>
     <color name="green">#FF2AA952</color>
+    <color name="blue">#FF0A7AFF</color>
+    <color name="grey4">#FFDBDBDB</color>
     <color name="black2">#FF222222</color>
 </resources>
