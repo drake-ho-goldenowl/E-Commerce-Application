@@ -11,4 +11,6 @@
     <string name="facebook_client_token">dde6806e3253d6ea3a2034b60906cf54</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ratingandreviews">Rating and reviews</string>
+    <string name="order_details">Order Details</string>
+    <string name="my_orders">My Orders</string>
 </resources>
