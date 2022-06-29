@@ -26,4 +26,9 @@
             app:popUpTo="@+id/nav_host_fragment_log"
             app:popUpToInclusive="true"/>
     </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Auth.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" />
 </navigation>
