@@ -74,10 +74,7 @@ class LoginFragment : Fragment() {
             }
 
             btnForgetPassword.setOnClickListener {
-                authViewModel.validEmail(editTextEmail.text.toString())
-                if (!binding.txtLayoutEmail.isErrorEnabled) {
-                    authViewModel.forgotPassword(editTextEmail.text.toString())
-                }
+                findNavController().navigate(R.id.forgotPasswordFragment)
             }
         }
     }

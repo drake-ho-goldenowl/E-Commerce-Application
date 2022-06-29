@@ -88,6 +88,9 @@ class AuthViewModel @Inject constructor(
                     if (task.isSuccessful) {
                         toastMessage.postValue("Email sent.")
                     }
+                    else{
+                        toastMessage.postValue("Email invalid")
+                    }
                 }
         }
     }

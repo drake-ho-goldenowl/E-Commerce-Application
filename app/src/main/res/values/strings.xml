@@ -255,4 +255,5 @@
     <string name="my_orders">My Orders</string>
     <string name="my_profile">My Profile</string>
     <string name="setting">Setting</string>
+    <string name="forgot_password">Forgot password</string>
 </resources>
