@@ -167,7 +167,7 @@ class RatingProductFragment : Fragment() {
                 viewModel.statusFilterImage.postValue(checkboxWithPhoto.isChecked)
             }
 
-            if (!viewModel.userManager.isLogged()) {
+            if (!viewModel.isLogged()) {
                 btnAddReview.visibility = View.GONE
             }
         }

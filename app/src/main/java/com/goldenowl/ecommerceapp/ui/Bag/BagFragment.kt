@@ -30,7 +30,7 @@ class BagFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if (!viewModel.userManager.isLogged()) {
+        if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
         binding = FragmentBagBinding.inflate(inflater, container, false)
@@ -68,8 +68,8 @@ class BagFragment : Fragment() {
             bags = it
         }
 
-        viewModel.toastMessage.observe(viewLifecycleOwner){
-            Toast.makeText(context,it,Toast.LENGTH_LONG).show()
+        viewModel.toastMessage.observe(viewLifecycleOwner) {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         }
     }
 

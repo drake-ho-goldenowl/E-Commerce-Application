@@ -9,8 +9,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -21,10 +20,10 @@ import javax.inject.Inject
 class FavoriteViewModel @Inject constructor(
     private val favoriteRepository: FavoriteRepository,
     private val bagRepository: BagRepository,
-    val userManager: UserManager
+    private val userManager: UserManager,
+    private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
-    private val db = Firebase.firestore
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = favoriteRepository.getAllCategory().asLiveData()
     val favoriteAndProducts: LiveData<List<FavoriteAndProduct>> = statusFilter.flatMapLatest {
@@ -80,7 +79,7 @@ class FavoriteViewModel @Inject constructor(
 
     private fun updateFavoriteFirebase() {
         viewModelScope.launch {
-            favoriteRepository.updateFavoriteFirebase(db,userManager.getAccessToken())
+            favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
         }
     }
 
@@ -92,7 +91,7 @@ class FavoriteViewModel @Inject constructor(
                 color,
                 size,
             )
-            bagRepository.updateBagFirebase(db,userManager.getAccessToken())
+            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
         }
     }
 
@@ -133,6 +132,11 @@ class FavoriteViewModel @Inject constructor(
             }
         }
     }
+
+    fun isLogged(): Boolean {
+        return userManager.isLogged()
+    }
+
     companion object {
         const val LAST_EDIT = "lastEdit"
         const val DATA = "data"

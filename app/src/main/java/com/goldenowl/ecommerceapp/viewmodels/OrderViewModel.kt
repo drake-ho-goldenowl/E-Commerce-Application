@@ -10,8 +10,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -22,9 +21,9 @@ import javax.inject.Inject
 class OrderViewModel @Inject constructor(
     private val bagRepository: BagRepository,
     private val orderRepository: OrderRepository,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val db: FirebaseFirestore
 ) : BaseViewModel() {
-    private val db = Firebase.firestore
     private val statusIdOrder = MutableStateFlow("")
     val allOrder = orderRepository.getAll().asLiveData()
     val order = statusIdOrder.flatMapLatest {

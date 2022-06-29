@@ -36,7 +36,7 @@ class SettingFragment : Fragment() {
 
     private fun bind() {
         binding.apply {
-            appBarLayout.topAppBar.title = "Setting"
+            appBarLayout.topAppBar.title = getString(R.string.setting)
             editTextFullName.setText(viewModel.userManager.getName())
             editTextDateOfBirth.setText(viewModel.userManager.getDOB())
             Glide.with(this@SettingFragment)
@@ -123,6 +123,10 @@ class SettingFragment : Fragment() {
             val filePath = data.data
             binding.imgAvatar.setImageURI(filePath)
             viewModel.uploadImage(filePath, viewModel.userManager.getAccessToken())
+            Glide.with(this@SettingFragment)
+                .load(data.data)
+                .error(R.drawable.ic_no_login)
+                .into(binding.imgAvatar)
         }
     }
 

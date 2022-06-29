@@ -3,9 +3,8 @@ package com.goldenowl.ecommerceapp.viewmodels
 import androidx.lifecycle.*
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.utilities.*
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -19,9 +18,9 @@ class CheckoutViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
     private val bagRepository: BagRepository,
     private val rsa: RSA,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val db: FirebaseFirestore,
 ) : BaseViewModel() {
-    private val db = Firebase.firestore
     private val statusIdAddress = MutableStateFlow("")
     private val statusIdPayment = MutableStateFlow("")
     val success: MutableLiveData<Boolean> = MutableLiveData(false)

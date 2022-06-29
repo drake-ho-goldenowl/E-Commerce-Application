@@ -5,9 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.Card
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.*
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.*
@@ -17,9 +16,9 @@ import javax.inject.Inject
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
     private val userManager: UserManager,
-    private val rsa: RSA
+    private val rsa: RSA,
+    private val db: FirebaseFirestore,
 ) : BaseViewModel() {
-    private val db = Firebase.firestore
     val listCard: MutableLiveData<List<Card>> = MutableLiveData()
     val alertName: MutableLiveData<Boolean> = MutableLiveData(false)
     val alertNumberCard: MutableLiveData<Boolean> = MutableLiveData(false)

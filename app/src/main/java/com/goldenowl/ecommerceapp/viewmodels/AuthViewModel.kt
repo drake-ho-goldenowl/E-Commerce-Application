@@ -21,9 +21,8 @@ import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,13 +30,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    val userManager: UserManager,
+    private val userManager: UserManager,
     private val googleSignInClient: GoogleSignInClient,
+    private val db: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
 ) :
     BaseViewModel() {
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val db = Firebase.firestore
-
     val userLiveData: MutableLiveData<FirebaseUser?> = MutableLiveData()
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
     val validEmailLiveData: MutableLiveData<String> = MutableLiveData()
@@ -73,10 +71,10 @@ class AuthViewModel @Inject constructor(
                         )
                         userManager.addAccount(account)
                         userManager.writeProfile(db, account)
-                        toastMessage.postValue("Registration Success")
+                        toastMessage.postValue(REGISTRATION_SUCCESS)
                     }
                 } else {
-                    toastMessage.postValue("Registration Failure: " + task.exception)
+                    toastMessage.postValue(REGISTRATION_FAIL)
                 }
             }
     }
@@ -132,9 +130,15 @@ class AuthViewModel @Inject constructor(
                 }
                 userLiveData.postValue(user)
                 toastMessage.postValue(LOGIN_SUCCESS)
+            } else {
+                toastMessage.postValue(LOGIN_FAIL)
             }
         }
 
+    }
+
+    fun isLogged(): Boolean {
+        return userManager.isLogged()
     }
 
     fun logOut() {
@@ -159,7 +163,7 @@ class AuthViewModel @Inject constructor(
                     actionLoginOrCreateFirebase(user, null)
                 }
             } else {
-                toastMessage.postValue("Login Fail")
+                toastMessage.postValue(LOGIN_FAIL)
             }
         }
     }
@@ -286,5 +290,8 @@ class AuthViewModel @Inject constructor(
 
     companion object {
         const val LOGIN_SUCCESS = "Login Success"
+        const val LOGIN_FAIL = "Login Fail"
+        const val REGISTRATION_SUCCESS = "Registration Success"
+        const val REGISTRATION_FAIL = "Registration Fail"
     }
 }

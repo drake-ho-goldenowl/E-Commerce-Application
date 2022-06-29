@@ -7,6 +7,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -27,9 +28,15 @@ class DatabaseModule {
     }
 
     @Provides
-    fun provideFirebaseFireStore(@ApplicationContext context: Context): FirebaseFirestore{
+    fun provideFirebaseFireStore(@ApplicationContext context: Context): FirebaseFirestore {
         FirebaseApp.initializeApp(context)
         return Firebase.firestore
+    }
+
+    @Provides
+    fun provideFirebaseAuth(@ApplicationContext context: Context): FirebaseAuth {
+        FirebaseApp.initializeApp(context)
+        return FirebaseAuth.getInstance()
     }
 
     @Provides

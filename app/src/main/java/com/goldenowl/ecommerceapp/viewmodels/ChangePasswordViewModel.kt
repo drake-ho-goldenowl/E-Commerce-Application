@@ -6,16 +6,17 @@ import com.goldenowl.ecommerceapp.utilities.Hash
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ChangePasswordViewModel @Inject constructor(private val userManager: UserManager) :
+class ChangePasswordViewModel @Inject constructor(
+    private val userManager: UserManager,
+    private val firebaseAuth: FirebaseAuth,
+    private val db: FirebaseFirestore
+) :
     BaseViewModel() {
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val db = Firebase.firestore
     val validOldPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validNewPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val validRepeatPasswordLiveData: MutableLiveData<String> = MutableLiveData()

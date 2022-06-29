@@ -253,4 +253,6 @@
     </string-array>
     <string name="order_details">Order Details</string>
     <string name="my_orders">My Orders</string>
+    <string name="my_profile">My Profile</string>
+    <string name="setting">Setting</string>
 </resources>

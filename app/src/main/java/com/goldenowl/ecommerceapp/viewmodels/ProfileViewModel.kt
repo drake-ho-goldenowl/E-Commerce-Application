@@ -13,9 +13,8 @@ import com.goldenowl.ecommerceapp.data.ShippingAddressRepository
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.hdodenhof.circleimageview.CircleImageView
 import javax.inject.Inject
@@ -25,10 +24,10 @@ class ProfileViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
     private val shippingAddressRepository: ShippingAddressRepository,
     private val rsa: RSA,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val db: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
-    private val db = Firebase.firestore
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     val totalAddress = shippingAddressRepository.getSize().asLiveData()
     val payment = MutableLiveData("")
     val totalOrder = orderRepository.getSize().asLiveData()
