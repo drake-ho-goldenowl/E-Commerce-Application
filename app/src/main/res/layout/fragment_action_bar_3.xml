@@ -15,7 +15,7 @@
         app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
         app:collapsedTitleTextColor="@color/black"
         app:contentScrim="@color/colorOnPrimary"
-        app:expandedTitleMarginBottom="5dp"
+        app:expandedTitleMarginBottom="8dp"
         app:expandedTitleMarginStart="14dp"
         app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
         app:expandedTitleTextColor="@color/black"

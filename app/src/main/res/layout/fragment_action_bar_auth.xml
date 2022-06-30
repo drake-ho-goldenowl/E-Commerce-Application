@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:elevation="0dp"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -10,12 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:background="@color/grey2"
+        android:elevation="0dp"
         android:fitsSystemWindows="true"
         app:collapsedTitleGravity="center_horizontal"
         app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
         app:collapsedTitleTextColor="@color/black"
         app:contentScrim="@color/grey2"
-        app:expandedTitleMarginBottom="5dp"
+        app:expandedTitleMarginBottom="8dp"
         app:expandedTitleMarginStart="14dp"
         app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
         app:expandedTitleTextColor="@color/black"
@@ -30,7 +32,6 @@
             app:contentInsetStartWithNavigation="0dp"
             app:layout_collapseMode="pin"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:title="TEST"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
