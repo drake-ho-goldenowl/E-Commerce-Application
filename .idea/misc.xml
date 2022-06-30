@@ -143,6 +143,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_2.xml" value="0.125" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_3.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_4.xml" value="0.335" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_auth.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_filter.xml" value="0.121875" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_filter_2.xml" value="0.165" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_add_shipping_address.xml" value="0.2324074074074074" />
@@ -171,7 +172,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_setting.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_shipping_address.xml" value="0.1343115124153499" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_shop.xml" value="0.25" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_sign_up.xml" value="0.25" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_sign_up.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_signup.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_signup2.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_success.xml" value="0.25" />

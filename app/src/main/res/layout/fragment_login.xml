@@ -13,17 +13,17 @@
 
         <include
             android:id="@+id/appBarLayout"
-            layout="@layout/fragment_action_bar_2" />
+            layout="@layout/fragment_action_bar_auth" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/grey2"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grey2">
+                android:layout_height="match_parent">
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@id/guideline3"

@@ -1,7 +1,5 @@
 package com.goldenowl.ecommerceapp.viewmodels
 
-import android.content.ContentValues
-import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.MutableLiveData
 import com.facebook.AccessToken
@@ -13,8 +11,6 @@ import com.facebook.login.LoginResult
 import com.goldenowl.ecommerceapp.data.User
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.Hash
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FacebookAuthProvider
@@ -40,7 +36,7 @@ class AuthViewModel @Inject constructor(
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
     val validEmailLiveData: MutableLiveData<String> = MutableLiveData()
     val validPasswordLiveData: MutableLiveData<String> = MutableLiveData()
-    val callbackManager = CallbackManager.Factory.create()
+    val callbackManager: CallbackManager = CallbackManager.Factory.create()
 
     init {
         if (firebaseAuth.currentUser != null) {
@@ -144,13 +140,6 @@ class AuthViewModel @Inject constructor(
         return userManager.isLogged()
     }
 
-    fun logOut() {
-        firebaseAuth.signOut()
-        userManager.logOut()
-        LAST_EDIT_TIME_FAVORITES = null
-        LAST_EDIT_TIME_BAG = null
-        userLiveData.postValue(null)
-    }
 
     fun signInWithGoogle(listener: OnSignInStartedListener) {
         listener.onSignInStarted(googleSignInClient)
@@ -176,37 +165,32 @@ class AuthViewModel @Inject constructor(
         LoginManager.getInstance()
             .registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
-                    Log.d(ContentValues.TAG, "facebook:onSuccess:$result")
                     handleFacebookAccessToken(result.accessToken)
                 }
 
                 override fun onCancel() {
-                    Log.d(ContentValues.TAG, "facebook:onCancel")
+                    toastMessage.postValue("facebook:onCancel")
                 }
 
                 override fun onError(error: FacebookException) {
-                    Log.d(ContentValues.TAG, "facebook:onError", error)
+                    toastMessage.postValue("facebook:onError")
                 }
             })
     }
 
     private fun handleFacebookAccessToken(token: AccessToken) {
-        Log.d(ContentValues.TAG, "handleFacebookAccessToken:$token")
-
         val credential = FacebookAuthProvider.getCredential(token.token)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(ContentValues.TAG, "signInWithCredential:success")
                     val user = firebaseAuth.currentUser
                     user?.let {
                         actionLoginOrCreateFirebase(user, null)
                     }
                 } else {
                     // If sign in fails, display a message to the user.
-                    Log.w(ContentValues.TAG, "signInWithCredential:failure", task.exception)
-                    toastMessage.postValue("Authentication failed.")
+                    toastMessage.postValue(LOGIN_FAIL)
                 }
             }
     }
@@ -227,18 +211,11 @@ class AuthViewModel @Inject constructor(
         userManager.writeProfile(db, account)
     }
 
-    private fun isLettersOrDigit(string: String): Boolean {
-        return string.filter { it.isLetterOrDigit() }.length == string.length
-    }
 
     fun validName(nameText: String): Boolean {
         return when {
             nameText.isBlank() -> {
                 validNameLiveData.postValue("Mustn't empty")
-                false
-            }
-            !isLettersOrDigit(nameText) -> {
-                validNameLiveData.postValue("Mustn't Contain Special Character")
                 false
             }
             else -> {
@@ -290,11 +267,14 @@ class AuthViewModel @Inject constructor(
             true
         }
     }
-
     companion object {
         const val LOGIN_SUCCESS = "Login Success"
         const val LOGIN_FAIL = "Login Fail"
         const val REGISTRATION_SUCCESS = "Registration Success"
         const val REGISTRATION_FAIL = "Registration Fail"
+        const val EMAIL = "email"
+        const val PUBLIC_PROFILE = "public_profile"
+        const val USER_FRIEND = "user_friends"
+        const val TAG = "Authentication"
     }
 }
