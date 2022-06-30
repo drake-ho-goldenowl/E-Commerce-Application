@@ -2,16 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clipToPadding="false">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardViewProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="26dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -28,6 +28,7 @@
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/img_sample_2"
+                android:contentDescription="@string/image_product"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -135,7 +136,7 @@
         android:layout_marginBottom="-10dp"
         android:background="@drawable/btn_favorite_no_active"
         android:button="@null"
-        android:elevation="4dp"
+        android:elevation="5dp"
         app:layout_constraintBottom_toBottomOf="@+id/cardViewProduct"
         app:layout_constraintRight_toRightOf="@+id/cardViewProduct" />
 

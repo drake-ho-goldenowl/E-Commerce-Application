@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.databinding.ItemViewPagerHomeBinding
 
 class ViewPageImageHome(private val idImage: Int, private val title: String) : Fragment() {
     private lateinit var binding: ItemViewPagerHomeBinding
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -17,8 +17,16 @@ class ViewPageImageHome(private val idImage: Int, private val title: String) : F
     ): View {
         binding = ItemViewPagerHomeBinding.inflate(inflater, container, false)
 
-        binding.imgHome.setBackgroundResource(idImage)
-        binding.txtTitle.text = title
+        binding.apply {
+            imgHome.setImageResource(idImage)
+            txtTitle.text = title
+            imgHome.setOnClickListener {
+                val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
+                    nameCategories = ""
+                )
+                findNavController().navigate(action)
+            }
+        }
         return binding.root
     }
 }

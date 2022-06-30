@@ -256,4 +256,7 @@
     <string name="my_profile">My Profile</string>
     <string name="setting">Setting</string>
     <string name="forgot_password">Forgot password</string>
+    <string name="view_all_items">View all items</string>
+    <string name="choose_category">Choose category</string>
+    <string name="image_product">Image product</string>
 </resources>
