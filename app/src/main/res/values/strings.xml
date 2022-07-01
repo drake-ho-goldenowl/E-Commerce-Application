@@ -266,4 +266,7 @@
     <string name="facebook">Facebook</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="or_login_with_social_account">Or login with social account</string>
+    <string name="view_all_items">View all items</string>
+    <string name="choose_category">Choose category</string>
+    <string name="image_product">Image product</string>
 </resources>
