@@ -69,15 +69,18 @@ class LoginFragment : Fragment() {
             }
             btnFacebook.setOnClickListener {
                 LoginManager.getInstance()
-                    .logInWithReadPermissions(requireActivity(), listOf(EMAIL))
+                    .logInWithReadPermissions(
+                        requireActivity(), authViewModel.callbackManager, listOf(
+                            AuthViewModel.PUBLIC_PROFILE,
+                            AuthViewModel.EMAIL,
+                            AuthViewModel.USER_FRIEND
+                        )
+                    )
                 authViewModel.loginWithFacebook()
             }
 
             btnForgetPassword.setOnClickListener {
-                authViewModel.validEmail(editTextEmail.text.toString())
-                if (!binding.txtLayoutEmail.isErrorEnabled) {
-                    authViewModel.forgotPassword(editTextEmail.text.toString())
-                }
+                findNavController().navigate(R.id.forgotPasswordFragment)
             }
         }
     }
@@ -104,6 +107,7 @@ class LoginFragment : Fragment() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        authViewModel.callbackManager.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_SIGN_IN && resultCode == Activity.RESULT_OK && data != null) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
@@ -115,7 +119,7 @@ class LoginFragment : Fragment() {
                 Toast.makeText(this.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
-        authViewModel.callbackManager.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -132,8 +136,5 @@ class LoginFragment : Fragment() {
         }
     }
 
-    companion object {
-        const val EMAIL = "email"
-    }
 
 }

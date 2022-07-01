@@ -10,9 +10,8 @@ import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.utilities.REVIEW_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,10 +23,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewRatingViewModel @Inject constructor(
     private val productRepository: ProductRepository,
-    val userManager: UserManager
+    private val userManager: UserManager,
+    private val db : FirebaseFirestore
 ) :
     BaseViewModel() {
-    val db = Firebase.firestore
     val listReview: MutableLiveData<List<Review>> = MutableLiveData()
     val listRating: MutableLiveData<List<Int>> = MutableLiveData()
     val alertStar: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -43,6 +42,9 @@ class ReviewRatingViewModel @Inject constructor(
     val statusFilterImage: MutableLiveData<Boolean> = MutableLiveData(false)
     lateinit var product: MutableLiveData<Product>
 
+    fun isLogged(): Boolean {
+        return userManager.isLogged()
+    }
     fun fetchRatingProduct(product: Product) {
         db.collection(REVIEW_FIREBASE).whereEqualTo(ID_PRODUCT, product.id).get()
             .addOnSuccessListener { documents ->

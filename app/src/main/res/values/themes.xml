@@ -81,4 +81,10 @@
         <item name="backgroundTint">@color/colorPrimary</item>
     </style>
 
+
+    <!--    set TabLayout-->
+    <style name="CustomTabText" parent="Base.Widget.Design.TabLayout">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
 </resources>

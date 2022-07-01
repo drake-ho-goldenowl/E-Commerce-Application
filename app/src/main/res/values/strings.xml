@@ -251,5 +251,22 @@
         <item>Zambia</item>
         <item>Zimbabwe</item>
     </string-array>
-
+    <string name="order_details">Order Details</string>
+    <string name="my_orders">My Orders</string>
+    <string name="my_profile">My Profile</string>
+    <string name="setting">Setting</string>
+    <string name="forgot_password">Forgot password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="or_sign_up_with_social_account">Or sign up with social account</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="name">Name</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="forgot_your_password">Forgot your password?</string>
+    <string name="or_login_with_social_account">Or login with social account</string>
+    <string name="view_all_items">View all items</string>
+    <string name="choose_category">Choose category</string>
+    <string name="image_product">Image product</string>
 </resources>

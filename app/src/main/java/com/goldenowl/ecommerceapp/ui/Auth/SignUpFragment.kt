@@ -3,8 +3,6 @@ package com.goldenowl.ecommerceapp.ui.Auth
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +39,7 @@ class SignUpFragment : Fragment() {
 
     private fun bind() {
         binding.apply {
-            appBarLayout.topAppBar.title = "Sign up"
+            appBarLayout.topAppBar.title = getString(R.string.sign_up)
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 startActivity(Intent(activity, MainActivity::class.java))
                 activity?.finish()
@@ -67,32 +65,23 @@ class SignUpFragment : Fragment() {
                 )
             }
 
-            editTextName.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
-                override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+            editTextName.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
                     authViewModel.validName(editTextName.text.toString())
                 }
+            }
 
-                override fun afterTextChanged(p0: Editable?) {}
-            })
-
-            editTextEmail.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
-                override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+            editTextEmail.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
                     authViewModel.validEmail(editTextEmail.text.toString())
                 }
+            }
 
-                override fun afterTextChanged(p0: Editable?) {}
-            })
-
-            editTextPassword.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, count: Int) {}
-                override fun onTextChanged(p0: CharSequence?, start: Int, before: Int, count: Int) {
+            editTextPassword.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
                     authViewModel.validPassword(editTextPassword.text.toString())
                 }
-
-                override fun afterTextChanged(p0: Editable?) {}
-            })
+            }
 
             btnGoogle.setOnClickListener {
                 authViewModel.signInWithGoogle(object :
@@ -105,7 +94,13 @@ class SignUpFragment : Fragment() {
 
             btnFacebook.setOnClickListener {
                 LoginManager.getInstance()
-                    .logInWithReadPermissions(requireActivity(), listOf("email"))
+                    .logInWithReadPermissions(
+                        requireActivity(), authViewModel.callbackManager, listOf(
+                            AuthViewModel.PUBLIC_PROFILE,
+                            AuthViewModel.EMAIL,
+                            AuthViewModel.USER_FRIEND
+                        )
+                    )
                 authViewModel.loginWithFacebook()
             }
         }
@@ -141,6 +136,7 @@ class SignUpFragment : Fragment() {
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        authViewModel.callbackManager.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_SIGN_IN && resultCode == Activity.RESULT_OK && data != null) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
@@ -151,7 +147,7 @@ class SignUpFragment : Fragment() {
                 Toast.makeText(this.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
-        authViewModel.callbackManager.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 

@@ -163,4 +163,14 @@
         android:name="com.goldenowl.ecommerceapp.ui.Checkout.SuccessFragment"
         android:label="fragment_success"
         tools:layout="@layout/fragment_success" />
+    <fragment
+        android:id="@+id/ordersFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Order.OrdersFragment"
+        android:label="fragment_orders"
+        tools:layout="@layout/fragment_orders" />
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Order.OrderDetailFragment"
+        android:label="fragment_order_detail"
+        tools:layout="@layout/fragment_order_detail" />
 </navigation>

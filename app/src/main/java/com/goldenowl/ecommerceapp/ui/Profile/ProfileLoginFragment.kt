@@ -8,63 +8,72 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileLoginBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
+import com.goldenowl.ecommerceapp.viewmodels.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileLoginFragment : Fragment() {
     private lateinit var binding: FragmentProfileLoginBinding
-    private val authViewModel: AuthViewModel by viewModels()
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileLoginBinding.inflate(inflater, container, false)
-
+        setupObserve()
         bind()
         return binding.root
     }
 
-    private fun bind() {
-        binding.apply {
-            if (authViewModel.userManager.isLogged()) {
-                txtName.text = authViewModel.userManager.getName()
-                txtEmail.text = authViewModel.userManager.getEmail()
-                Glide.with(requireActivity())
-                    .load(authViewModel.userManager.getAvatar())
-                    .error(R.drawable.ic_no_login)
-                    .into(binding.imgAvatar)
+    private fun setupObserve() {
+        viewModel.apply {
+            viewModel.getPayment()
+            totalAddress.observe(viewLifecycleOwner) {
+                binding.txtSubTitleShipping.text = "$it addresses"
             }
 
+            payment.observe(viewLifecycleOwner) {
+                binding.txtSubTitlePayment.text = it
+            }
+            totalOrder.observe(viewLifecycleOwner) {
+                binding.txtSubTitleOrder.text = "Already have $it orders"
+            }
+        }
+    }
+
+    private fun bind() {
+        binding.apply {
+            viewModel.setupProfileUI(this@ProfileLoginFragment, txtName, txtEmail, imgAvatar)
             btnLogout.setOnClickListener {
-                authViewModel.userManager.logOut()
-                authViewModel.logOut()
+                viewModel.logOut()
                 startActivity(Intent(activity, AuthActivity::class.java))
                 activity?.finish()
+            }
+            myOrderLayout.setOnClickListener {
+                findNavController().navigate(R.id.ordersFragment)
+            }
+            shippingLayout.setOnClickListener {
+                findNavController().navigate(R.id.shippingAddressFragment)
+            }
+            paymentLayout.setOnClickListener {
+                findNavController().navigate(R.id.paymentMethodFragment)
             }
             settingLayout.setOnClickListener {
                 findNavController().navigate(R.id.action_profileFragment_to_settingFragment)
             }
+
         }
     }
 
     override fun onResume() {
         super.onResume()
-        authViewModel.apply {
-            if (userManager.isLogged()) {
-                binding.txtName.text = userManager.getName()
-                binding.txtEmail.text = userManager.getEmail()
-                Glide.with(this@ProfileLoginFragment)
-                    .load(userManager.getAvatar())
-                    .error(R.drawable.ic_no_login)
-                    .into(binding.imgAvatar)
-            }
+        binding.apply {
+            viewModel.setupProfileUI(this@ProfileLoginFragment, txtName, txtEmail, imgAvatar)
+            viewModel.getPayment()
         }
-
     }
 }

@@ -14,6 +14,9 @@ interface ShippingAddressDao {
     @Delete
     suspend fun delete(shippingAddress: ShippingAddress)
 
+    @Query("SELECT COUNT(id) FROM ShippingAddress")
+    fun getSize(): Flow<Int>
+
     @Query("DELETE FROM ShippingAddress")
     suspend fun deleteAll()
 

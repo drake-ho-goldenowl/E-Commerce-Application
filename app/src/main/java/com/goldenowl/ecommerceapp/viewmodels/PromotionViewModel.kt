@@ -8,9 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.Promotion
 import com.goldenowl.ecommerceapp.data.PromotionRepository
 import com.goldenowl.ecommerceapp.utilities.PROMOTION_FIREBASE
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
-import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -19,9 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PromotionViewModel @Inject constructor(
-    private val promotionRepository: PromotionRepository
+    private val promotionRepository: PromotionRepository,
+    private val db: FirebaseFirestore,
 ) : ViewModel() {
-    private val db = Firebase.firestore
     val promotions: LiveData<List<Promotion>> = promotionRepository.getAll().asLiveData()
 
     val statusPromotion = MutableStateFlow("")

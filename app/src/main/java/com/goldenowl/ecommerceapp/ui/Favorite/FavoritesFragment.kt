@@ -35,7 +35,7 @@ class FavoritesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        if (!viewModel.userManager.isLogged()) {
+        if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
         binding = FragmentFavoritesBinding.inflate(inflater, container, false)

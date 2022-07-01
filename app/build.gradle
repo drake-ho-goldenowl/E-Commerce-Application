@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'dagger.hilt.android.plugin'
@@ -20,7 +19,7 @@ android {
         minSdk 21
         targetSdk 32
         versionCode 1
-        versionName "1.0"
+        versionName "1.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -103,3 +102,5 @@ dependencies {
     //library compress image
     implementation 'id.zelory:compressor:3.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

@@ -5,8 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -18,10 +17,10 @@ import kotlin.math.roundToInt
 class BagViewModel @Inject constructor(
     private val bagRepository: BagRepository,
     private val favoriteRepository: FavoriteRepository,
-    val userManager: UserManager
+    private val userManager: UserManager,
+    private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
-    private val db = Firebase.firestore
     private val statusIdFavorite = MutableStateFlow(Triple("", "", ""))
     val favorite: LiveData<Favorite?> = statusIdFavorite.flatMapLatest {
         favoriteRepository.getFavorite(it.first, it.second, it.third)
@@ -105,7 +104,7 @@ class BagViewModel @Inject constructor(
                 )
                 if (size != null) {
                     var salePercent = 0
-                    if(bagAndProduct.product.salePercent != null){
+                    if (bagAndProduct.product.salePercent != null) {
                         salePercent = bagAndProduct.product.salePercent
                     }
                     val price = size.price * (100 - salePercent) / 100
@@ -119,5 +118,9 @@ class BagViewModel @Inject constructor(
 
     fun setSearch(string: String) {
         filterSearch.value = string
+    }
+
+    fun isLogged(): Boolean {
+        return userManager.isLogged()
     }
 }

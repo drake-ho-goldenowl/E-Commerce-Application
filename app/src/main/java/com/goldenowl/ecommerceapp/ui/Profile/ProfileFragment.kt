@@ -6,21 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.viewModels
 import com.goldenowl.ecommerceapp.R
-import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileBinding
+import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
+    private val viewModel: AuthViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val userManager = UserManager.getInstance(this.requireContext())
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.appBarLayout.topAppBar.title = "My Profile"
-        if (!userManager.isLogged()) {
+        binding.appBarLayout.topAppBar.title = getString(R.string.my_profile)
+        if (!viewModel.isLogged()) {
             changeFragment(ProfileNoLoginFragment())
             return binding.root
         }

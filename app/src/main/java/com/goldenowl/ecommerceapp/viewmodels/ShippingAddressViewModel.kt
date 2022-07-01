@@ -10,8 +10,7 @@ import com.goldenowl.ecommerceapp.utilities.ADDRESS_USER
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.VALUE_LAST_EDIT
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -22,9 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ShippingAddressViewModel @Inject constructor(
     private val shippingAddressRepository: ShippingAddressRepository,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val db : FirebaseFirestore
 ) : BaseViewModel() {
-    private val db = Firebase.firestore
     val listAll = shippingAddressRepository.getAll().asLiveData()
     val alertFullName: MutableLiveData<Boolean> = MutableLiveData(false)
     val alertAddress: MutableLiveData<Boolean> = MutableLiveData(false)
