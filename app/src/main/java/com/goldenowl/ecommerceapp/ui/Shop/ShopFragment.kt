@@ -70,18 +70,10 @@ class ShopFragment : Fragment() {
                 findNavController().navigate(action)
             }
 
-
-
-
-            searchBar.btnBack.setOnClickListener {
-                setDefault()
-            }
-
             // Handle Search Bar
             MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.ic_search -> {
-                        setSearchView()
                         true
                     }
                     else -> false
@@ -90,27 +82,8 @@ class ShopFragment : Fragment() {
         }
     }
 
-    fun setDefault() {
-        binding.apply {
-            searchBar.editTextSearch.setText("")
-            searchBarLayout.visibility = View.GONE
-        }
-    }
-
-    fun setSearchView() {
-        binding.apply {
-            searchBarLayout.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setDefault()
-    }
-
     companion object {
         const val NAME_CATEGORY = "nameCategories"
         val TEST = listOf("knitwear", "blazers", "shorts", "Light blouse big X", "rau cải")
     }
-
 }
