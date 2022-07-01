@@ -28,6 +28,11 @@ class DatabaseModule {
     }
 
     @Provides
+    fun provideFirebaseApp(@ApplicationContext context: Context): FirebaseApp? {
+        return FirebaseApp.initializeApp(context)
+    }
+
+    @Provides
     fun provideFirebaseFireStore(@ApplicationContext context: Context): FirebaseFirestore {
         FirebaseApp.initializeApp(context)
         return Firebase.firestore
