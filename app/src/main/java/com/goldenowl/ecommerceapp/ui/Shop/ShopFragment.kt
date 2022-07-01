@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,10 +12,6 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdapter2
 import com.goldenowl.ecommerceapp.databinding.FragmentShopBinding
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
-import com.google.android.flexbox.AlignItems
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -49,67 +44,73 @@ class ShopFragment : Fragment() {
             )
             findNavController().navigate(action)
         }
+        setupObserve()
+        bind()
+        return binding.root
+    }
 
-
-        viewModel.allCategory.observe(this.viewLifecycleOwner) {
-            adapterCategory.submitList(it)
+    private fun setupObserve() {
+        viewModel.apply {
+            allCategory.observe(viewLifecycleOwner) {
+                adapterCategory.submitList(it)
+            }
         }
-        binding.MaterialToolbar.title = "Categories"
-        binding.recyclerViewCategories.layoutManager = LinearLayoutManager(context)
-        binding.recyclerViewCategories.adapter = adapterCategory
+    }
 
-        binding.btnViewAllItems.setOnClickListener {
-            val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                nameCategories = ""
-            )
-            findNavController().navigate(action)
-        }
-
+    private fun bind() {
         binding.apply {
-            val layoutManager = FlexboxLayoutManager(context)
-            layoutManager.flexDirection = FlexDirection.ROW
-            layoutManager.justifyContent = JustifyContent.FLEX_START
-            layoutManager.alignItems = AlignItems.FLEX_START
-            categoryLayout.recyclerViewCategories.layoutManager = layoutManager
+            MaterialToolbar.title = getString(R.string.categories)
+            recyclerViewCategories.layoutManager = LinearLayoutManager(context)
+            recyclerViewCategories.adapter = adapterCategory
+
+            btnViewAllItems.setOnClickListener {
+                val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
+                    nameCategories = ""
+                )
+                findNavController().navigate(action)
+            }
+
+
+
+
+            searchBar.btnBack.setOnClickListener {
+                setDefault()
+            }
 
             // Handle Search Bar
             MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.ic_search -> {
-                        categoryLayout.mainLayout.visibility = View.VISIBLE
-                        historyLayout.mainLayout.visibility = View.VISIBLE
-                        val searchView = it.actionView as SearchView
-                        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                            override fun onQueryTextSubmit(query: String?): Boolean {
-                                return true
-                            }
-
-                            override fun onQueryTextChange(newText: String?): Boolean {
-                                if (!newText.isNullOrEmpty()) {
-                                    viewModel.setSearch(newText)
-                                } else {
-                                    viewModel.setSearch("")
-                                    categoryLayout.mainLayout.visibility = View.VISIBLE
-                                    historyLayout.mainLayout.visibility = View.VISIBLE
-                                }
-                                return true
-                            }
-                        })
-
+                        setSearchView()
                         true
                     }
                     else -> false
                 }
             }
         }
+    }
 
+    fun setDefault() {
+        binding.apply {
+            searchBar.editTextSearch.setText("")
+            searchBarLayout.visibility = View.GONE
+        }
+    }
 
+    fun setSearchView() {
+        binding.apply {
+            searchBarLayout.visibility = View.VISIBLE
+        }
+    }
 
-        return binding.root
+    override fun onResume() {
+        super.onResume()
+        setDefault()
     }
 
     companion object {
         const val NAME_CATEGORY = "nameCategories"
+        val TEST = listOf("knitwear", "blazers", "shorts", "Light blouse big X", "rau cải")
     }
 
 }

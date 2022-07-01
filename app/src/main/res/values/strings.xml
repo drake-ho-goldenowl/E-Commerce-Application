@@ -15,6 +15,8 @@
     <string name="shipping_addresses">Shipping Addresses</string>
     <string name="adding_shipping_address">Adding Shipping Address</string>
     <string name="payment_methods">Payment methods</string>
+    <string name="categories">Categories</string>
+    <string name="all_product">All product</string>
     <string-array name="countries_array">
         <item>Afghanistan</item>
         <item>Albania</item>
