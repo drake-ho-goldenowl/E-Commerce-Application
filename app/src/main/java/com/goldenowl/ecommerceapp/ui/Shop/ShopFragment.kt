@@ -19,7 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class ShopFragment : Fragment() {
     private val viewModel: ShopViewModel by viewModels()
     private lateinit var binding: FragmentShopBinding
-
     private lateinit var adapterCategory: ListCategoriesAdapter2
 
     override fun onCreateView(
@@ -27,20 +26,11 @@ class ShopFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentShopBinding.inflate(inflater, container, false)
-        arguments?.let {
-            val selectCategory = it.getString(NAME_CATEGORY)
-            if (selectCategory != null) {
-                val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                    nameCategories = selectCategory
-                )
-                findNavController().navigate(action)
-                return binding.root
-            }
-        }
 
         adapterCategory = ListCategoriesAdapter2 { str ->
             val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                nameCategories = str
+                nameCategories = str,
+                nameProduct = null
             )
             findNavController().navigate(action)
         }
@@ -65,7 +55,8 @@ class ShopFragment : Fragment() {
 
             btnViewAllItems.setOnClickListener {
                 val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                    nameCategories = ""
+                    nameCategories = "",
+                    nameProduct = null
                 )
                 findNavController().navigate(action)
             }
@@ -74,16 +65,12 @@ class ShopFragment : Fragment() {
             MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.ic_search -> {
+                        findNavController().navigate(R.id.searchFragment)
                         true
                     }
                     else -> false
                 }
             }
         }
-    }
-
-    companion object {
-        const val NAME_CATEGORY = "nameCategories"
-        val TEST = listOf("knitwear", "blazers", "shorts", "Light blouse big X", "rau cải")
     }
 }

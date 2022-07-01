@@ -102,4 +102,7 @@ dependencies {
 
     //library compress image
     implementation 'id.zelory:compressor:3.0.1'
+
+    // QR Scan
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 }

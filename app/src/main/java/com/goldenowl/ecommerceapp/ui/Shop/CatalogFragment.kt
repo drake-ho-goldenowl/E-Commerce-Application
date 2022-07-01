@@ -35,6 +35,14 @@ class CatalogFragment : Fragment() {
     ): View {
         arguments?.let {
             nameTitle = it.getString(NAME_CATEGORY).toString()
+            val searchName = it.getString(NAME_PRODUCT)
+            if (searchName != null) {
+                viewModel.setSearch(searchName)
+                println(searchName)
+            }
+            else{
+                viewModel.setSearch("")
+            }
         }
         binding = FragmentCatalogBinding.inflate(inflater, container, false)
         if (nameTitle.isNullOrBlank()) {
@@ -42,6 +50,7 @@ class CatalogFragment : Fragment() {
         } else {
             viewModel.setCategory(nameTitle.toString())
         }
+        viewModel.setSort(0)
 
         observeSetup()
         adapterSetup()
@@ -152,6 +161,8 @@ class CatalogFragment : Fragment() {
             appBarLayout.MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.ic_search -> {
+                        findNavController().navigateUp()
+                        findNavController().navigate(R.id.searchFragment)
                         true
                     }
                     else -> false
@@ -169,17 +180,12 @@ class CatalogFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.setSearch("")
-        viewModel.setSort(0)
-    }
-
     companion object {
         const val REQUEST_KEY = "request_key"
         const val BUNDLE_KEY_NAME = "bundle_name"
         const val BUNDLE_KEY_POSITION = "bundle_position"
         const val GRIDVIEW_SPAN_COUNT = 2
         const val NAME_CATEGORY = "nameCategories"
+        const val NAME_PRODUCT = "nameProduct"
     }
 }
