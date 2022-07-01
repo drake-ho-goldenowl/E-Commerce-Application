@@ -39,7 +39,7 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew assembleRelease
     
-      - run: git log  --pretty=oneline | tail -n 10 >> log.txt
+      - run: git log --oneline -5 > log.txt
 
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
