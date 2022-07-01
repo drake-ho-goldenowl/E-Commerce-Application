@@ -25,8 +25,20 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
-    private val listImage = listOf(R.drawable.img_home, R.drawable.img_home)
-    private val listTitle = listOf("Street clothes", "Summer clothes")
+    private val listImage = listOf(
+        R.drawable.img_home,
+        R.drawable.img_home_1,
+        R.drawable.img_home_2,
+        R.drawable.img_home_3,
+        R.drawable.img_home_4
+    )
+    private val listTitle = listOf(
+        "Summer clothes",
+        "Street clothes",
+        "Sleep clothes",
+        "Sport clothes",
+        "Inform clothes"
+    )
 
     private lateinit var adapterSale: ListProductGridAdapter
     private lateinit var adapterNew: ListProductGridAdapter
