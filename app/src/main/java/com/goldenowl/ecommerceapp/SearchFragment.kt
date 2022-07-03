@@ -117,6 +117,9 @@ class SearchFragment : Fragment() {
                     return false
                 }
             })
+            btnQR.setOnClickListener {
+                findNavController().navigate(R.id.qrScanFragment)
+            }
         }
     }
 
@@ -145,7 +148,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun setDefaultList(): List<String> {
-        if (listCategory.size > MAX_CATEGORY) {
+        if (listCategory.size >= MAX_CATEGORY) {
             binding.btnViewAll.visibility = View.VISIBLE
             return listCategory.subList(0, MAX_CATEGORY)
         }
@@ -179,7 +182,7 @@ class SearchFragment : Fragment() {
     }
 
     companion object {
-        const val MAX_CATEGORY = 6
+        const val MAX_CATEGORY = 4
         const val GRIDVIEW_SPAN_COUNT = 2
     }
 }
