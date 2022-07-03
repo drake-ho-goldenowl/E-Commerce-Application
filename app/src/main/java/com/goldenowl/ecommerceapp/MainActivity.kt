@@ -31,10 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onBackPressed() {
-//        super.onBackPressed()
-    }
-
     private fun setupBottomNavMenu(navController: NavController) {
         binding.bottomNavigation.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->

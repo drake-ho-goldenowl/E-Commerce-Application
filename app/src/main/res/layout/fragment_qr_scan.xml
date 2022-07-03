@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".QrScanFragment">
+
+    <com.budiyev.android.codescanner.CodeScannerView
+        android:id="@+id/scannerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:frameAspectRatioHeight="184"
+        app:frameAspectRatioWidth="184"
+        app:autoFocusButtonVisible="false"
+        app:flashButtonPosition="bottomStart"
+        app:flashButtonColor="@color/transparent"
+        app:flashButtonOnIcon="@drawable/ic_flash2"
+        app:flashButtonOffIcon="@drawable/ic_flash"/>
+
+</FrameLayout>

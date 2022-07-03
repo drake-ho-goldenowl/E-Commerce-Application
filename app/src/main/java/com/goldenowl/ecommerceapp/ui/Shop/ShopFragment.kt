@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdapter2
 import com.goldenowl.ecommerceapp.databinding.FragmentShopBinding
-import com.goldenowl.ecommerceapp.ui.Shop.CatalogFragment.Companion.NAME_CATEGORY
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,7 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class ShopFragment : Fragment() {
     private val viewModel: ShopViewModel by viewModels()
     private lateinit var binding: FragmentShopBinding
-
     private lateinit var adapterCategory: ListCategoriesAdapter2
 
     override fun onCreateView(
@@ -28,17 +26,6 @@ class ShopFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentShopBinding.inflate(inflater, container, false)
-        arguments?.let {
-            val selectCategory = it.getString(NAME_CATEGORY)
-            if (selectCategory != null) {
-                val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                    nameCategories = selectCategory,
-                    nameProduct = null
-                )
-                findNavController().navigate(action)
-                return binding.root
-            }
-        }
 
         adapterCategory = ListCategoriesAdapter2 { str ->
             val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
@@ -86,5 +73,4 @@ class ShopFragment : Fragment() {
             }
         }
     }
-
 }
