@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdapter2
 import com.goldenowl.ecommerceapp.databinding.FragmentShopBinding
+import com.goldenowl.ecommerceapp.ui.Shop.CatalogFragment.Companion.NAME_CATEGORY
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +32,8 @@ class ShopFragment : Fragment() {
             val selectCategory = it.getString(NAME_CATEGORY)
             if (selectCategory != null) {
                 val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                    nameCategories = selectCategory
+                    nameCategories = selectCategory,
+                    nameProduct = null
                 )
                 findNavController().navigate(action)
                 return binding.root
@@ -40,7 +42,8 @@ class ShopFragment : Fragment() {
 
         adapterCategory = ListCategoriesAdapter2 { str ->
             val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                nameCategories = str
+                nameCategories = str,
+                nameProduct = null
             )
             findNavController().navigate(action)
         }
@@ -65,7 +68,8 @@ class ShopFragment : Fragment() {
 
             btnViewAllItems.setOnClickListener {
                 val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                    nameCategories = ""
+                    nameCategories = "",
+                    nameProduct = null
                 )
                 findNavController().navigate(action)
             }
@@ -74,6 +78,7 @@ class ShopFragment : Fragment() {
             MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.ic_search -> {
+                        findNavController().navigate(R.id.searchFragment)
                         true
                     }
                     else -> false
@@ -82,8 +87,4 @@ class ShopFragment : Fragment() {
         }
     }
 
-    companion object {
-        const val NAME_CATEGORY = "nameCategories"
-        val TEST = listOf("knitwear", "blazers", "shorts", "Light blouse big X", "rau cải")
-    }
 }

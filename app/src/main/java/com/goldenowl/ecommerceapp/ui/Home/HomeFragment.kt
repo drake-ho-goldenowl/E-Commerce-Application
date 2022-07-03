@@ -151,7 +151,8 @@ class HomeFragment : Fragment() {
 
             txtViewAllSale.setOnClickListener {
                 val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
-                    nameCategories = ""
+                    nameCategories = "",
+                    nameProduct = null
                 )
 
                 findNavController().navigate(action)
@@ -159,7 +160,8 @@ class HomeFragment : Fragment() {
 
             txtViewAllNew.setOnClickListener {
                 val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
-                    nameCategories = ""
+                    nameCategories = "",
+                    nameProduct = null
                 )
                 findNavController().navigate(action)
             }

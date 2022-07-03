@@ -152,6 +152,7 @@ class CatalogFragment : Fragment() {
             appBarLayout.MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.ic_search -> {
+                        findNavController().navigate(R.id.searchFragment)
                         true
                     }
                     else -> false
