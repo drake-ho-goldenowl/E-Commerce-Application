@@ -1,45 +1,100 @@
 package com.goldenowl.ecommerceapp
 
 import android.Manifest
-import android.content.Intent
-import android.net.Uri
+import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.Settings
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.budiyev.android.codescanner.*
 import com.goldenowl.ecommerceapp.databinding.FragmentQrScanBinding
+import com.goldenowl.ecommerceapp.viewmodels.QrScanViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class QrScanFragment : Fragment() {
+    private val viewModel: QrScanViewModel by viewModels()
     private lateinit var binding: FragmentQrScanBinding
     private lateinit var codeScanner: CodeScanner
     private lateinit var requestCamera: ActivityResultLauncher<String>
+    private val handlerFragment = Handler()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requestCamera =
+            registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                if (isGranted) {
+                    Toast.makeText(context, "Camera permission granted", Toast.LENGTH_SHORT).show()
+                    startScanning()
+                } else {
+                    Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+            }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentQrScanBinding.inflate(inflater, container, false)
-        codeScanner = CodeScanner(requireContext(), binding.scannerView)
-        requestCamera = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            if (it) {
-                Toast.makeText(context, "Camera permission granted", Toast.LENGTH_SHORT).show()
+        setupObserve()
+        bind()
+        when {
+            ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED -> {
                 startScanning()
-            } else {
-                Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.data = Uri.parse("package:" + requireActivity().packageName)
-                Toast.makeText(context, intent.data.toString(), Toast.LENGTH_SHORT).show()
-                startActivity(intent)
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                val action = QrScanFragmentDirections.actionQrScanFragmentToAllowCameraFragment()
+                findNavController().navigate(action)
+            }
+            else -> {
+                requestCamera.launch(Manifest.permission.CAMERA)
             }
         }
-        requestCamera.launch(Manifest.permission.CAMERA)
         return binding.root
+    }
+
+    private fun setupObserve() {
+        viewModel.apply {
+            statusCheckProduct.observe(viewLifecycleOwner) {
+                if (it.isNotBlank()) {
+                    if (it != "NULL") {
+                        val action =
+                            QrScanFragmentDirections.actionQrScanFragmentToProductDetailFragment(
+                                idProduct = it
+                            )
+                        findNavController().navigate(action)
+                    } else {
+                        incorrectProductPopup()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun bind() {
+        binding.apply {
+            codeScanner = CodeScanner(requireContext(), scannerView)
+            btnBack.setOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
     }
 
     private fun startScanning() {
@@ -55,8 +110,10 @@ class QrScanFragment : Fragment() {
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
             requireActivity().runOnUiThread {
-                Toast.makeText(requireContext(), "Scan result: ${it.text}", Toast.LENGTH_LONG)
-                    .show()
+                handlerFragment.removeMessages(0)
+                if (it.text.isNotBlank()) {
+                    viewModel.checkProduct(it.text)
+                }
             }
         }
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
@@ -72,20 +129,84 @@ class QrScanFragment : Fragment() {
         }
     }
 
+    private fun timeOutDetectedQR() {
+        handlerFragment.removeMessages(0)
+        handlerFragment.postDelayed({
+            popUpTimeOutPopup()
+        }, TIME_OUT.toLong())
+    }
+
+    private fun popUpTimeOutPopup() {
+        pauseCamera()
+        val dialog = AlertDialog.Builder(context)
+            .setTitle("Continue scanning the QR")
+            .setMessage("Time allowed. Do you want to continue scanning the product QR code")
+            .setPositiveButton("Continue") { dialog, _ ->
+                resumeCamera()
+                timeOutDetectedQR()
+                dialog.dismiss()
+            }
+            .setNegativeButton(
+                "Close"
+            ) { dialog, _ ->
+                findNavController().navigateUp()
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .create().show()
+    }
+
+    private fun incorrectProductPopup() {
+        pauseCamera()
+        AlertDialog.Builder(context)
+            .setTitle("QR Incorrect")
+            .setMessage("Please try again")
+            .setPositiveButton("OK") { dialog, _ ->
+                resumeCamera()
+                timeOutDetectedQR()
+                dialog.dismiss()
+            }
+            .setCancelable(false)
+            .create().show()
+    }
+
+    private fun resumeCamera() {
+        if (::codeScanner.isInitialized) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                codeScanner.startPreview()
+            }
+        }
+    }
+
+    private fun pauseCamera() {
+        if (::codeScanner.isInitialized) {
+            codeScanner.releaseResources()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        if (::codeScanner.isInitialized) {
-            codeScanner.startPreview()
-        }
-        if (::requestCamera.isInitialized) {
-            requestCamera.launch(Manifest.permission.CAMERA)
-        }
+        timeOutDetectedQR()
+        resumeCamera()
     }
 
     override fun onPause() {
         super.onPause()
-        if (::codeScanner.isInitialized) {
-            codeScanner.releaseResources()
-        }
+        handlerFragment.removeMessages(0)
+        pauseCamera()
+    }
+
+    override fun onDestroy() {
+        handlerFragment.removeMessages(0)
+        codeScanner.isFlashEnabled = false
+        super.onDestroy()
+    }
+
+    companion object {
+        const val TIME_OUT = 1000 * 60 * 2
     }
 }
