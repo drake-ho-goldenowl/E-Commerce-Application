@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".AllowCameraFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:gravity="bottom"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="11dp"
+            android:contentDescription="button"
+            android:src="@drawable/ic_close3" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorOnPrimary"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="14dp"
+                android:text="Allow camera access to scan products"
+                android:textColor="@color/green"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="23dp"
+                android:lineSpacingExtra="5dp"
+                android:text="You can use your camera to scan QR codes to quickly search products."
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="18dp"
+                app:dividerColor="@color/grey4" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="23dp"
+                android:text="You previously denied Noda access to your camera. You can change this by allowing camera access in your phone settings."
+                android:textColor="@color/grey3"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="34dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/grey4"
+                    app:cardCornerRadius="5dp">
+
+                    <TextView
+                        android:id="@+id/btnNotNow"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:text="Not now"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/green"
+                    app:cardCornerRadius="5dp">
+
+                    <TextView
+                        android:id="@+id/btnGoToSetting"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:gravity="center"
+                        android:text="Go to Settings"
+                        android:textColor="@color/colorOnPrimary"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
