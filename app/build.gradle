@@ -5,9 +5,32 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'dagger.hilt.android.plugin'
 
-ext {
-    gitVersionCode = grgit.tag.list().size()
-    gitVersionName = grgit.describe(tags: true, always: true)
+def getVersionCode = { ->
+    try {
+        def code = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--first-parent', '--count', 'main'
+            standardOutput = code
+        }
+        return code.toString().split("\n").size()
+    }
+    catch (ignored) {
+        return -1;
+    }
+}
+
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--dirty'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    }
+    catch (ignored) {
+        return null;
+    }
 }
 
 def keystoreProperties = new Properties()
@@ -23,8 +46,8 @@ android {
         applicationId "com.goldenowl.ecommerceapp"
         minSdk 21
         targetSdk 32
-        versionCode gitVersionCode
-        versionName gitVersionName
+        versionCode getVersionCode()
+        versionName getVersionName()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
