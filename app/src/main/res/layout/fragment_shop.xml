@@ -14,16 +14,16 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorOnPrimary"
-            app:elevation="0dp">
+            android:background="@color/colorOnPrimary">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/MaterialToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="?attr/actionBarSize"
                 app:contentInsetStart="48dp"
-                app:elevation="0dp"
+                app:layout_collapseMode="pin"
                 app:menu="@menu/top_app_bar"
+                app:title="TEST"
                 app:titleCentered="true"
                 app:titleTextAppearance="@style/CollapsedAppBar"
                 app:titleTextColor="@color/black" />
@@ -33,7 +33,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/grey2"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <Button
@@ -43,7 +42,7 @@
                 android:layout_margin="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/btn_custom"
-                android:text="@string/view_all_items"
+                android:text="VIEW ALL ITEMS"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -54,9 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="@string/choose_category"
-                android:textColor="@color/grey3"
-                android:textSize="14sp"
+                android:text="Choose category"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btnViewAllItems" />
 
@@ -72,6 +69,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/txtChooseCategory" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

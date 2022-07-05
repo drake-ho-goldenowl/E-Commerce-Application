@@ -8,10 +8,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdapter2
 import com.goldenowl.ecommerceapp.databinding.FragmentShopBinding
+import com.goldenowl.ecommerceapp.ui.Shop.CatalogFragment.Companion.NAME_CATEGORY
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class ShopFragment : Fragment() {
@@ -29,7 +32,8 @@ class ShopFragment : Fragment() {
             val selectCategory = it.getString(NAME_CATEGORY)
             if (selectCategory != null) {
                 val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                    nameCategories = selectCategory
+                    nameCategories = selectCategory,
+                    nameProduct = null
                 )
                 findNavController().navigate(action)
                 return binding.root
@@ -38,32 +42,49 @@ class ShopFragment : Fragment() {
 
         adapterCategory = ListCategoriesAdapter2 { str ->
             val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                nameCategories = str
+                nameCategories = str,
+                nameProduct = null
             )
             findNavController().navigate(action)
         }
-
-
-        viewModel.allCategory.observe(this.viewLifecycleOwner) {
-            adapterCategory.submitList(it)
-        }
-        binding.MaterialToolbar.title = "Categories"
-        binding.recyclerViewCategories.layoutManager = LinearLayoutManager(context)
-        binding.recyclerViewCategories.adapter = adapterCategory
-
-        binding.btnViewAllItems.setOnClickListener {
-            val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
-                nameCategories = ""
-            )
-            findNavController().navigate(action)
-        }
-
-
+        setupObserve()
+        bind()
         return binding.root
     }
 
-    companion object {
-        const val NAME_CATEGORY = "nameCategories"
+    private fun setupObserve() {
+        viewModel.apply {
+            allCategory.observe(viewLifecycleOwner) {
+                adapterCategory.submitList(it)
+            }
+        }
+    }
+
+    private fun bind() {
+        binding.apply {
+            MaterialToolbar.title = getString(R.string.categories)
+            recyclerViewCategories.layoutManager = LinearLayoutManager(context)
+            recyclerViewCategories.adapter = adapterCategory
+
+            btnViewAllItems.setOnClickListener {
+                val action = ShopFragmentDirections.actionShopFragmentToCatalogFragment(
+                    nameCategories = "",
+                    nameProduct = null
+                )
+                findNavController().navigate(action)
+            }
+
+            // Handle Search Bar
+            MaterialToolbar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.ic_search -> {
+                        findNavController().navigate(R.id.searchFragment)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
     }
 
 }

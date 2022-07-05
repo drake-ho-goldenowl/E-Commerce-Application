@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
@@ -29,7 +28,6 @@ class CatalogFragment : Fragment() {
     private lateinit var adapterProduct: ListProductAdapter
     private lateinit var adapterProductGrid: ListProductGridAdapter
     private lateinit var adapterCategory: ListCategoriesAdater
-
     private var isLinearLayoutManager = true
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,10 +42,16 @@ class CatalogFragment : Fragment() {
         } else {
             viewModel.setCategory(nameTitle.toString())
         }
-        viewModel.setSearch("")
-        viewModel.setSort(0)
 
+        observeSetup()
+        adapterSetup()
+        bind()
+        setFragmentListener()
 
+        return binding.root
+    }
+
+    private fun adapterSetup() {
         adapterProduct = ListProductAdapter({
             val action = CatalogFragmentDirections.actionCatalogFragmentToProductDetailFragment(
                 idProduct = it.id
@@ -75,18 +79,12 @@ class CatalogFragment : Fragment() {
         adapterCategory = ListCategoriesAdater { str ->
             if (binding.appBarLayout.topAppBar.title == str) {
                 viewModel.setCategory("")
-                binding.appBarLayout.topAppBar.title = "All product"
+                binding.appBarLayout.topAppBar.title = getString(R.string.all_product)
             } else {
                 viewModel.setCategory(str)
                 binding.appBarLayout.topAppBar.title = str
             }
         }
-
-        observeSetup()
-        bind()
-        setFragmentListener()
-
-        return binding.root
     }
 
     private fun observeSetup() {
@@ -109,7 +107,7 @@ class CatalogFragment : Fragment() {
     private fun bind() {
         binding.apply {
             if (nameTitle.isNullOrBlank()) {
-                appBarLayout.topAppBar.title = "All Product"
+                appBarLayout.topAppBar.title = getString(R.string.all_product)
             } else {
                 appBarLayout.topAppBar.title = nameTitle
             }
@@ -150,27 +148,11 @@ class CatalogFragment : Fragment() {
                 bottomSheetSort.show(parentFragmentManager, BottomSheetSort.TAG)
             }
 
-
             // Handle Search Bar
             appBarLayout.MaterialToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.ic_search -> {
-                        val searchView = it.actionView as SearchView
-                        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                            override fun onQueryTextSubmit(query: String?): Boolean {
-                                return true
-                            }
-
-                            override fun onQueryTextChange(newText: String?): Boolean {
-                                if (!newText.isNullOrEmpty()) {
-                                    viewModel.setSearch(newText)
-                                } else {
-                                    viewModel.setSearch("")
-                                }
-                                return true
-                            }
-                        })
-
+                        findNavController().navigate(R.id.searchFragment)
                         true
                     }
                     else -> false
@@ -186,6 +168,12 @@ class CatalogFragment : Fragment() {
             binding.appBarLayout.btnSort.text = result
             viewModel.setSort(position)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.setSearch("")
+        viewModel.setSort(0)
     }
 
     companion object {

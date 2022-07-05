@@ -22,7 +22,8 @@ class ViewPageImageHome(private val idImage: Int, private val title: String) : F
             txtTitle.text = title
             imgHome.setOnClickListener {
                 val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
-                    nameCategories = ""
+                    nameCategories = "",
+                    nameProduct = null
                 )
                 findNavController().navigate(action)
             }

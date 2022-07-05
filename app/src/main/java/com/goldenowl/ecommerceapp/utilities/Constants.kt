@@ -16,6 +16,7 @@ const val ORDER_USER = "order"
 
 const val LAST_EDIT = "LAST_EDIT"
 const val VALUE_LAST_EDIT = "lastEdit"
+const val HISTORY = "HISTORY"
 
 val NON_DIGITS = Regex("[^\\d]")
 
