@@ -271,4 +271,11 @@
     <string name="view_all_items">View all items</string>
     <string name="choose_category">Choose category</string>
     <string name="image_product">Image product</string>
+    <string name="title_time_out">Continue scanning the QR</string>
+    <string name="message_time_out">Time allowed. Do you want to continue scanning the product QR code</string>
+    <string name="title_incorrect">QR Incorrect</string>
+    <string name="message_incorrect">Please try again</string>
+    <string name="close">Close</string>
+    <string name="message_continue">Continue</string>
+    <string name="ok">OK</string>
 </resources>

@@ -117,6 +117,9 @@ class SearchFragment : Fragment() {
                     return false
                 }
             })
+            btnQR.setOnClickListener {
+                findNavController().navigate(R.id.qrScanFragment)
+            }
         }
     }
 
