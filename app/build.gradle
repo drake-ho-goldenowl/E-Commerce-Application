@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'dagger.hilt.android.plugin'
@@ -20,7 +19,7 @@ android {
         minSdk 21
         targetSdk 32
         versionCode 1
-        versionName "1.4"
+        versionName "2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -102,9 +101,6 @@ dependencies {
 
     //library compress image
     implementation 'id.zelory:compressor:3.0.1'
-
-    // QR Scan
-    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
