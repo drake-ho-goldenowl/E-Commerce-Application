@@ -5,6 +5,20 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'dagger.hilt.android.plugin'
 
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-list', '--first-parent', '--count', 'main'
+            standardOutput = stdout
+        }
+        return stdout.toString().replace("\n",".0").trim()
+    }
+    catch (ignored) {
+        return "1.0"
+    }
+}
+
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
@@ -13,13 +27,12 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     compileSdk 32
-
     defaultConfig {
         applicationId "com.goldenowl.ecommerceapp"
         minSdk 21
         targetSdk 32
         versionCode 1
-        versionName "2.0"
+        versionName getVersionName()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,17 +66,17 @@ android {
 dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.0.5'
-    implementation 'com.google.firebase:firebase-firestore:24.1.2'
-    implementation 'com.google.firebase:firebase-auth:21.0.5'
+    implementation 'com.google.firebase:firebase-firestore:24.2.0'
+    implementation 'com.google.firebase:firebase-auth:21.0.6'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
 
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
 
     implementation 'de.hdodenhof:circleimageview:latest.release'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.1.2'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.2.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.1'
-    def nav_version = "2.4.2"
-    def fragment_version = "1.4.1"
+    def nav_version = "2.5.0"
+    def fragment_version = "1.5.0"
     // Kotlin
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -79,9 +92,9 @@ dependencies {
     implementation "androidx.room:room-ktx:2.4.2"
 
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0"
 
     implementation platform('com.google.firebase:firebase-bom:30.0.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
@@ -91,9 +104,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.12.0'
 
     implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

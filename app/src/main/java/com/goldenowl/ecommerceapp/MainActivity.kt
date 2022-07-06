@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        FirebaseApp.initializeApp(this)
 
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
