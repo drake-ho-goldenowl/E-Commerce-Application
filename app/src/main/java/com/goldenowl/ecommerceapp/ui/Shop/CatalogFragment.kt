@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -38,9 +39,7 @@ class CatalogFragment : Fragment() {
             val searchName = it.getString(NAME_PRODUCT)
             if (searchName != null) {
                 viewModel.setSearch(searchName)
-                println(searchName)
-            }
-            else{
+            } else {
                 viewModel.setSearch("")
             }
         }
@@ -97,19 +96,22 @@ class CatalogFragment : Fragment() {
     }
 
     private fun observeSetup() {
-        viewModel.allCategory.observe(viewLifecycleOwner) {
-            adapterCategory.submitList(it)
-        }
+        viewModel.apply {
+            allCategory.observe(viewLifecycleOwner) {
+                adapterCategory.submitList(it)
+                adapterCategory.positionCurrent = it.indexOf(getCategory())
+            }
 
-        viewModel.products.observe(viewLifecycleOwner) {
-            val product = viewModel.filterSort(it)
-            adapterProductGrid.submitList(product)
-            adapterProduct.submitList(product)
-        }
+            products.observe(viewLifecycleOwner) {
+                val product = viewModel.filterSort(it)
+                adapterProductGrid.submitList(product)
+                adapterProduct.submitList(product)
+            }
 
-        viewModel.favorites.observe(viewLifecycleOwner) {
-            adapterProductGrid.notifyDataSetChanged()
-            adapterProduct.notifyDataSetChanged()
+            favorites.observe(viewLifecycleOwner) {
+                adapterProductGrid.notifyDataSetChanged()
+                adapterProduct.notifyDataSetChanged()
+            }
         }
     }
 
@@ -120,6 +122,16 @@ class CatalogFragment : Fragment() {
             } else {
                 appBarLayout.topAppBar.title = nameTitle
             }
+
+            nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+                if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
+                    println("asdasdasdas")
+                    viewModel.products.value?.let {
+                        println("asdasdasdas")
+                        viewModel.loadMore(it)
+                    }
+                }
+            })
 
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()

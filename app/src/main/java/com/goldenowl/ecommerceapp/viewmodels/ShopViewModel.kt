@@ -3,15 +3,18 @@ package com.goldenowl.ecommerceapp.viewmodels
 import android.content.Context
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.FavoriteRepository
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.data.ProductRepository
 import com.goldenowl.ecommerceapp.data.UserManager
+import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
+import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
@@ -22,22 +25,130 @@ import javax.inject.Inject
 class ShopViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val favoriteRepository: FavoriteRepository,
-    private val userManager: UserManager
+    private val userManager: UserManager,
+    private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = productRepository.getAllCategory().asLiveData()
-    val products: LiveData<List<Product>> = statusFilter.flatMapLatest {
-        if (it.first.isNotBlank() && it.second.isNotBlank()) {
-            productRepository.filterByCategoryAndSearch(it.second, it.first)
-        } else if (it.first.isNotBlank()) {
-            productRepository.filterByCategory(it.first)
-        } else if (it.second.isNotBlank()) {
-            productRepository.filterBySearch(it.second)
-        } else {
-            productRepository.getAll()
-        }
-    }.asLiveData()
+
+    //    val products: LiveData<List<Product>> = statusFilter.flatMapLatest {
+//        if (it.first.isNotBlank() && it.second.isNotBlank()) {
+//            productRepository.filterByCategoryAndSearch(it.second, it.first)
+//        } else if (it.first.isNotBlank()) {
+//            productRepository.filterByCategory(it.first)
+//        } else if (it.second.isNotBlank()) {
+//            productRepository.filterBySearch(it.second)
+//        } else {
+//            productRepository.getAll()
+//        }
+//    }.asLiveData()
+    private var lastVisible = 0
+    val products: MutableLiveData<List<Product>>
+    private val source = Source.CACHE
+
+    init {
+        products = statusFilter.flatMapLatest {
+            if (it.first.isNotBlank() && it.second.isNotBlank()) {
+                filterByCategoryAndSearch(it.second, it.first)
+            } else if (it.first.isNotBlank()) {
+                filterByCategory(it.first)
+            } else if (it.second.isNotBlank()) {
+                filterBySearch(it.second)
+            } else {
+                getAll()
+            }
+        }.asLiveData() as MutableLiveData<List<Product>>
+    }
+
+    private fun filterByCategoryAndSearch(search: String, category: String): Flow<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData()
+        db.collection(PRODUCT_FIREBASE)
+            .whereEqualTo("categoryName", category)
+            .limit(LIMIT.toLong())
+            .get(source)
+            .addOnSuccessListener { documents ->
+                lastVisible = documents.size() - 1
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    val product = document.toObject<Product>()
+                    if (product.title.lowercase().contains(search.lowercase())) {
+                        list.add(document.toObject())
+                    }
+                }
+                result.postValue(list)
+            }
+
+        return result.asFlow()
+    }
+
+    private fun filterByCategory(category: String): Flow<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData()
+        db.collection(PRODUCT_FIREBASE).whereEqualTo("categoryName", category).get(source)
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    list.add(document.toObject())
+                }
+                lastVisible = list.size - 1
+                result.postValue(list)
+            }
+
+        return result.asFlow()
+    }
+
+    private fun filterBySearch(search: String): Flow<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData()
+        db.collection(PRODUCT_FIREBASE)
+            .limit(LIMIT.toLong())
+            .get(source)
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    val product = document.toObject<Product>()
+                    if (product.title.lowercase().contains(search.lowercase())) {
+                        list.add(document.toObject())
+                    }
+                }
+                lastVisible = list.size - 1
+                result.postValue(list)
+            }
+
+        return result.asFlow()
+    }
+
+    private fun getAll(): Flow<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData()
+        db.collection(PRODUCT_FIREBASE)
+            .limit(LIMIT.toLong())
+            .get(source)
+            .addOnSuccessListener { documents ->
+
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    list.add(document.toObject())
+                }
+                lastVisible = list.size - 1
+                result.postValue(list)
+            }
+
+        return result.asFlow()
+    }
+
+    fun loadMore(list: List<Product>) {
+        db.collection(PRODUCT_FIREBASE)
+            .orderBy("title")
+            .startAfter(lastVisible)
+            .limit(LIMIT.toLong()).get(source).addOnSuccessListener { documents ->
+                lastVisible = documents.size() - 1
+                val temp = mutableListOf<Product>()
+                temp.addAll(list)
+                for (document in documents) {
+                    temp.add(document.toObject())
+                }
+                products.postValue(temp)
+            }
+    }
 
     private val statusIdProduct = MutableStateFlow("")
     val product: LiveData<Product> = statusIdProduct.flatMapLatest {
@@ -74,6 +185,10 @@ class ShopViewModel @Inject constructor(
 
     fun setCategory(category: String) {
         statusFilter.value = Triple(category, statusFilter.value.second, statusFilter.value.third)
+    }
+
+    fun getCategory(): String {
+        return statusFilter.value.first
     }
 
     fun setSearch(search: String) {
@@ -147,5 +262,6 @@ class ShopViewModel @Inject constructor(
 
     companion object {
         const val TAG = "ShopViewModel"
+        const val LIMIT = 4
     }
 }
