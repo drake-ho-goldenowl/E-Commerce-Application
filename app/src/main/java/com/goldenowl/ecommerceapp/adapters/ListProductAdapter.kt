@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.R
@@ -30,8 +31,14 @@ class ListProductAdapter(
 
         fun bind(product: Product) {
             binding.apply {
+                val circularProgressDrawable = CircularProgressDrawable(itemView.context)
+                circularProgressDrawable.strokeWidth = 5f
+                circularProgressDrawable.centerRadius = 30f
+                circularProgressDrawable.start()
+
                 Glide.with(itemView.context)
                     .load(product.images[0])
+                    .placeholder(circularProgressDrawable)
                     .error(R.drawable.img_sample_2)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProduct)
