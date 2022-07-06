@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -11,6 +12,8 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,17 +27,54 @@ class HomeViewModel @Inject constructor(
     private val shippingAddressRepository: ShippingAddressRepository,
     private val orderRepository: OrderRepository,
     private val userManager: UserManager,
-    private val db : FirebaseFirestore,
+    private val db: FirebaseFirestore,
 ) : ViewModel() {
-    val product = productRepository.getAll().asLiveData()
+    val category = productRepository.getAllCategory().asLiveData()
     val favorites = favoriteRepository.getAll().asLiveData()
 
-    fun filterSale(products: List<Product>): List<Product> {
-        return products.filter { it.salePercent != null }
+    fun getProductWithCategory(category: String): MutableLiveData<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+        val source = Source.CACHE
+        db.collection(PRODUCT_FIREBASE).whereEqualTo(CATEGORY, category).get(source)
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    list.add(document.toObject())
+                }
+                result.postValue(list)
+            }
+        return result
     }
 
-    fun filterNew(products: List<Product>): List<Product> {
-        return products.filter { it.isPopular }
+    fun getNewProduct(): MutableLiveData<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+        val source = Source.CACHE
+        db.collection(PRODUCT_FIREBASE).orderBy(CREATED_DATE, Query.Direction.DESCENDING).limit(
+            LIMIT.toLong()
+        )
+            .get(source)
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    list.add(document.toObject())
+                }
+                result.postValue(list)
+            }
+        return result
+    }
+
+    fun getSaleProduct(): MutableLiveData<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+        val source = Source.CACHE
+        db.collection(PRODUCT_FIREBASE).whereNotEqualTo(SALE_PERCENT, null).get(source)
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    list.add(document.toObject())
+                }
+                result.postValue(list)
+            }
+        return result
     }
 
     private var bags = Bags()
@@ -219,6 +259,10 @@ class HomeViewModel @Inject constructor(
     }
 
     companion object {
+        const val LIMIT = 4
+        const val CATEGORY = "categoryName"
+        const val CREATED_DATE  = "createdDate"
+        const val SALE_PERCENT = "salePercent"
         const val ID_PRODUCT = "idProduct"
     }
 }
