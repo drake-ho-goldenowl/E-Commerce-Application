@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageHomeAdapter
+import com.goldenowl.ecommerceapp.adapters.ListHomeAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
@@ -42,6 +43,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var adapterSale: ListProductGridAdapter
     private lateinit var adapterNew: ListProductGridAdapter
+    private lateinit var adapter: ListHomeAdapter
     private val handlerFragment = Handler()
 
     override fun onCreateView(
@@ -60,40 +62,75 @@ class HomeFragment : Fragment() {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
 
-        adapterSale = ListProductGridAdapter({
-            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
-                idProduct = it.id
+//        adapterSale = ListProductGridAdapter({
+//            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
+//                idProduct = it.id
+//            )
+//            findNavController().navigate(action)
+//        }, {
+//            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+//            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+//        }, { view, product ->
+//            viewModel.setButtonFavorite(requireContext(), view, product.id)
+//        })
+//
+//        adapterNew = ListProductGridAdapter({
+//            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
+//                idProduct = it.id
+//            )
+//            findNavController().navigate(action)
+//        }, {
+//            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+//            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+//        }, { view, product ->
+//            viewModel.setButtonFavorite(requireContext(), view, product.id)
+//        })
+
+        adapter = ListHomeAdapter { recyclerView, textView, s ->
+            val adapterItem = ListProductGridAdapter({
+                val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
+                    idProduct = it.id
+                )
+                findNavController().navigate(action)
+            }, {
+                val bottomSheetSize = BottomSheetFavorite(it, null, null)
+                bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+            }, { view, product ->
+                viewModel.setButtonFavorite(requireContext(), view, product.id)
+            })
+            when (s) {
+                SALE -> {
+                    viewModel.product.observe(viewLifecycleOwner){
+                        adapterItem.submitList(viewModel.filterSale(it))
+                    }
+                }
+                NEW -> {
+                    viewModel.product.observe(viewLifecycleOwner){
+                        adapterItem.submitList(viewModel.filterNew(it))
+                    }
+                }
+                else -> {
+
+                }
+            }
+
+            recyclerView.adapter = adapterItem
+            recyclerView.layoutManager = LinearLayoutManager(
+                context,
+                LinearLayoutManager.HORIZONTAL, false
             )
-            findNavController().navigate(action)
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
-            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
-        }, { view, product ->
-            viewModel.setButtonFavorite(requireContext(), view, product.id)
-        })
-
-        adapterNew = ListProductGridAdapter({
-            val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
-                idProduct = it.id
-            )
-            findNavController().navigate(action)
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
-            bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
-        }, { view, product ->
-            viewModel.setButtonFavorite(requireContext(), view, product.id)
-        })
-
-
-        viewModel.product.observe(viewLifecycleOwner) {
-            adapterSale.submitList(viewModel.filterSale(it))
-            adapterNew.submitList(viewModel.filterNew(it))
         }
 
-        viewModel.favorites.observe(viewLifecycleOwner) {
-            adapterSale.notifyDataSetChanged()
-            adapterNew.notifyDataSetChanged()
-        }
+
+//        viewModel.product.observe(viewLifecycleOwner) {
+//            adapterSale.submitList(viewModel.filterSale(it))
+//            adapterNew.submitList(viewModel.filterNew(it))
+//        }
+//
+//        viewModel.favorites.observe(viewLifecycleOwner) {
+//            adapterSale.notifyDataSetChanged()
+//            adapterNew.notifyDataSetChanged()
+//        }
 
 
         bind()
@@ -102,19 +139,20 @@ class HomeFragment : Fragment() {
 
     private fun bind() {
         binding.apply {
-            recyclerViewSale.adapter = adapterSale
-
-            recyclerViewSale.layoutManager = LinearLayoutManager(
-                context,
-                LinearLayoutManager.HORIZONTAL, false
-            )
-
-            recyclerViewNew.adapter = adapterNew
-
-            recyclerViewNew.layoutManager = LinearLayoutManager(
-                context,
-                LinearLayoutManager.HORIZONTAL, false
-            )
+//            recyclerViewSale.adapter = adapterSale
+//
+//            recyclerViewSale.layoutManager = LinearLayoutManager(
+//                context,
+//                LinearLayoutManager.HORIZONTAL, false
+//            )
+//
+//            recyclerViewNew.adapter = adapterNew
+//
+//            recyclerViewNew.layoutManager = LinearLayoutManager(
+//                context,
+//                LinearLayoutManager.HORIZONTAL, false
+//            )
+//            recyclerListHome.adapter = adapterSale
 
             //set viewPager
             viewPagerHome.apply {
@@ -149,20 +187,20 @@ class HomeFragment : Fragment() {
 
             }
 
-            txtViewAllSale.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
-                    nameCategories = ""
-                )
-
-                findNavController().navigate(action)
-            }
-
-            txtViewAllNew.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
-                    nameCategories = ""
-                )
-                findNavController().navigate(action)
-            }
+//            txtViewAllSale.setOnClickListener {
+//                val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
+//                    nameCategories = ""
+//                )
+//
+//                findNavController().navigate(action)
+//            }
+//
+//            txtViewAllNew.setOnClickListener {
+//                val action = HomeFragmentDirections.actionHomeFragmentToCatalogFragment(
+//                    nameCategories = ""
+//                )
+//                findNavController().navigate(action)
+//            }
 
         }
     }
@@ -189,4 +227,8 @@ class HomeFragment : Fragment() {
         super.onDestroy()
     }
 
+    companion object {
+        const val SALE = "Sale"
+        const val NEW = "New"
+    }
 }
