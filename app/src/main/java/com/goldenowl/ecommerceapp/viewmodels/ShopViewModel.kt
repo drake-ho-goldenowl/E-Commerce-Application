@@ -43,9 +43,10 @@ class ShopViewModel @Inject constructor(
 //            productRepository.getAll()
 //        }
 //    }.asLiveData()
-    private var lastVisible = 0
+    private var lastVisible = ""
     val products: MutableLiveData<List<Product>>
     private val source = Source.CACHE
+    val total= MutableLiveData(0)
 
     init {
         products = statusFilter.flatMapLatest {
@@ -65,10 +66,10 @@ class ShopViewModel @Inject constructor(
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
             .whereEqualTo("categoryName", category)
+            .orderBy(ID_PRODUCT)
             .limit(LIMIT.toLong())
             .get(source)
             .addOnSuccessListener { documents ->
-                lastVisible = documents.size() - 1
                 val list = mutableListOf<Product>()
                 for (document in documents) {
                     val product = document.toObject<Product>()
@@ -76,6 +77,7 @@ class ShopViewModel @Inject constructor(
                         list.add(document.toObject())
                     }
                 }
+                lastVisible = list[list.size - 1].id
                 result.postValue(list)
             }
 
@@ -84,13 +86,16 @@ class ShopViewModel @Inject constructor(
 
     private fun filterByCategory(category: String): Flow<List<Product>> {
         val result: MutableLiveData<List<Product>> = MutableLiveData()
-        db.collection(PRODUCT_FIREBASE).whereEqualTo("categoryName", category).get(source)
+        db.collection(PRODUCT_FIREBASE)
+            .whereEqualTo("categoryName", category)
+            .orderBy(ID_PRODUCT)
+            .get(source)
             .addOnSuccessListener { documents ->
                 val list = mutableListOf<Product>()
                 for (document in documents) {
                     list.add(document.toObject())
                 }
-                lastVisible = list.size - 1
+                lastVisible = list[list.size - 1].id
                 result.postValue(list)
             }
 
@@ -110,7 +115,7 @@ class ShopViewModel @Inject constructor(
                         list.add(document.toObject())
                     }
                 }
-                lastVisible = list.size - 1
+                lastVisible = list[list.size - 1].id
                 result.postValue(list)
             }
 
@@ -121,6 +126,7 @@ class ShopViewModel @Inject constructor(
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
             .limit(LIMIT.toLong())
+            .orderBy(ID_PRODUCT)
             .get(source)
             .addOnSuccessListener { documents ->
 
@@ -128,25 +134,35 @@ class ShopViewModel @Inject constructor(
                 for (document in documents) {
                     list.add(document.toObject())
                 }
-                lastVisible = list.size - 1
+                lastVisible = list[list.size - 1].id
                 result.postValue(list)
             }
 
         return result.asFlow()
     }
 
+    fun getTotal(){
+        db.collection(PRODUCT_FIREBASE)
+            .get(source)
+            .addOnSuccessListener { documents ->
+                total.postValue(documents.size())
+            }
+    }
+
     fun loadMore(list: List<Product>) {
         db.collection(PRODUCT_FIREBASE)
-            .orderBy("title")
+            .orderBy(ID_PRODUCT)
             .startAfter(lastVisible)
             .limit(LIMIT.toLong()).get(source).addOnSuccessListener { documents ->
-                lastVisible = documents.size() - 1
                 val temp = mutableListOf<Product>()
-                temp.addAll(list)
-                for (document in documents) {
-                    temp.add(document.toObject())
+                if(documents.size() != 0){
+                    temp.addAll(list)
+                    for (document in documents) {
+                        temp.add(document.toObject())
+                    }
+                    lastVisible = temp[temp.size - 1].id
+                    products.postValue(temp)
                 }
-                products.postValue(temp)
             }
     }
 
@@ -263,5 +279,6 @@ class ShopViewModel @Inject constructor(
     companion object {
         const val TAG = "ShopViewModel"
         const val LIMIT = 4
+        const val ID_PRODUCT = "id"
     }
 }

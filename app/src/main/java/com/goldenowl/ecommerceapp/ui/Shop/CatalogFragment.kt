@@ -30,6 +30,8 @@ class CatalogFragment : Fragment() {
     private lateinit var adapterProductGrid: ListProductGridAdapter
     private lateinit var adapterCategory: ListCategoriesAdater
     private var isLinearLayoutManager = true
+
+    private var totalProduct = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,7 +57,6 @@ class CatalogFragment : Fragment() {
         adapterSetup()
         bind()
         setFragmentListener()
-
         return binding.root
     }
 
@@ -104,6 +105,7 @@ class CatalogFragment : Fragment() {
 
             products.observe(viewLifecycleOwner) {
                 val product = viewModel.filterSort(it)
+                binding.progressBar.visibility = View.GONE
                 adapterProductGrid.submitList(product)
                 adapterProduct.submitList(product)
             }
@@ -111,6 +113,11 @@ class CatalogFragment : Fragment() {
             favorites.observe(viewLifecycleOwner) {
                 adapterProductGrid.notifyDataSetChanged()
                 adapterProduct.notifyDataSetChanged()
+            }
+
+            getTotal()
+            total.observe(viewLifecycleOwner){
+                totalProduct = it
             }
         }
     }
@@ -125,10 +132,11 @@ class CatalogFragment : Fragment() {
 
             nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
                 if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
-                    println("asdasdasdas")
                     viewModel.products.value?.let {
-                        println("asdasdasdas")
-                        viewModel.loadMore(it)
+                        if(it.size < totalProduct){
+                            progressBar.visibility = View.VISIBLE
+                            viewModel.loadMore(it)
+                        }
                     }
                 }
             })
