@@ -74,7 +74,7 @@ class QrScanFragment : Fragment() {
         viewModel.apply {
             statusCheckProduct.observe(viewLifecycleOwner) {
                 if (it.isNotBlank()) {
-                    if (it != "NULL") {
+                    if (it != NULL) {
                         val action =
                             QrScanFragmentDirections.actionQrScanFragmentToProductDetailFragment(
                                 idProduct = it
@@ -138,16 +138,16 @@ class QrScanFragment : Fragment() {
 
     private fun popUpTimeOutPopup() {
         pauseCamera()
-        val dialog = AlertDialog.Builder(context)
-            .setTitle("Continue scanning the QR")
-            .setMessage("Time allowed. Do you want to continue scanning the product QR code")
-            .setPositiveButton("Continue") { dialog, _ ->
+        AlertDialog.Builder(context)
+            .setTitle(getString(R.string.title_time_out))
+            .setMessage(getString(R.string.message_time_out))
+            .setPositiveButton(getString(R.string.message_continue)) { dialog, _ ->
                 resumeCamera()
                 timeOutDetectedQR()
                 dialog.dismiss()
             }
             .setNegativeButton(
-                "Close"
+                getString(R.string.close)
             ) { dialog, _ ->
                 findNavController().navigateUp()
                 dialog.dismiss()
@@ -159,9 +159,9 @@ class QrScanFragment : Fragment() {
     private fun incorrectProductPopup() {
         pauseCamera()
         AlertDialog.Builder(context)
-            .setTitle("QR Incorrect")
-            .setMessage("Please try again")
-            .setPositiveButton("OK") { dialog, _ ->
+            .setTitle(getString(R.string.title_incorrect))
+            .setMessage(getString(R.string.message_incorrect))
+            .setPositiveButton(getString(R.string.ok)) { dialog, _ ->
                 resumeCamera()
                 timeOutDetectedQR()
                 dialog.dismiss()
@@ -208,5 +208,6 @@ class QrScanFragment : Fragment() {
 
     companion object {
         const val TIME_OUT = 1000 * 60 * 2
+        const val NULL = "NULL"
     }
 }

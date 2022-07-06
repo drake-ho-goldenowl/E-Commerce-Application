@@ -21,9 +21,13 @@ class QrScanViewModel @Inject constructor(
                         statusCheckProduct.postValue(idProduct)
 
                     } else {
-                        statusCheckProduct.postValue("NULL")
+                        statusCheckProduct.postValue(NULL)
                     }
                 }
             }
+    }
+
+    companion object {
+        const val NULL = "NULL"
     }
 }
