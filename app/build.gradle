@@ -101,6 +101,9 @@ dependencies {
 
     //library compress image
     implementation 'id.zelory:compressor:3.0.1'
+
+    //Scan QR code
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
