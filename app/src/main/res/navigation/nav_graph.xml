@@ -87,6 +87,9 @@
             android:name="nameProduct"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_catalogFragment_self"
+            app:destination="@id/catalogFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
