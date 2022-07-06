@@ -139,8 +139,6 @@ class HomeFragment : Fragment() {
                     if (loadMore) {
                         loadMore = false
                         if (count < category.size) {
-                            println("------------$count")
-                            println("------------${category[count]}")
                             viewModel.getProductWithCategory(category[count])
                                 .observe(viewLifecycleOwner) {
                                     if (it.isNotEmpty()) {
