@@ -16,8 +16,10 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
 import com.goldenowl.ecommerceapp.adapters.ListProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
+import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentCatalogBinding
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
+import com.goldenowl.ecommerceapp.utilities.NEW
 import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,12 +32,10 @@ class CatalogFragment : Fragment() {
     private lateinit var adapterProductGrid: ListProductGridAdapter
     private lateinit var adapterCategory: ListCategoriesAdater
     private var isLinearLayoutManager = true
-
-    private var totalProduct = 0
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private var filterPrice = emptyList<Float>()
+    private var listProduct: List<Product> = emptyList()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         arguments?.let {
             nameTitle = it.getString(NAME_CATEGORY).toString()
             val searchName = it.getString(NAME_PRODUCT)
@@ -45,14 +45,27 @@ class CatalogFragment : Fragment() {
                 viewModel.setSearch("")
             }
         }
-        binding = FragmentCatalogBinding.inflate(inflater, container, false)
+        viewModel.setSort(0)
+        viewModel.lastVisible = ""
         if (nameTitle.isNullOrBlank()) {
             viewModel.setCategory("")
         } else {
-            viewModel.setCategory(nameTitle.toString())
+            if (nameTitle.toString() == NEW) {
+                viewModel.setCategory("")
+                viewModel.setSort(1)
+            } else {
+                viewModel.setCategory(nameTitle.toString())
+            }
         }
-        viewModel.setSort(0)
 
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentCatalogBinding.inflate(inflater, container, false)
+        viewModel.products.value?.let { viewModel.filterPrice(10F, 20F, it) }
         observeSetup()
         adapterSetup()
         bind()
@@ -87,11 +100,17 @@ class CatalogFragment : Fragment() {
 
         adapterCategory = ListCategoriesAdater { str ->
             if (binding.appBarLayout.topAppBar.title == str) {
-                viewModel.setCategory("")
-                binding.appBarLayout.topAppBar.title = getString(R.string.all_product)
+                val action = CatalogFragmentDirections.actionCatalogFragmentSelf(
+                    nameCategories = "",
+                    nameProduct = null
+                )
+                findNavController().navigate(action)
             } else {
-                viewModel.setCategory(str)
-                binding.appBarLayout.topAppBar.title = str
+                val action = CatalogFragmentDirections.actionCatalogFragmentSelf(
+                    nameCategories = str,
+                    nameProduct = null
+                )
+                findNavController().navigate(action)
             }
         }
     }
@@ -104,8 +123,13 @@ class CatalogFragment : Fragment() {
             }
 
             products.observe(viewLifecycleOwner) {
-                val product = viewModel.filterSort(it)
-                binding.progressBar.visibility = View.GONE
+                var product = viewModel.filterSort(it)
+                if (filterPrice.isNotEmpty()) product =
+                    viewModel.filterPrice(filterPrice[0], filterPrice[1], product)
+                else {
+                    listProduct = product
+                }
+                binding.progressBar.visibility = View.INVISIBLE
                 adapterProductGrid.submitList(product)
                 adapterProduct.submitList(product)
             }
@@ -115,9 +139,13 @@ class CatalogFragment : Fragment() {
                 adapterProduct.notifyDataSetChanged()
             }
 
-            getTotal()
-            total.observe(viewLifecycleOwner){
-                totalProduct = it
+            loadMore.observe(viewLifecycleOwner) {
+                if (!it) {
+                    binding.progressBar.visibility = View.INVISIBLE
+                }
+                else{
+                    binding.progressBar.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -130,10 +158,15 @@ class CatalogFragment : Fragment() {
                 appBarLayout.topAppBar.title = nameTitle
             }
 
+            if (viewModel.statusFilter.value.third == 1) {
+                appBarLayout.btnSort.text = getString(R.string.newest)
+            }
+
             nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+                println("sdasdasdasdasdasdasd")
                 if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                     viewModel.products.value?.let {
-                        if(it.size < totalProduct){
+                        if (viewModel.loadMore.value == true) {
                             progressBar.visibility = View.VISIBLE
                             viewModel.loadMore(it)
                         }
@@ -151,7 +184,16 @@ class CatalogFragment : Fragment() {
             )
 
             appBarLayout.recyclerViewCategories.adapter = adapterCategory
+            appBarLayout.btnFilter.setOnClickListener {
+                if (filterPrice.isNotEmpty()) {
+                    val bottomFilter = BottomFilter(filterPrice[0], filterPrice[1])
+                    bottomFilter.show(parentFragmentManager, BottomFilter.TAG)
+                } else {
+                    val bottomFilter = BottomFilter()
+                    bottomFilter.show(parentFragmentManager, BottomFilter.TAG)
+                }
 
+            }
             //Handle Button Change View
             appBarLayout.btnChangeView.background =
                 if (isLinearLayoutManager)
@@ -195,8 +237,21 @@ class CatalogFragment : Fragment() {
         setFragmentResultListener(REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(BUNDLE_KEY_NAME)
             val position = bundle.getInt(BUNDLE_KEY_POSITION)
-            binding.appBarLayout.btnSort.text = result
-            viewModel.setSort(position)
+            if (!result.isNullOrBlank()) {
+                binding.appBarLayout.btnSort.text = result
+                viewModel.setSort(position)
+            }
+            val min = bundle.getFloat(BUNDLE_KEY_MIN)
+            val max = bundle.getFloat(BUNDLE_KEY_MAX)
+            if (min >= 0 && max > 0) {
+                filterPrice = listOf(min, max)
+                viewModel.apply {
+                    products.postValue(filterPrice(min, max, listProduct))
+                }
+            } else {
+                filterPrice = emptyList()
+                viewModel.products.postValue(listProduct)
+            }
         }
     }
 
@@ -204,8 +259,11 @@ class CatalogFragment : Fragment() {
         const val REQUEST_KEY = "request_key"
         const val BUNDLE_KEY_NAME = "bundle_name"
         const val BUNDLE_KEY_POSITION = "bundle_position"
+        const val BUNDLE_KEY_MIN = "bundle_min"
+        const val BUNDLE_KEY_MAX = "bundle_max"
         const val GRIDVIEW_SPAN_COUNT = 2
         const val NAME_CATEGORY = "nameCategories"
         const val NAME_PRODUCT = "nameProduct"
+
     }
 }

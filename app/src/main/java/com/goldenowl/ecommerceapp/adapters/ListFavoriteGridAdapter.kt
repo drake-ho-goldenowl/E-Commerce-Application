@@ -36,7 +36,7 @@ class ListFavoriteGridAdapter(
             binding.apply {
                 Glide.with(itemView.context)
                     .load(favoriteAndProduct.product.images[0])
-                    .error(R.drawable.img_sample_2)
+                    .error(R.drawable.img_default)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProduct)
                 txtName.text = favoriteAndProduct.product.title

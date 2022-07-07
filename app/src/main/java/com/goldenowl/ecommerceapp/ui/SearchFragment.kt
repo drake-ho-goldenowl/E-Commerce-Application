@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.ui
 
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoryAdapter
 import com.goldenowl.ecommerceapp.adapters.ListHistoryAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentSearchBinding

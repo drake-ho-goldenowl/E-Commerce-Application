@@ -48,7 +48,7 @@ class RatingProductFragment : Fragment() {
                 txtName.text = it.first
                 Glide.with(this)
                     .load(it.second)
-                    .error(R.drawable.img_sample_2)
+                    .error(R.drawable.img_default)
                     .into(imgAvatar)
             }
         }, { review, txtHelpful, icLike, isHelpful ->

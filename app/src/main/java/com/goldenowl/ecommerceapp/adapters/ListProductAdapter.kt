@@ -4,6 +4,7 @@ import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -34,12 +35,14 @@ class ListProductAdapter(
                 val circularProgressDrawable = CircularProgressDrawable(itemView.context)
                 circularProgressDrawable.strokeWidth = 5f
                 circularProgressDrawable.centerRadius = 30f
+                circularProgressDrawable.backgroundColor =
+                    ContextCompat.getColor(itemView.context, R.color.colorPrimary)
                 circularProgressDrawable.start()
 
                 Glide.with(itemView.context)
                     .load(product.images[0])
                     .placeholder(circularProgressDrawable)
-                    .error(R.drawable.img_sample_2)
+                    .error(R.drawable.img_default)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imgProduct)
                 txtName.text = product.title

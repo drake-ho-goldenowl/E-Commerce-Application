@@ -17,6 +17,11 @@ const val ORDER_USER = "order"
 const val LAST_EDIT = "LAST_EDIT"
 const val VALUE_LAST_EDIT = "lastEdit"
 const val HISTORY = "HISTORY"
+const val SALE = "Sale"
+const val NEW = "New"
+const val CATEGORY_NAME = "categoryName"
+const val SALE_PERCENT = "salePercent"
+const val ID_PRODUCT = "id"
 
 val NON_DIGITS = Regex("[^\\d]")
 

@@ -278,4 +278,9 @@
     <string name="close">Close</string>
     <string name="message_continue">Continue</string>
     <string name="ok">OK</string>
+    <string name="newest">Newest</string>
+    <array name="initial_slider_values">
+        <item>20.0</item>
+        <item>70.0</item>
+    </array>
 </resources>

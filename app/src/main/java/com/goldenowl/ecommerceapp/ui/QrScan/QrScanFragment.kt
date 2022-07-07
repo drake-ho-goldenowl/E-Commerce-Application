@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.ui.QrScan
 
 import android.Manifest
 import android.app.AlertDialog
@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.budiyev.android.codescanner.*
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentQrScanBinding
 import com.goldenowl.ecommerceapp.viewmodels.QrScanViewModel
 import dagger.hilt.android.AndroidEntryPoint

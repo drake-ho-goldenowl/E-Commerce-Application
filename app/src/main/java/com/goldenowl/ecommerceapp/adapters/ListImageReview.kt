@@ -98,6 +98,7 @@ sealed class ListImageReviewViewHolder(binding: ViewBinding) :
                 } else {
                     Glide.with(fragment)
                         .load(uri)
+                        .error(R.drawable.img_default)
                         .into(imgReview)
                 }
             }

@@ -27,7 +27,6 @@
                 android:layout_width="104dp"
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/img_sample_2"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 

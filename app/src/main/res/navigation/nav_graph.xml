@@ -89,7 +89,9 @@
             app:nullable="true" />
         <action
             android:id="@+id/action_catalogFragment_self"
-            app:destination="@id/catalogFragment" />
+            app:destination="@id/catalogFragment"
+            app:popUpTo="@id/catalogFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
@@ -178,7 +180,7 @@
         tools:layout="@layout/fragment_order_detail" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.goldenowl.ecommerceapp.SearchFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
@@ -189,7 +191,7 @@
     </fragment>
     <fragment
         android:id="@+id/qrScanFragment"
-        android:name="com.goldenowl.ecommerceapp.QrScanFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.QrScan.QrScanFragment"
         android:label="fragment_qr_scan"
         tools:layout="@layout/fragment_qr_scan" >
         <action
@@ -205,7 +207,7 @@
     </fragment>
     <fragment
         android:id="@+id/allowCameraFragment"
-        android:name="com.goldenowl.ecommerceapp.AllowCameraFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.QrScan.AllowCameraFragment"
         android:label="fragment_allow_camera"
         tools:layout="@layout/fragment_allow_camera" />
 </navigation>

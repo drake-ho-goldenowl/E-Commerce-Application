@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.ui.QrScan
 
 import android.content.Intent
 import android.net.Uri

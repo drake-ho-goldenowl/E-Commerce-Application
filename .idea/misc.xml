@@ -32,6 +32,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/checkbox_custom.xml" value="0.17" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/checkbox_selector.xml" value="0.1695" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/edit_txt_custom.xml" value="0.158" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/edit_txt_custom2.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/favorites.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/favorites_icon.xml" value="0.153" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/home_icon.xml" value="0.1215" />
@@ -39,6 +40,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_arrow_back.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_arrow_forward.xml" value="0.173" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_arrow_right.xml" value="0.157" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_back_2.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_bag.xml" value="0.173" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_bag.xml" value="0.157" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_baseline_favorites.xml" value="0.17" />
@@ -92,9 +94,11 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_round_arrow_right.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_search.xml" value="0.153" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_splash.xml" value="0.1" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_usps.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_view_module.xml" value="0.1325" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_view_modules.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_visa.xml" value="0.1655" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/ic_visa2.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/logo_app.xml" value="0.11" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/person_icon.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/profile_icon.xml" value="0.1" />
@@ -202,7 +206,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_mastercard.xml" value="0.375" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_order.xml" value="0.75" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_payment_card.xml" value="0.335" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product.xml" value="0.335" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product_2.xml" value="0.2864321608040201" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product_favorite.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product_favorite_2.xml" value="0.40214477211796246" />

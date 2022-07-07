@@ -9,7 +9,7 @@ import com.goldenowl.ecommerceapp.data.FavoriteRepository
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.data.ProductRepository
 import com.goldenowl.ecommerceapp.data.UserManager
-import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
+import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
@@ -43,10 +43,10 @@ class ShopViewModel @Inject constructor(
 //            productRepository.getAll()
 //        }
 //    }.asLiveData()
-    private var lastVisible = ""
+    var lastVisible = ""
     val products: MutableLiveData<List<Product>>
+    var loadMore = MutableLiveData(true)
     private val source = Source.CACHE
-    val total= MutableLiveData(0)
 
     init {
         products = statusFilter.flatMapLatest {
@@ -65,7 +65,7 @@ class ShopViewModel @Inject constructor(
     private fun filterByCategoryAndSearch(search: String, category: String): Flow<List<Product>> {
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
-            .whereEqualTo("categoryName", category)
+            .whereEqualTo(CATEGORY_NAME, category)
             .orderBy(ID_PRODUCT)
             .limit(LIMIT.toLong())
             .get(source)
@@ -74,10 +74,12 @@ class ShopViewModel @Inject constructor(
                 for (document in documents) {
                     val product = document.toObject<Product>()
                     if (product.title.lowercase().contains(search.lowercase())) {
-                        list.add(document.toObject())
+                        list.add(product)
                     }
                 }
-                lastVisible = list[list.size - 1].id
+                if (list.size > 1) {
+                    lastVisible = list[list.size - 1].id
+                }
                 result.postValue(list)
             }
 
@@ -85,26 +87,34 @@ class ShopViewModel @Inject constructor(
     }
 
     private fun filterByCategory(category: String): Flow<List<Product>> {
-        val result: MutableLiveData<List<Product>> = MutableLiveData()
-        db.collection(PRODUCT_FIREBASE)
-            .whereEqualTo("categoryName", category)
-            .orderBy(ID_PRODUCT)
-            .get(source)
-            .addOnSuccessListener { documents ->
-                val list = mutableListOf<Product>()
-                for (document in documents) {
-                    list.add(document.toObject())
+        if (category == SALE) {
+            return filterSale()
+        } else {
+            val result: MutableLiveData<List<Product>> = MutableLiveData()
+            db.collection(PRODUCT_FIREBASE)
+                .whereEqualTo(CATEGORY_NAME, category)
+                .orderBy(ID_PRODUCT)
+                .limit(LIMIT.toLong())
+                .get(source)
+                .addOnSuccessListener { documents ->
+                    val list = mutableListOf<Product>()
+                    for (document in documents) {
+                        list.add(document.toObject())
+                    }
+                    if (list.size > 1) {
+                        lastVisible = list[list.size - 1].id
+                    }
+                    result.postValue(list)
                 }
-                lastVisible = list[list.size - 1].id
-                result.postValue(list)
-            }
 
-        return result.asFlow()
+            return result.asFlow()
+        }
     }
 
     private fun filterBySearch(search: String): Flow<List<Product>> {
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
+            .orderBy(ID_PRODUCT)
             .limit(LIMIT.toLong())
             .get(source)
             .addOnSuccessListener { documents ->
@@ -112,10 +122,12 @@ class ShopViewModel @Inject constructor(
                 for (document in documents) {
                     val product = document.toObject<Product>()
                     if (product.title.lowercase().contains(search.lowercase())) {
-                        list.add(document.toObject())
+                        list.add(product)
                     }
                 }
-                lastVisible = list[list.size - 1].id
+                if (list.size > 1) {
+                    lastVisible = list[list.size - 1].id
+                }
                 result.postValue(list)
             }
 
@@ -134,34 +146,176 @@ class ShopViewModel @Inject constructor(
                 for (document in documents) {
                     list.add(document.toObject())
                 }
-                lastVisible = list[list.size - 1].id
+                if (list.size > 1) {
+                    lastVisible = list[list.size - 1].id
+                }
                 result.postValue(list)
             }
 
         return result.asFlow()
     }
 
-    fun getTotal(){
-        db.collection(PRODUCT_FIREBASE)
-            .get(source)
-            .addOnSuccessListener { documents ->
-                total.postValue(documents.size())
+    fun filterPrice(min: Float, max: Float, list: List<Product>): MutableList<Product> {
+        val temp = list.toMutableList()
+        for (product in list) {
+            val price = product.colors[0].sizes[0].price
+            if (price < min || price > max) {
+                temp.remove(product)
             }
+        }
+        return temp
     }
 
     fun loadMore(list: List<Product>) {
+        statusFilter.value.apply {
+            if (this.first.isNotBlank() && this.second.isNotBlank()) {
+                loadMoreCategoryAndSearch(this.second, this.first, list)
+            } else if (this.first.isNotBlank()) {
+                loadMoreCategory(this.first, list)
+            } else if (this.second.isNotBlank()) {
+                loadMoreSearch(this.second, list)
+            } else {
+                loadMoreAll(list)
+            }
+        }
+    }
+
+    private fun loadMoreAll(list: List<Product>) {
         db.collection(PRODUCT_FIREBASE)
             .orderBy(ID_PRODUCT)
             .startAfter(lastVisible)
             .limit(LIMIT.toLong()).get(source).addOnSuccessListener { documents ->
                 val temp = mutableListOf<Product>()
-                if(documents.size() != 0){
+                if (documents.size() != 0) {
+                    loadMore.postValue(true)
                     temp.addAll(list)
                     for (document in documents) {
                         temp.add(document.toObject())
                     }
                     lastVisible = temp[temp.size - 1].id
                     products.postValue(temp)
+                } else {
+                    loadMore.postValue(false)
+                }
+            }
+    }
+
+    private fun loadMoreCategory(category: String, list: List<Product>) {
+
+        if (category == SALE) {
+            loadMoreSaleProduct(list)
+        } else {
+            db.collection(PRODUCT_FIREBASE)
+                .whereEqualTo(CATEGORY_NAME, category)
+                .orderBy(ID_PRODUCT)
+                .startAfter(lastVisible)
+                .limit(LIMIT.toLong())
+                .get(source)
+                .addOnSuccessListener { documents ->
+                    val temp = mutableListOf<Product>()
+                    if (documents.size() != 0) {
+                        loadMore.postValue(true)
+                        temp.addAll(list)
+                        for (document in documents) {
+                            temp.add(document.toObject())
+                        }
+                        lastVisible = temp[temp.size - 1].id
+                        products.postValue(temp)
+                    } else {
+                        loadMore.postValue(false)
+                    }
+                }
+        }
+
+    }
+
+    private fun loadMoreSearch(search: String, list: List<Product>) {
+        db.collection(PRODUCT_FIREBASE)
+            .limit(LIMIT.toLong())
+            .orderBy(ID_PRODUCT)
+            .startAfter(lastVisible)
+            .get(source)
+            .addOnSuccessListener { documents ->
+                val temp = mutableListOf<Product>()
+                if (documents.size() != 0) {
+                    loadMore.postValue(true)
+                    temp.addAll(list)
+                    for (document in documents) {
+                        val product = document.toObject<Product>()
+                        if (product.title.lowercase().contains(search.lowercase())) {
+                            temp.add(product)
+                        }
+                    }
+                    lastVisible = temp[temp.size - 1].id
+                    products.postValue(temp)
+                } else {
+                    loadMore.postValue(false)
+                }
+            }
+    }
+
+    private fun loadMoreCategoryAndSearch(search: String, category: String, list: List<Product>) {
+        db.collection(PRODUCT_FIREBASE)
+            .whereEqualTo(CATEGORY_NAME, category)
+            .orderBy(ID_PRODUCT)
+            .startAfter(lastVisible)
+            .limit(LIMIT.toLong())
+            .get(source)
+            .addOnSuccessListener { documents ->
+                val temp = mutableListOf<Product>()
+                if (documents.size() != 0) {
+                    loadMore.postValue(true)
+                    temp.addAll(list)
+                    for (document in documents) {
+                        val product = document.toObject<Product>()
+                        if (product.title.lowercase().contains(search.lowercase())) {
+                            temp.add(product)
+                        }
+                    }
+                    lastVisible = temp[temp.size - 1].id
+                    products.postValue(temp)
+                } else {
+                    loadMore.postValue(false)
+                }
+            }
+    }
+
+    private fun filterSale(): Flow<List<Product>> {
+        val result: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
+        val source = Source.CACHE
+        db.collection(PRODUCT_FIREBASE)
+            .whereNotEqualTo(SALE_PERCENT, null)
+            .orderBy(SALE_PERCENT)
+            .limit(LIMIT.toLong())
+            .get(source)
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (document in documents) {
+                    list.add(document.toObject())
+                }
+                result.postValue(list)
+            }
+        return result.asFlow()
+    }
+
+    private fun loadMoreSaleProduct(list: List<Product>) {
+        db.collection(PRODUCT_FIREBASE)
+            .whereNotEqualTo(SALE_PERCENT, null)
+            .orderBy(SALE_PERCENT)
+            .limit(LIMIT.toLong())
+            .get(source)
+            .addOnSuccessListener { documents ->
+                val temp = mutableListOf<Product>()
+                if (documents.size() != 0) {
+                    loadMore.postValue(true)
+                    temp.addAll(list)
+                    for (document in documents) {
+                        temp.add(document.toObject())
+                    }
+                    lastVisible = temp[temp.size - 1].id
+                    products.postValue(temp)
+                } else {
+                    loadMore.postValue(false)
                 }
             }
     }
@@ -279,6 +433,5 @@ class ShopViewModel @Inject constructor(
     companion object {
         const val TAG = "ShopViewModel"
         const val LIMIT = 4
-        const val ID_PRODUCT = "id"
     }
 }
