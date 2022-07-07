@@ -15,9 +15,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListImageReview
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutAddYourReviewBinding
-import com.goldenowl.ecommerceapp.ui.LoadingDialog
+import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
 import com.goldenowl.ecommerceapp.utilities.FileUtil
-import com.goldenowl.ecommerceapp.viewmodels.ReviewRatingViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import id.zelory.compressor.Compressor
@@ -43,7 +42,7 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
     ): View {
         binding = BottomLayoutAddYourReviewBinding.inflate(inflater, container, false)
 
-        adapter = ListImageReview(this, true, {
+        adapter = ListImageReview( true, {
 
         }, {
             val intent = Intent(Intent.ACTION_PICK)

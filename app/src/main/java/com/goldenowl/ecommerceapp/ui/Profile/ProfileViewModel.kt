@@ -1,12 +1,10 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.Profile
 
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import com.bumptech.glide.Glide
-import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.Card
 import com.goldenowl.ecommerceapp.data.OrderRepository
 import com.goldenowl.ecommerceapp.data.ShippingAddressRepository
@@ -41,10 +39,12 @@ class ProfileViewModel @Inject constructor(
         if (userManager.isLogged()) {
             name.text = userManager.getName()
             email.text = userManager.getEmail()
-            Glide.with(fragment)
-                .load(userManager.getAvatar())
-                .error(R.drawable.ic_no_login)
-                .into(avatar)
+
+            GlideDefault.userImage(
+                fragment.requireContext(),
+                userManager.getAvatar(),
+                avatar
+            )
         }
     }
 

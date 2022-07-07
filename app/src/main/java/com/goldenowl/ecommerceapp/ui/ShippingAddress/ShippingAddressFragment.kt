@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListAddressAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentShippingAddressBinding
-import com.goldenowl.ecommerceapp.ui.ConfirmDialog
-import com.goldenowl.ecommerceapp.viewmodels.ShippingAddressViewModel
+import com.goldenowl.ecommerceapp.ui.General.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

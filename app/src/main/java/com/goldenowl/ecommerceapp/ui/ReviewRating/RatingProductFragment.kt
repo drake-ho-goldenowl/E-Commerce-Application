@@ -11,13 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListImageReview
 import com.goldenowl.ecommerceapp.adapters.ListReviewAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentRatingProductBinding
-import com.goldenowl.ecommerceapp.viewmodels.ReviewRatingViewModel
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
@@ -46,10 +45,7 @@ class RatingProductFragment : Fragment() {
             val result = viewModel.getNameAndAvatarUser(userID)
             result.observe(viewLifecycleOwner) {
                 txtName.text = it.first
-                Glide.with(this)
-                    .load(it.second)
-                    .error(R.drawable.img_default)
-                    .into(imgAvatar)
+                GlideDefault.show(requireContext(),it.second,imgAvatar)
             }
         }, { review, txtHelpful, icLike, isHelpful ->
             if (isHelpful) {
@@ -68,7 +64,7 @@ class RatingProductFragment : Fragment() {
                 }
         }, { recyclerView, review ->
 
-            val adapter = ListImageReview(this@RatingProductFragment, false, {}, {})
+            val adapter = ListImageReview(false, {}, {})
             adapter.dataSet = review.listImage
             adapter.notifyDataSetChanged()
 

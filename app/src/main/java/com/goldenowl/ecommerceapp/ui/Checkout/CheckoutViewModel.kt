@@ -1,7 +1,8 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.Checkout
 
 import androidx.lifecycle.*
 import com.goldenowl.ecommerceapp.data.*
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject

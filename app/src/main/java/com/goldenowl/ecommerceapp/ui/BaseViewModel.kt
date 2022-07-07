@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

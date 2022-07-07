@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui.Bag
+package com.goldenowl.ecommerceapp.ui.Promotion
 
 import android.os.Bundle
 import android.text.Editable
@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListPromotionAdapter
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutPromotionBinding
-import com.goldenowl.ecommerceapp.viewmodels.PromotionViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.ShippingAddress
 import com.goldenowl.ecommerceapp.databinding.FragmentAddShippingAddressBinding
-import com.goldenowl.ecommerceapp.viewmodels.ShippingAddressViewModel
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 

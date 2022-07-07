@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.ReviewRating
 
 import android.util.Log
 import androidx.core.net.toUri
@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.REVIEW_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.Timestamp

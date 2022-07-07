@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui
 
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 

@@ -7,13 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.FavoriteAndProduct
 import com.goldenowl.ecommerceapp.data.Size
 import com.goldenowl.ecommerceapp.databinding.ItemProductFavoriteBinding
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListFavoriteGridAdapter(
     private val onCloseClicked: (FavoriteAndProduct) -> Unit,
@@ -34,11 +32,7 @@ class ListFavoriteGridAdapter(
         fun bind(favoriteAndProduct: FavoriteAndProduct) {
             val size = filterSize(favoriteAndProduct)
             binding.apply {
-                Glide.with(itemView.context)
-                    .load(favoriteAndProduct.product.images[0])
-                    .error(R.drawable.img_default)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProduct)
+                GlideDefault.show(itemView.context,favoriteAndProduct.product.images[0],imgProduct,true)
                 txtName.text = favoriteAndProduct.product.title
                 txtBrandName.text = favoriteAndProduct.product.brandName
                 ratingBar.rating = favoriteAndProduct.product.reviewStars.toFloat()

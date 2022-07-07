@@ -15,8 +15,7 @@ import com.goldenowl.ecommerceapp.MainActivity
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentSignUpBinding
 import com.goldenowl.ecommerceapp.utilities.REQUEST_SIGN_IN
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
-import com.goldenowl.ecommerceapp.viewmodels.OnSignInStartedListener
+import com.goldenowl.ecommerceapp.ui.OnSignInStartedListener
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException

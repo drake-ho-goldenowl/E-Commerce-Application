@@ -13,7 +13,6 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListDeliveryAdapter
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.databinding.FragmentCheckoutBinding
-import com.goldenowl.ecommerceapp.viewmodels.CheckoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 

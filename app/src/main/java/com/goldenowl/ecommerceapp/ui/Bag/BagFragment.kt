@@ -13,7 +13,7 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListBagAdapter
 import com.goldenowl.ecommerceapp.data.BagAndProduct
 import com.goldenowl.ecommerceapp.databinding.FragmentBagBinding
-import com.goldenowl.ecommerceapp.viewmodels.BagViewModel
+import com.goldenowl.ecommerceapp.ui.Promotion.BottomPromotion
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCardAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentPaymentMethodBinding
-import com.goldenowl.ecommerceapp.ui.ConfirmDialog
-import com.goldenowl.ecommerceapp.viewmodels.PaymentViewModel
+import com.goldenowl.ecommerceapp.ui.General.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

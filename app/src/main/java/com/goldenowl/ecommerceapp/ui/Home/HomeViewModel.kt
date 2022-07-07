@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.Home
 
 import android.content.Context
 import android.util.Log
@@ -10,7 +10,9 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
+import com.goldenowl.ecommerceapp.ui.Shop.ShopViewModel
 import com.goldenowl.ecommerceapp.utilities.*
+import com.goldenowl.ecommerceapp.ui.Favorite.FavoriteViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.Source

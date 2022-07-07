@@ -13,8 +13,7 @@ import com.goldenowl.ecommerceapp.adapters.ListProductOrderAdapter
 import com.goldenowl.ecommerceapp.data.Order
 import com.goldenowl.ecommerceapp.data.ProductOrder
 import com.goldenowl.ecommerceapp.databinding.FragmentOrderDetailBinding
-import com.goldenowl.ecommerceapp.ui.LoadingDialog
-import com.goldenowl.ecommerceapp.viewmodels.OrderViewModel
+import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 

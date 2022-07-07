@@ -5,10 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.data.Promotion
 import com.goldenowl.ecommerceapp.databinding.ItemPromotionBinding
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -25,10 +24,7 @@ class ListPromotionAdapter(private val onApplyClicked: (Promotion) -> Unit) :
                 txtName.text = promotion.name
                 txtIdPromotion.text = promotion.id
 
-                Glide.with(itemView.context)
-                    .load(promotion.backgroundImage)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgPromotion)
+                GlideDefault.show(itemView.context,promotion.backgroundImage,imgPromotion,true)
 
                 btnApply.setOnClickListener {
                     onApplyClicked(promotion)

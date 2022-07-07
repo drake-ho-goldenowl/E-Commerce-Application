@@ -4,17 +4,15 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.ItemButtonAddImageBinding
 import com.goldenowl.ecommerceapp.databinding.ItemImageReviewBinding
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 
 class ListImageReview(
-    private val fragment: Fragment,
     private val isUri: Boolean,
     private val onItemClicked: (String) -> Unit,
     private val onItemAddImageClicked: () -> Unit,
@@ -25,7 +23,6 @@ class ListImageReview(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListImageReviewViewHolder {
         return when (viewType) {
             R.layout.item_image_review -> ListImageReviewViewHolder.ItemViewHolder(
-                fragment,
                 isUri,
                 ItemImageReviewBinding.inflate(
                     LayoutInflater.from(
@@ -86,7 +83,6 @@ class ListImageReview(
 sealed class ListImageReviewViewHolder(binding: ViewBinding) :
     RecyclerView.ViewHolder(binding.root) {
     class ItemViewHolder(
-        private val fragment: Fragment,
         private val isUri: Boolean,
         private var binding: ItemImageReviewBinding
     ) :
@@ -96,10 +92,7 @@ sealed class ListImageReviewViewHolder(binding: ViewBinding) :
                 if (isUri) {
                     imgReview.setImageURI(Uri.parse(uri))
                 } else {
-                    Glide.with(fragment)
-                        .load(uri)
-                        .error(R.drawable.img_default)
-                        .into(imgReview)
+                    GlideDefault.show(itemView.context,uri,imgReview)
                 }
             }
         }

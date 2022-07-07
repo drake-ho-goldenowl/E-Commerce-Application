@@ -3,7 +3,7 @@ package com.goldenowl.ecommerceapp.data
 import android.util.Log
 import com.goldenowl.ecommerceapp.utilities.BAG_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
-import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
+import com.goldenowl.ecommerceapp.ui.Favorite.FavoriteViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import javax.inject.Inject

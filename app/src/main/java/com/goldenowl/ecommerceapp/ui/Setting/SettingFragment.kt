@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui.Profile
+package com.goldenowl.ecommerceapp.ui.Setting
 
 import android.app.Activity
 import android.content.Intent
@@ -11,11 +11,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentSettingBinding
-import com.goldenowl.ecommerceapp.ui.DatePickerFragment
-import com.goldenowl.ecommerceapp.viewmodels.SettingViewModel
+import com.goldenowl.ecommerceapp.ui.General.DatePickerFragment
+import com.goldenowl.ecommerceapp.ui.Profile.BottomSheetChangePassword
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,10 +39,12 @@ class SettingFragment : Fragment() {
             appBarLayout.topAppBar.title = getString(R.string.setting)
             editTextFullName.setText(viewModel.userManager.getName())
             editTextDateOfBirth.setText(viewModel.userManager.getDOB())
-            Glide.with(this@SettingFragment)
-                .load(viewModel.userManager.getAvatar())
-                .error(R.drawable.ic_no_login)
-                .into(binding.imgAvatar)
+
+            GlideDefault.userImage(
+                requireContext(),
+                viewModel.userManager.getAvatar(),
+                binding.imgAvatar
+            )
 
             if (viewModel.checkLoginWithFbOrGoogle()) {
                 txtChange.visibility = View.GONE
@@ -123,10 +125,11 @@ class SettingFragment : Fragment() {
             val filePath = data.data
             binding.imgAvatar.setImageURI(filePath)
             viewModel.uploadImage(filePath, viewModel.userManager.getAccessToken())
-            Glide.with(this@SettingFragment)
-                .load(data.data)
-                .error(R.drawable.ic_no_login)
-                .into(binding.imgAvatar)
+            GlideDefault.userImage(
+                requireContext(),
+                data.data.toString(),
+                binding.imgAvatar
+            )
         }
     }
 

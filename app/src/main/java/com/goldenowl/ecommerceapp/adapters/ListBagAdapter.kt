@@ -9,11 +9,10 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.BagAndProduct
 import com.goldenowl.ecommerceapp.databinding.ItemBagBinding
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListBagAdapter(
     private val onItemClicked: (BagAndProduct) -> Unit,
@@ -34,11 +33,7 @@ class ListBagAdapter(
 
         fun bind(bagAndProduct: BagAndProduct) {
             binding.apply {
-                Glide.with(itemView.context)
-                    .load(bagAndProduct.product.images[0])
-                    .error(R.drawable.img_default)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProduct)
+                GlideDefault.show(itemView.context,bagAndProduct.product.images[0],imgProduct,true)
                 txtName.text = bagAndProduct.product.title
                 txtColorInput.text = bagAndProduct.bag.color
                 txtSizeInput.text = bagAndProduct.bag.size

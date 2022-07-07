@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.Auth
 
 import android.util.Patterns
 import androidx.lifecycle.MutableLiveData
@@ -12,6 +12,8 @@ import com.goldenowl.ecommerceapp.data.User
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.Hash
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
+import com.goldenowl.ecommerceapp.ui.OnSignInStartedListener
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth

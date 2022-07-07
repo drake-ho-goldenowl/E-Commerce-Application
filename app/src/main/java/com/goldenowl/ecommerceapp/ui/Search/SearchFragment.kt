@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui
+package com.goldenowl.ecommerceapp.ui.Search
 
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
@@ -15,8 +15,8 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoryAdapter
 import com.goldenowl.ecommerceapp.adapters.ListHistoryAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentSearchBinding
+import com.goldenowl.ecommerceapp.ui.Shop.ShopViewModel
 import com.goldenowl.ecommerceapp.utilities.HISTORY
-import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager

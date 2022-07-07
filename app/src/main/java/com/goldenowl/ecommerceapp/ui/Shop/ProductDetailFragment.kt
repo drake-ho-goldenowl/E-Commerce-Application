@@ -6,8 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,13 +16,13 @@ import com.goldenowl.ecommerceapp.adapters.SpinnerAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentProductDetailBinding
 import com.goldenowl.ecommerceapp.ui.Bag.BottomSheetCart
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
-import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProductDetailFragment : Fragment() {
+class ProductDetailFragment : BaseFragment() {
     private val viewModel: ShopViewModel by viewModels()
     private lateinit var binding: FragmentProductDetailBinding
     private lateinit var colors: MutableList<String>
@@ -75,11 +73,7 @@ class ProductDetailFragment : Fragment() {
 
     private fun observeSetup() {
         viewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
-            Toast.makeText(
-                this.context,
-                str,
-                Toast.LENGTH_SHORT
-            ).show()
+            toastMessage(str)
         }
 
         viewModel.product.observe(viewLifecycleOwner) {

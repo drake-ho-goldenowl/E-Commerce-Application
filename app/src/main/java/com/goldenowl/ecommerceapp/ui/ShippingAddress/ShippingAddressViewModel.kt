@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.ShippingAddress
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.ShippingAddress
 import com.goldenowl.ecommerceapp.data.ShippingAddressRepository
 import com.goldenowl.ecommerceapp.data.UserManager
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.ADDRESS_USER
 import com.goldenowl.ecommerceapp.utilities.LAST_EDIT
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE

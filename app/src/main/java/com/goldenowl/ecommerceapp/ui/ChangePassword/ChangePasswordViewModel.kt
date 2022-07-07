@@ -1,7 +1,8 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.ChangePassword
 
 import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.data.UserManager
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.Hash
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.EmailAuthProvider

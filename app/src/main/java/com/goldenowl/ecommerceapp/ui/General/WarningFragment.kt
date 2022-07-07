@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui
+package com.goldenowl.ecommerceapp.ui.General
 
 import androidx.fragment.app.Fragment
 import com.goldenowl.ecommerceapp.R

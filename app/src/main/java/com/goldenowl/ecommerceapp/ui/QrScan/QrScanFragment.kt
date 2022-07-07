@@ -18,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import com.budiyev.android.codescanner.*
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentQrScanBinding
-import com.goldenowl.ecommerceapp.viewmodels.QrScanViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 

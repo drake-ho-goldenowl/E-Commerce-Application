@@ -1,7 +1,8 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.QrScan
 
 import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

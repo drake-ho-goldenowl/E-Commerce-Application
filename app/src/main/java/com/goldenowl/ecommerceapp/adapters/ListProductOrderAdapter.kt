@@ -5,11 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.ProductOrder
 import com.goldenowl.ecommerceapp.databinding.ItemProductOrderBinding
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import kotlin.math.roundToInt
 
 class ListProductOrderAdapter :
@@ -21,17 +19,16 @@ class ListProductOrderAdapter :
 
         fun bind(product: ProductOrder) {
             binding.apply {
-                Glide.with(itemView.context)
-                    .load(product.image)
-                    .error(R.drawable.img_default)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProduct)
-                txtName.text = product.title
-                txtBrandName.text = product.brandName
-                txtColorInput.text = product.color
-                txtSizeInput.text = product.size
-                txtPrice.text = "${product.price.roundToInt()}\$"
-                txtUnitInput.text = product.units.toString()
+                product.apply {
+                    GlideDefault.show(itemView.context, image, imgProduct, true)
+                    txtName.text = title
+                    txtBrandName.text = brandName
+                    txtColorInput.text = color
+                    txtSizeInput.text = size
+                    txtPrice.text = "${price.roundToInt()}\$"
+                    txtUnitInput.text = units.toString()
+                }
+
             }
         }
     }

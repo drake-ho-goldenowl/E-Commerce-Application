@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.utilities
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
+import com.goldenowl.ecommerceapp.R
 
 class Notification(private val context: Context) {
     private lateinit var channel: NotificationChannel

@@ -1,8 +1,9 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.Setting
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.data.UserManager
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference

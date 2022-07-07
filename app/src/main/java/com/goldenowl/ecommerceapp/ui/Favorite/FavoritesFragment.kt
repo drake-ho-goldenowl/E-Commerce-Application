@@ -19,7 +19,6 @@ import com.goldenowl.ecommerceapp.adapters.ListFavoriteGridAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentFavoritesBinding
 import com.goldenowl.ecommerceapp.ui.Shop.BottomSheetSort
 import com.goldenowl.ecommerceapp.ui.Shop.CatalogFragment
-import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

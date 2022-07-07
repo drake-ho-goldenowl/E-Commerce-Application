@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.viewmodels
+package com.goldenowl.ecommerceapp.ui.Promotion
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.Promotion
 import com.goldenowl.ecommerceapp.data.PromotionRepository
+import com.goldenowl.ecommerceapp.ui.Shop.ShopViewModel
 import com.goldenowl.ecommerceapp.utilities.PROMOTION_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject

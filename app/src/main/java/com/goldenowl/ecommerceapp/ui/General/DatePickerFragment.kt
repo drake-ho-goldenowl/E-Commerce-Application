@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui
+package com.goldenowl.ecommerceapp.ui.General
 
 import android.app.DatePickerDialog
 import android.app.Dialog

@@ -21,7 +21,6 @@ import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.IS_FIRST
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
-import com.goldenowl.ecommerceapp.viewmodels.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 

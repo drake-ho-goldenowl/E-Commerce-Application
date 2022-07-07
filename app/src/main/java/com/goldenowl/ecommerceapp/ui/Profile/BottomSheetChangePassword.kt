@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
-import com.goldenowl.ecommerceapp.Notification
+import com.goldenowl.ecommerceapp.utilities.Notification
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutChangePasswordBinding
-import com.goldenowl.ecommerceapp.viewmodels.ChangePasswordViewModel
+import com.goldenowl.ecommerceapp.ui.ChangePassword.ChangePasswordViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 

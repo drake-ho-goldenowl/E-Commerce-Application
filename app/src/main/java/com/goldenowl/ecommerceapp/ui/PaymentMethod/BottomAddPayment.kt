@@ -13,7 +13,6 @@ import androidx.fragment.app.viewModels
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutAddPaymentBinding
 import com.goldenowl.ecommerceapp.utilities.NON_DIGITS
-import com.goldenowl.ecommerceapp.viewmodels.PaymentViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
