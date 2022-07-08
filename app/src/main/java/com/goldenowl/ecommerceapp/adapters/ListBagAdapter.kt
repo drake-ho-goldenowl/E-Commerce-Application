@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -18,16 +19,16 @@ class ListBagAdapter(
     private val onItemClicked: (BagAndProduct) -> Unit,
     private val onAddClicked: (BagAndProduct) -> Unit,
     private val onDeleteClicked: (BagAndProduct) -> Unit,
-    private val onPlusQuantityClicked: (BagAndProduct) -> Unit,
-    private val onMinusQuantityClicked: (BagAndProduct) -> Unit,
+    private val onPlusQuantityClicked: (BagAndProduct,TextView) -> Unit,
+    private val onMinusQuantityClicked: (BagAndProduct,TextView) -> Unit,
 ) :
     ListAdapter<BagAndProduct, ListBagAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(private val context: Context,
                          private val onAddClicked: (BagAndProduct) -> Unit,
                          private val onDeleteClicked: (BagAndProduct) -> Unit,
-                         private val onPlusQuantityClicked: (BagAndProduct) -> Unit,
-                         private val onMinusQuantityClicked: (BagAndProduct) -> Unit,
+                         private val onPlusQuantityClicked: (BagAndProduct,TextView) -> Unit,
+                         private val onMinusQuantityClicked: (BagAndProduct,TextView) -> Unit,
                          private var binding: ItemBagBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -55,11 +56,11 @@ class ListBagAdapter(
                 }
 
                 btnMinus.setOnClickListener {
-                    onMinusQuantityClicked(bagAndProduct)
+                    onMinusQuantityClicked(bagAndProduct,txtQuantity)
                 }
 
                 btnPlus.setOnClickListener {
-                    onPlusQuantityClicked(bagAndProduct)
+                    onPlusQuantityClicked(bagAndProduct,txtQuantity)
                 }
 
                 btnMore.setOnClickListener { view ->

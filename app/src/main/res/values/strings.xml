@@ -279,6 +279,8 @@
     <string name="message_continue">Continue</string>
     <string name="ok">OK</string>
     <string name="newest">Newest</string>
+    <string name="favorite">Favorite</string>
+    <string name="add_to_cart">Add to cart</string>
     <array name="initial_slider_values">
         <item>20.0</item>
         <item>70.0</item>

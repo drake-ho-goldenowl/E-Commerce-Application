@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
-import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,9 +24,19 @@ class BottomSheetCart(
     private val viewModel: BagViewModel by viewModels()
     private lateinit var binding: BottomLayoutSelectSizeBinding
     private lateinit var adapter: ListSizeAdapter
-
     private var selectSize: String? = null
-    private var favorite: Favorite? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val listSize = product.getAllSize()
+        adapter = ListSizeAdapter {
+            selectSize = it
+        }
+        adapter.submitList(listSize)
+
+        adapter.positionCurrent = selectSizeInt
+        selectSize = listSize[selectSizeInt]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,54 +44,37 @@ class BottomSheetCart(
         savedInstanceState: Bundle?
     ): View {
         binding = BottomLayoutSelectSizeBinding.inflate(inflater, container, false)
-        val listSize = product.getAllSize()
-        val color = product.colors[selectColorInt]
-        viewModel.setFavorite(product.id, color.sizes[selectSizeInt].size, color.color.toString())
-        adapter = ListSizeAdapter {
-            selectSize = it
-        }
 
-        viewModel.disMiss.postValue(false)
-        adapter.submitList(listSize)
-
-        adapter.positionCurrent = selectSizeInt
-        selectSize = listSize[selectSizeInt]
-
-        viewModel.disMiss.observe(viewLifecycleOwner) {
-            if (it) {
-                dismiss()
-            }
-        }
-
-        viewModel.toastMessage.observe(viewLifecycleOwner) { str ->
-            Toast.makeText(
-                this.context,
-                str,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        viewModel.favorite.observe(viewLifecycleOwner) {
-            favorite = it
-        }
-
+        setupObserve()
         bind()
         return binding.root
+    }
+
+    private fun setupObserve() {
+        viewModel.apply {
+            disMiss.observe(viewLifecycleOwner) {
+                if (it) {
+                    dismiss()
+                }
+            }
+            toastMessage.observe(viewLifecycleOwner) { str ->
+                Toast.makeText(
+                    context,
+                    str,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
 
     fun bind() {
         binding.apply {
             recyclerViewSize.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
-
             recyclerViewSize.adapter = adapter
-            btnAddToCart.text = "Add to Cart"
+
+            btnAddToCart.text = getString(R.string.add_to_cart)
             btnAddToCart.setOnClickListener {
                 if (!selectSize.isNullOrBlank()) {
-                    viewModel.setFavorite(
-                        product.id,
-                        selectSize.toString(),
-                        product.colors[selectColorInt].color.toString()
-                    )
                     viewModel.insertBag(
                         product.id,
                         product.colors[selectColorInt].color.toString(),

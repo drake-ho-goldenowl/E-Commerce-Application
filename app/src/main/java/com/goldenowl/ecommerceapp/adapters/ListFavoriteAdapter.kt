@@ -16,14 +16,14 @@ import com.goldenowl.ecommerceapp.utilities.GlideDefault
 class ListFavoriteAdapter(
     private val onCloseClicked: (FavoriteAndProduct) -> Unit,
     private val onItemClicked: (FavoriteAndProduct) -> Unit,
-    private val onBagClicked: (FavoriteAndProduct) -> Unit,
+    private val onBagClicked: (View,FavoriteAndProduct) -> Unit,
     private val setButtonBag: (View, Favorite) -> Unit
 ) :
     ListAdapter<FavoriteAndProduct, ListFavoriteAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(
         private val onCloseClicked: (FavoriteAndProduct) -> Unit,
-        private val onBagClicked: (FavoriteAndProduct) -> Unit,
+        private val onBagClicked: (View,FavoriteAndProduct) -> Unit,
         private val setButtonBag: (View, Favorite) -> Unit,
         private var binding: ItemProductFavorite2Binding
     ) :
@@ -69,9 +69,9 @@ class ListFavoriteAdapter(
                     onCloseClicked(favoriteAndProduct)
                 }
 
-                setButtonBag(binding.btnBag, favoriteAndProduct.favorite)
+                setButtonBag(btnBag, favoriteAndProduct.favorite)
                 btnBag.setOnClickListener {
-                    onBagClicked(favoriteAndProduct)
+                    onBagClicked(btnBag,favoriteAndProduct)
                 }
             }
         }

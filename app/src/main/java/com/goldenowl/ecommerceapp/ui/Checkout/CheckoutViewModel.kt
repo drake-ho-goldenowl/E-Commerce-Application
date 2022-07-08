@@ -25,7 +25,12 @@ class CheckoutViewModel @Inject constructor(
     private val statusIdAddress = MutableStateFlow("")
     private val statusIdPayment = MutableStateFlow("")
     val success: MutableLiveData<Boolean> = MutableLiveData(false)
-    val bag = bagRepository.getAllBagAndProduct().asLiveData()
+
+    val bag = bagRepository.bagAndProduct
+
+    init {
+        bagRepository.fetchBagAndProduct()
+    }
     val shippingAddress = statusIdAddress.flatMapLatest {
         shippingAddressRepository.getShippingAddress(it)
     }.asLiveData()
@@ -98,8 +103,8 @@ class CheckoutViewModel @Inject constructor(
         viewModelScope.launch {
             setOrderOnFirebase(order)
             orderRepository.insert(order)
-            bagRepository.deleteAll()
-            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
+//            bagRepository.deleteAll()
+//            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
             success.postValue(true)
         }
     }

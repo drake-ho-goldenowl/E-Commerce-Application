@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/topAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:background="@color/colorOnPrimary"
+        android:fitsSystemWindows="true"
+        app:collapsedTitleGravity="center_horizontal"
+        app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
+        app:collapsedTitleTextColor="@color/black"
+        app:contentScrim="@color/colorOnPrimary"
+        app:expandedTitleMarginBottom="8dp"
+        app:expandedTitleMarginStart="14dp"
+        app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
+        app:expandedTitleTextColor="@color/black"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:statusBarScrim="?attr/colorOnPrimary">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/MaterialToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:contentInsetStart="48dp"
+            app:layout_collapseMode="pin"
+            app:menu="@menu/top_app_bar_3"
+            app:title="TEST"
+            app:titleCentered="true" />
+
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+</com.google.android.material.appbar.AppBarLayout>

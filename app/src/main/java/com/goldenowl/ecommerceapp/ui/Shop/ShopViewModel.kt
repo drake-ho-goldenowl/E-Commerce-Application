@@ -2,15 +2,16 @@ package com.goldenowl.ecommerceapp.ui.Shop
 
 import android.content.Context
 import android.view.View
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.*
-import com.goldenowl.ecommerceapp.R
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import com.goldenowl.ecommerceapp.data.FavoriteRepository
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.data.ProductRepository
-import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
-import com.goldenowl.ecommerceapp.utilities.*
+import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
+import com.goldenowl.ecommerceapp.utilities.SALE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
@@ -18,7 +19,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -26,29 +26,15 @@ import javax.inject.Inject
 class ShopViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val favoriteRepository: FavoriteRepository,
-    private val userManager: UserManager,
     private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
     val statusFilter = MutableStateFlow(Triple("", "", 0))
     val allCategory = productRepository.getAllCategory().asLiveData()
-
-    //    val products: LiveData<List<Product>> = statusFilter.flatMapLatest {
-//        if (it.first.isNotBlank() && it.second.isNotBlank()) {
-//            productRepository.filterByCategoryAndSearch(it.second, it.first)
-//        } else if (it.first.isNotBlank()) {
-//            productRepository.filterByCategory(it.first)
-//        } else if (it.second.isNotBlank()) {
-//            productRepository.filterBySearch(it.second)
-//        } else {
-//            productRepository.getAll()
-//        }
-//    }.asLiveData()
     var lastVisible = ""
-    val products: MutableLiveData<List<Product>>
     var loadMore = MutableLiveData(true)
-    private val source = Source.CACHE
-
+    val products: MutableLiveData<List<Product>>
+    val btnFavorite = MutableLiveData<View>()
     init {
         products = statusFilter.flatMapLatest {
             if (it.first.isNotBlank() && it.second.isNotBlank()) {
@@ -67,7 +53,6 @@ class ShopViewModel @Inject constructor(
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
             .whereEqualTo(CATEGORY_NAME, category)
-            .orderBy(ID_PRODUCT)
             .limit(LIMIT.toLong())
             .get(source)
             .addOnSuccessListener { documents ->
@@ -94,9 +79,8 @@ class ShopViewModel @Inject constructor(
             val result: MutableLiveData<List<Product>> = MutableLiveData()
             db.collection(PRODUCT_FIREBASE)
                 .whereEqualTo(CATEGORY_NAME, category)
-                .orderBy(ID_PRODUCT)
                 .limit(LIMIT.toLong())
-                .get(source)
+                .get()
                 .addOnSuccessListener { documents ->
                     val list = mutableListOf<Product>()
                     for (document in documents) {
@@ -115,7 +99,6 @@ class ShopViewModel @Inject constructor(
     private fun filterBySearch(search: String): Flow<List<Product>> {
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
-            .orderBy(ID_PRODUCT)
             .limit(LIMIT.toLong())
             .get(source)
             .addOnSuccessListener { documents ->
@@ -139,7 +122,6 @@ class ShopViewModel @Inject constructor(
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
             .limit(LIMIT.toLong())
-            .orderBy(ID_PRODUCT)
             .get(source)
             .addOnSuccessListener { documents ->
 
@@ -183,7 +165,7 @@ class ShopViewModel @Inject constructor(
 
     private fun loadMoreAll(list: List<Product>) {
         db.collection(PRODUCT_FIREBASE)
-            .orderBy(ID_PRODUCT)
+            .orderBy(ID)
             .startAfter(lastVisible)
             .limit(LIMIT.toLong()).get(source).addOnSuccessListener { documents ->
                 val temp = mutableListOf<Product>()
@@ -202,13 +184,12 @@ class ShopViewModel @Inject constructor(
     }
 
     private fun loadMoreCategory(category: String, list: List<Product>) {
-
         if (category == SALE) {
             loadMoreSaleProduct(list)
         } else {
             db.collection(PRODUCT_FIREBASE)
                 .whereEqualTo(CATEGORY_NAME, category)
-                .orderBy(ID_PRODUCT)
+                .orderBy(ID)
                 .startAfter(lastVisible)
                 .limit(LIMIT.toLong())
                 .get(source)
@@ -233,7 +214,7 @@ class ShopViewModel @Inject constructor(
     private fun loadMoreSearch(search: String, list: List<Product>) {
         db.collection(PRODUCT_FIREBASE)
             .limit(LIMIT.toLong())
-            .orderBy(ID_PRODUCT)
+            .orderBy(ID)
             .startAfter(lastVisible)
             .get(source)
             .addOnSuccessListener { documents ->
@@ -258,7 +239,7 @@ class ShopViewModel @Inject constructor(
     private fun loadMoreCategoryAndSearch(search: String, category: String, list: List<Product>) {
         db.collection(PRODUCT_FIREBASE)
             .whereEqualTo(CATEGORY_NAME, category)
-            .orderBy(ID_PRODUCT)
+            .orderBy(ID)
             .startAfter(lastVisible)
             .limit(LIMIT.toLong())
             .get(source)
@@ -302,6 +283,7 @@ class ShopViewModel @Inject constructor(
     private fun loadMoreSaleProduct(list: List<Product>) {
         db.collection(PRODUCT_FIREBASE)
             .whereNotEqualTo(SALE_PERCENT, null)
+            .orderBy(ID)
             .orderBy(SALE_PERCENT)
             .limit(LIMIT.toLong())
             .get(source)
@@ -326,7 +308,6 @@ class ShopViewModel @Inject constructor(
         productRepository.getProduct(it)
     }.asLiveData()
 
-    val favorites = favoriteRepository.getAll().asLiveData()
 
     fun setProduct(idProduct: String) {
         statusIdProduct.value = idProduct
@@ -410,29 +391,10 @@ class ShopViewModel @Inject constructor(
     }
 
     fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {
-        if (!userManager.isLogged()) {
-            buttonView.visibility = View.GONE
-        } else {
-            buttonView.visibility = View.VISIBLE
-            viewModelScope.launch {
-                val isFavorite = favoriteRepository.checkProductHaveFavorite(idProduct)
-                if (isFavorite) {
-                    buttonView.background = ContextCompat.getDrawable(
-                        context,
-                        R.drawable.btn_favorite_active
-                    )
-                } else {
-                    buttonView.background = ContextCompat.getDrawable(
-                        context,
-                        R.drawable.btn_favorite_no_active
-                    )
-                }
-            }
-        }
+        favoriteRepository.setButtonFavorite(context, buttonView, idProduct)
     }
 
     companion object {
         const val TAG = "ShopViewModel"
-        const val LIMIT = 4
     }
 }

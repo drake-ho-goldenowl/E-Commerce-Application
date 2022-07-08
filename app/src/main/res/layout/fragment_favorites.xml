@@ -13,7 +13,7 @@
 
         <include
             android:id="@+id/appBarLayout"
-            layout="@layout/fragment_action_bar_filter_2" />
+            layout="@layout/fragment_action_bar_5" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

@@ -13,13 +13,13 @@ import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListProductAdapter(
     private val onItemClicked: (Product) -> Unit,
-    private val onFavoriteClick: (Product) -> Unit,
+    private val onFavoriteClick: (View,Product) -> Unit,
     private val setFavoriteButton: (View, Product) -> Unit,
 ) :
     ListAdapter<Product, ListProductAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(
-        private val onFavoriteClick: (Product) -> Unit,
+        private val onFavoriteClick: (View,Product) -> Unit,
         private val setFavoriteButton: (View, Product) -> Unit,
         private var binding: ItemProduct2Binding
     ) :
@@ -31,7 +31,7 @@ class ListProductAdapter(
                 GlideDefault.show(itemView.context,product.images[0],imgProduct,true)
                 txtName.text = product.title
                 txtBrandName.text = product.brandName
-                ratingBar.rating = product.reviewStars.toFloat()
+                ratingBar.rating = product.reviewStars
                 txtNumberVote.text = "(${product.numberReviews})"
                 txtPrice.text = "${product.colors[0].sizes[0].price}\$"
 
@@ -49,7 +49,7 @@ class ListProductAdapter(
                 }
                 setFavoriteButton(btnFavorite, product)
                 btnFavorite.setOnClickListener {
-                    onFavoriteClick(product)
+                    onFavoriteClick(btnFavorite,product)
                 }
             }
         }

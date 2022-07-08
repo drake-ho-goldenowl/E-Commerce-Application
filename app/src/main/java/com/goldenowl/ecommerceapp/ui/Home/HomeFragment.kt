@@ -6,8 +6,9 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import com.goldenowl.ecommerceapp.adapters.ListHomeAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentHomeBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.IS_FIRST
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
@@ -25,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by viewModels()
     private val listImage = listOf(
@@ -49,10 +51,8 @@ class HomeFragment : Fragment() {
     private var count = 0
     private val handlerFragment = Handler()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         //Check Tutorial
         val sharedPref = this.activity?.getPreferences(Context.MODE_PRIVATE)
         val isFirst = sharedPref?.getBoolean(IS_FIRST, true);
@@ -60,39 +60,32 @@ class HomeFragment : Fragment() {
             sharedPref.edit().putBoolean(IS_FIRST, false).apply()
             findNavController().navigate(R.id.viewPageTutorialFragment)
         }
-        // Inflate the layout for this fragment
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        viewModel.category.observe(viewLifecycleOwner) {
-            category = it
-        }
 
-        viewModel.getSaleProduct().observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                product[SALE] = it
-                loadMore = true
-                adapter.submitList(product.keys.toList())
-                adapter.notifyDataSetChanged()
-            }
-        }
-        viewModel.getNewProduct().observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                product[NEW] = it
-                loadMore = true
-                adapter.submitList(product.keys.toList())
-                adapter.notifyDataSetChanged()
-            }
-        }
+        setupAdapter()
+        setupObserve()
+        setFragmentListener()
+        bind()
+        return binding.root
+    }
 
-
+    private fun setupAdapter() {
         adapter = ListHomeAdapter { recyclerView, textView, s ->
             val adapterItem = ListProductGridAdapter({
                 val action = HomeFragmentDirections.actionHomeFragmentToProductDetailFragment(
                     idProduct = it.id
                 )
                 findNavController().navigate(action)
-            }, {
-                val bottomSheetSize = BottomSheetFavorite(it, null, null)
+            }, { btnFavorite, product ->
+                val bottomSheetSize = BottomSheetFavorite(product, null, null)
                 bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+                viewModel.btnFavorite.postValue(btnFavorite)
             }, { view, product ->
                 viewModel.setButtonFavorite(requireContext(), view, product.id)
             })
@@ -123,9 +116,31 @@ class HomeFragment : Fragment() {
                 findNavController().navigate(action)
             }
         }
+    }
 
-        bind()
-        return binding.root
+    private fun setupObserve() {
+        viewModel.apply {
+            category.observe(viewLifecycleOwner) {
+                this@HomeFragment.category = it
+            }
+
+            getSaleProduct().observe(viewLifecycleOwner) {
+                if (it.isNotEmpty()) {
+                    product[SALE] = it
+                    loadMore = true
+                    adapter.submitList(product.keys.toList())
+                    adapter.notifyDataSetChanged()
+                }
+            }
+            getNewProduct().observe(viewLifecycleOwner) {
+                if (it.isNotEmpty()) {
+                    product[NEW] = it
+                    loadMore = true
+                    adapter.submitList(product.keys.toList())
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
     }
 
     private fun bind() {
@@ -133,9 +148,11 @@ class HomeFragment : Fragment() {
             recyclerListHome.adapter = adapter
             recyclerListHome.layoutManager = LinearLayoutManager(context)
             adapter.submitList(product.keys.toList())
+            progressBar.visibility = View.GONE
             nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
                 if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                     if (loadMore) {
+                        progressBar.visibility = View.VISIBLE
                         loadMore = false
                         if (count < category.size) {
                             viewModel.getProductWithCategory(category[count])
@@ -188,6 +205,22 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+
+    private fun setFragmentListener() {
+        setFragmentResultListener(REQUEST_KEY) { _, bundle ->
+            val result = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
+            if (result) {
+                viewModel.btnFavorite.value?.let {
+                    it.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.btn_favorite_active
+                    )
+                }
+            }
+        }
+    }
+
 
     private fun autoScroll() {
         handlerFragment.removeMessages(0)

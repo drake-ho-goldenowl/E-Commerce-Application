@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
@@ -15,7 +14,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -59,22 +57,22 @@ class OrderViewModel @Inject constructor(
     }
 
     fun reOrder(list: List<ProductOrder>) {
-        viewModelScope.launch {
-            for (productOrder in list) {
-                productOrder.apply {
-                    bagRepository.insert(
-                        Bag(
-                            size = size,
-                            color = color,
-                            idProduct = idProduct,
-                            quantity = units.toLong(),
-                        )
-                    )
-                }
-            }
-            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
-            dismiss.postValue(true)
-        }
+//        viewModelScope.launch {
+//            for (productOrder in list) {
+//                productOrder.apply {
+//                    bagRepository.insert(
+//                        Bag(
+//                            size = size,
+//                            color = color,
+//                            idProduct = idProduct,
+//                            quantity = units.toLong(),
+//                        )
+//                    )
+//                }
+//            }
+//            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
+//            dismiss.postValue(true)
+//        }
     }
 
     companion object {

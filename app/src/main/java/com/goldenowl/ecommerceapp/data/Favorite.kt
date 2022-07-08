@@ -1,6 +1,5 @@
 package com.goldenowl.ecommerceapp.data
 
-import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
@@ -15,11 +14,9 @@ import androidx.room.ForeignKey.CASCADE
     )]
 )
 data class Favorite(
-    @NonNull
+    var id :String = "",
     val size: String = "",
-    @NonNull
     val idProduct: String = "",
-    @NonNull
     val color: String = "",
     var isBag: Boolean = false
 )

@@ -13,13 +13,12 @@ import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListProductGridAdapter(
     private val onItemClicked: (Product) -> Unit,
-    private val onFavoriteClick: (Product) -> Unit,
+    private val onFavoriteClick: (View,Product) -> Unit,
     private val setFavoriteButton: (View, Product) -> Unit,
 ) :
     ListAdapter<Product, ListProductGridAdapter.ItemViewHolder>(DiffCallback) {
-
     class ItemViewHolder(
-        private val onFavoriteClick: (Product) -> Unit,
+        private val onFavoriteClick: (View,Product) -> Unit,
         private val setFavoriteButton: (View, Product) -> Unit,
         private var binding: ItemProductBinding
     ) :
@@ -49,7 +48,7 @@ class ListProductGridAdapter(
                 }
                 setFavoriteButton(btnFavorite, product)
                 btnFavorite.setOnClickListener {
-                    onFavoriteClick(product)
+                    onFavoriteClick(btnFavorite,product)
                 }
             }
         }

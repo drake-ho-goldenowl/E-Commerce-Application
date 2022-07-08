@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.widget.NestedScrollView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -18,12 +17,13 @@ import com.goldenowl.ecommerceapp.adapters.ListProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentCatalogBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.NEW
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CatalogFragment : Fragment() {
+class CatalogFragment : BaseFragment() {
     private val viewModel: ShopViewModel by viewModels()
     private var nameTitle: String? = null
     private lateinit var binding: FragmentCatalogBinding
@@ -44,8 +44,17 @@ class CatalogFragment : Fragment() {
                 viewModel.setSearch("")
             }
         }
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentCatalogBinding.inflate(inflater, container, false)
         viewModel.setSort(0)
         viewModel.lastVisible = ""
+
         if (nameTitle.isNullOrBlank()) {
             viewModel.setCategory("")
         } else {
@@ -56,15 +65,6 @@ class CatalogFragment : Fragment() {
                 viewModel.setCategory(nameTitle.toString())
             }
         }
-
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCatalogBinding.inflate(inflater, container, false)
-        viewModel.products.value?.let { viewModel.filterPrice(10F, 20F, it) }
         observeSetup()
         adapterSetup()
         bind()
@@ -78,9 +78,10 @@ class CatalogFragment : Fragment() {
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+        }, { btnFavorite, product ->
+            val bottomSheetSize = BottomSheetFavorite(product)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+            viewModel.btnFavorite.postValue(btnFavorite)
         }, { view, product ->
             viewModel.setButtonFavorite(requireContext(), view, product.id)
         })
@@ -90,8 +91,8 @@ class CatalogFragment : Fragment() {
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+        }, { btnFavorite, product ->
+            val bottomSheetSize = BottomSheetFavorite(product)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
         }, { view, product ->
             viewModel.setButtonFavorite(requireContext(), view, product.id)
@@ -133,16 +134,10 @@ class CatalogFragment : Fragment() {
                 adapterProduct.submitList(product)
             }
 
-            favorites.observe(viewLifecycleOwner) {
-                adapterProductGrid.notifyDataSetChanged()
-                adapterProduct.notifyDataSetChanged()
-            }
-
             loadMore.observe(viewLifecycleOwner) {
                 if (!it) {
                     binding.progressBar.visibility = View.INVISIBLE
-                }
-                else{
+                } else {
                     binding.progressBar.visibility = View.VISIBLE
                 }
             }
@@ -250,18 +245,15 @@ class CatalogFragment : Fragment() {
                 filterPrice = emptyList()
                 viewModel.products.postValue(listProduct)
             }
+            val isFavorite = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
+            if (isFavorite) {
+                viewModel.btnFavorite.value?.let {
+                    it.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.btn_favorite_active
+                    )
+                }
+            }
         }
-    }
-
-    companion object {
-        const val REQUEST_KEY = "request_key"
-        const val BUNDLE_KEY_NAME = "bundle_name"
-        const val BUNDLE_KEY_POSITION = "bundle_position"
-        const val BUNDLE_KEY_MIN = "bundle_min"
-        const val BUNDLE_KEY_MAX = "bundle_max"
-        const val GRIDVIEW_SPAN_COUNT = 2
-        const val NAME_CATEGORY = "nameCategories"
-        const val NAME_PRODUCT = "nameProduct"
-
     }
 }

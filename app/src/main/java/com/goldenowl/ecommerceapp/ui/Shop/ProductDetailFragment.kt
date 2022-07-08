@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.adapters.SpinnerAdapter
@@ -54,14 +57,15 @@ class ProductDetailFragment : BaseFragment() {
             binding.nestedScrollView.apply {
                 scrollTo(0, 0)
             }
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+        }, { _,product ->
+            val bottomSheetSize = BottomSheetFavorite(product, null, null)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
         }, { view, product ->
             viewModel.setButtonFavorite(requireContext(), view, product.id)
         })
 
         observeSetup()
+        setFragmentListener()
         return binding.root
     }
 
@@ -91,9 +95,6 @@ class ProductDetailFragment : BaseFragment() {
             binding.txtNumberRelated.text = "${it.size} items"
         }
 
-        viewModel.favorites.observe(viewLifecycleOwner) {
-            viewModel.setButtonFavorite(requireContext(), binding.btnFavorite, idProduct)
-        }
     }
 
     fun bind() {
@@ -141,7 +142,7 @@ class ProductDetailFragment : BaseFragment() {
             txtBrandName.text = product.brandName
             txtTitle.text = product.title
             txtDescription.text = product.description
-            ratingBar.rating = product.reviewStars.toFloat()
+            ratingBar.rating = product.reviewStars
             txtNumberVote.text = "(${product.numberReviews})"
             txtPrice.text = "\$${product.colors[0].sizes[0].price}"
 
@@ -244,6 +245,17 @@ class ProductDetailFragment : BaseFragment() {
         }
     }
 
+    private fun setFragmentListener() {
+        setFragmentResultListener(REQUEST_KEY) { _, bundle ->
+            val result = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
+            if (result) {
+                binding.btnFavorite.background = ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.btn_favorite_active
+                )
+            }
+        }
+    }
 
     private fun autoScroll() {
         handlerFragment.removeMessages(0)
@@ -273,6 +285,5 @@ class ProductDetailFragment : BaseFragment() {
     companion object {
         const val DEFAULT_SIZE = "Size"
         const val DEFAULT_COLOR = "Color"
-        const val ID_PRODUCT = "idProduct"
     }
 }

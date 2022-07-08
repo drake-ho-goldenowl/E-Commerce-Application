@@ -1,124 +1,83 @@
 package com.goldenowl.ecommerceapp.ui.Bag
 
-import androidx.lifecycle.LiveData
+import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 @HiltViewModel
 class BagViewModel @Inject constructor(
-    private val bagRepository: BagRepository,
     private val favoriteRepository: FavoriteRepository,
     private val userManager: UserManager,
+    private val bagRepository: BagRepository,
     private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
-    private val statusIdFavorite = MutableStateFlow(Triple("", "", ""))
-    val favorite: LiveData<Favorite?> = statusIdFavorite.flatMapLatest {
-        favoriteRepository.getFavorite(it.first, it.second, it.third)
-    }.asLiveData()
+    val bagAndProduct = bagRepository.bagAndProduct
+    val totalPrice = MutableLiveData(0)
+    val sale = MutableLiveData(0L)
+    val disMiss = MutableLiveData(false)
 
-    private val filterSearch = MutableStateFlow("")
-    val bags: LiveData<List<BagAndProduct>> = filterSearch.flatMapLatest {
-        if (it.isNotBlank()) {
-            bagRepository.filterBySearch(it)
-        } else {
-            bagRepository.getAllBagAndProduct()
-        }
-    }.asLiveData()
-
-    val allBags: LiveData<List<BagAndProduct>> = bagRepository.getAllBagAndProduct().asLiveData()
-
-    val disMiss: MutableLiveData<Boolean> = MutableLiveData()
-
-    fun setFavorite(idProduct: String, size: String, color: String) {
-        statusIdFavorite.value = Triple(idProduct, size, color)
+    fun fetchBag() {
+        bagRepository.fetchBagAndProduct()
     }
-
-    private fun updateBagFirebase() {
-        viewModelScope.launch {
-            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
-        }
-    }
-
-    fun insertFavorite(product: Product, size: String, color: String) {
-        viewModelScope.launch {
-            favoriteRepository.insertFavorite(product, size, color)
-            favoriteRepository.updateFavoriteFirebase(db, userManager.getAccessToken())
-        }
-    }
-
-    fun removeBag(bag: Bag) {
-        viewModelScope.launch {
-            bagRepository.delete(bag)
-            updateBagFirebase()
-        }
-    }
-
-    fun plusQuantity(bag: Bag) {
-        viewModelScope.launch {
-            bagRepository.updateQuantity(bag.idProduct, bag.color, bag.size, bag.quantity + 1)
-            updateBagFirebase()
-        }
-    }
-
-    fun minusQuantity(bag: Bag) {
-        viewModelScope.launch {
-            if (bag.quantity > 1) {
-                bagRepository.updateQuantity(bag.idProduct, bag.color, bag.size, bag.quantity - 1)
-                updateBagFirebase()
-            } else {
-                removeBag(bag)
-            }
-        }
-    }
-
 
     fun insertBag(idProduct: String, color: String, size: String) {
-        viewModelScope.launch {
-            bagRepository.insertBag(
-                idProduct,
-                color,
-                size
-            )
-            updateBagFirebase()
-            disMiss.postValue(true)
-        }
+        bagRepository.insertBag(idProduct, color, size)
+        disMiss.postValue(true)
     }
 
-    fun calculatorTotal(lists: List<BagAndProduct>, salePercent: Long): Int {
-        var total = 0.0
-        viewModelScope.launch {
-            for (bagAndProduct in lists) {
-                val size = bagAndProduct.product.getColorAndSize(
-                    bagAndProduct.bag.color,
-                    bagAndProduct.bag.size
-                )
-                if (size != null) {
-                    var salePercent = 0
-                    if (bagAndProduct.product.salePercent != null) {
-                        salePercent = bagAndProduct.product.salePercent
-                    }
-                    val price = size.price * (100 - salePercent) / 100
-                    total += (price * bagAndProduct.bag.quantity)
-                }
+    fun removeBagFirebase(bag: Bag) {
+        bagRepository.removeBagFirebase(bag)
+    }
+
+    private fun updateBagFirebase(bag: Bag, isFetch: Boolean = true) {
+        bagRepository.updateBagFirebase(bag,isFetch)
+    }
+
+    private fun changeQuantityAndCalculator(old: BagAndProduct, new: Bag) {
+        val index = bagAndProduct.value?.indexOf(old) ?: -1
+        if (index != -1) {
+            var list = mutableListOf<BagAndProduct>()
+            bagAndProduct.value?.let {
+                it[index].bag = new
+                list = it
             }
+            calculatorTotal(list, sale.value ?: 0)
         }
-        total -= (salePercent * total / 100)
-        return total.roundToInt()
     }
 
-    fun setSearch(string: String) {
-        filterSearch.value = string
+    fun plusQuantity(bagAndProduct: BagAndProduct, textView: TextView? = null) {
+        val newBag = bagAndProduct.bag
+        newBag.quantity += 1
+        textView?.let {
+            it.text = newBag.quantity.toString()
+        }
+        updateBagFirebase(newBag, false)
+        changeQuantityAndCalculator(bagAndProduct, newBag)
+    }
+
+    fun minusQuantity(bagAndProduct: BagAndProduct, textView: TextView) {
+        val newBag = bagAndProduct.bag
+        if (newBag.quantity > 1) {
+            newBag.quantity -= 1
+            textView.text = newBag.quantity.toString()
+            updateBagFirebase(newBag, false)
+            changeQuantityAndCalculator(bagAndProduct, newBag)
+        } else {
+            removeBagFirebase(bagAndProduct.bag)
+        }
+    }
+
+    fun insertFavorite(idProduct: String, size: String, color: String) {
+        favoriteRepository.insertFavorite(idProduct, color, size)
+    }
+
+    fun calculatorTotal(lists: List<BagAndProduct>, salePercent: Long = 0) {
+        totalPrice.postValue(bagRepository.calculatorTotal(lists, salePercent))
     }
 
     fun isLogged(): Boolean {

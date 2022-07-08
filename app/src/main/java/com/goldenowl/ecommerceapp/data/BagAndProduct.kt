@@ -5,7 +5,7 @@ import androidx.room.Relation
 
 data class BagAndProduct(
     @Embedded
-    val bag: Bag,
+    var bag: Bag,
     @Relation(
         parentColumn = "idProduct",
         entityColumn = "id"

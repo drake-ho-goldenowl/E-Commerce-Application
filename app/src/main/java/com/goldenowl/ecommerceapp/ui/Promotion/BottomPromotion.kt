@@ -12,6 +12,9 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListPromotionAdapter
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutPromotionBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_NAME
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_SALE
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,7 +36,7 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
 
         if (!idPromotion.isNullOrBlank()) {
             binding.editPromoCode.setText(idPromotion)
-            viewModel.setStatusPromotion(idPromotion)
+            viewModel.getPromotion(idPromotion)
         }
 
         adapter = ListPromotionAdapter {
@@ -53,8 +56,6 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
                 selectPromotion = it.id
                 salePercent = it.salePercent
                 binding.txtWrongCode.visibility = View.GONE
-            } else if (viewModel.statusPromotion.value.isNotBlank()) {
-                binding.txtWrongCode.visibility = View.VISIBLE
             }
         }
         bind()
@@ -77,7 +78,8 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if (!s.isNullOrBlank()) {
-                        viewModel.setStatusPromotion(s.toString())
+                        viewModel.getPromotion(s.toString())
+                        binding.txtWrongCode.visibility = View.VISIBLE
                     }
                 }
 
@@ -94,8 +96,5 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
 
     companion object {
         const val TAG = "BOTTOM_SHEET_PROMOTION"
-        const val REQUEST_KEY = "request"
-        const val BUNDLE_KEY_NAME = "bundle_name_promotion"
-        const val BUNDLE_KEY_SALE = "bundle_sale"
     }
 }

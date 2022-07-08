@@ -13,7 +13,7 @@
 
         <include
             android:id="@+id/appBarLayout"
-            layout="@layout/fragment_action_bar_3" />
+            layout="@layout/fragment_action_bar_5" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,10 +24,11 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewBag"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="260dp"
+                android:layout_weight="1"
                 android:background="@color/grey2"
-                android:foregroundGravity="center"
-                android:layout_marginBottom="260dp"/>
+                android:foregroundGravity="center" />
         </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
@@ -107,7 +108,6 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
 
-
             <ImageButton
                 android:id="@+id/btnRemove"
                 android:layout_width="36dp"
@@ -116,6 +116,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/editPromoCode"
                 app:layout_constraintRight_toRightOf="@id/editPromoCode" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

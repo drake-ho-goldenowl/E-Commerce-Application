@@ -13,6 +13,7 @@ import androidx.room.ForeignKey.CASCADE
     )]
 )
 data class Bag(
+    var id: String = "",
     val size: String = "",
     val color: String = "",
     val idProduct: String = "",
