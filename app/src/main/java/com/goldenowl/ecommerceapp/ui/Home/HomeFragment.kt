@@ -47,7 +47,7 @@ class HomeFragment : BaseFragment() {
     private lateinit var adapter: ListHomeAdapter
     private var category: List<String> = emptyList()
     private var product: MutableMap<String, List<Product>> = mutableMapOf()
-    private var loadMore = false
+    private var loadMore = true
     private var count = 0
     private val handlerFragment = Handler()
 
@@ -148,7 +148,10 @@ class HomeFragment : BaseFragment() {
             recyclerListHome.adapter = adapter
             recyclerListHome.layoutManager = LinearLayoutManager(context)
             adapter.submitList(product.keys.toList())
-            progressBar.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+            if (!loadMore) {
+                progressBar.visibility = View.GONE
+            }
             nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
                 if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                     if (loadMore) {

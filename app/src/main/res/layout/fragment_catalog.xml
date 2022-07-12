@@ -34,7 +34,7 @@
                     android:layout_weight="1"
                     android:clipToPadding="false"
                     android:paddingTop="16dp"
-                    android:nestedScrollingEnabled="false"/>
+                    android:nestedScrollingEnabled="false" />
 
                 <ProgressBar
                     android:id="@+id/progressBar"

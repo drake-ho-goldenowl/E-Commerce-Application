@@ -16,14 +16,14 @@ import com.goldenowl.ecommerceapp.utilities.GlideDefault
 class ListFavoriteAdapter(
     private val onCloseClicked: (FavoriteAndProduct) -> Unit,
     private val onItemClicked: (FavoriteAndProduct) -> Unit,
-    private val onBagClicked: (View,FavoriteAndProduct) -> Unit,
+    private val onBagClicked: (View, FavoriteAndProduct) -> Unit,
     private val setButtonBag: (View, Favorite) -> Unit
 ) :
     ListAdapter<FavoriteAndProduct, ListFavoriteAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(
         private val onCloseClicked: (FavoriteAndProduct) -> Unit,
-        private val onBagClicked: (View,FavoriteAndProduct) -> Unit,
+        private val onBagClicked: (View, FavoriteAndProduct) -> Unit,
         private val setButtonBag: (View, Favorite) -> Unit,
         private var binding: ItemProductFavorite2Binding
     ) :
@@ -33,7 +33,12 @@ class ListFavoriteAdapter(
         fun bind(favoriteAndProduct: FavoriteAndProduct) {
             val size = filterSize(favoriteAndProduct)
             binding.apply {
-                GlideDefault.show(itemView.context,favoriteAndProduct.product.images[0],imgProduct,true)
+                GlideDefault.show(
+                    itemView.context,
+                    favoriteAndProduct.product.images[0],
+                    imgProduct,
+                    true
+                )
                 txtName.text = favoriteAndProduct.product.title
                 txtBrandName.text = favoriteAndProduct.product.brandName
                 ratingBar.rating = favoriteAndProduct.product.reviewStars.toFloat()
@@ -71,7 +76,7 @@ class ListFavoriteAdapter(
 
                 setButtonBag(btnBag, favoriteAndProduct.favorite)
                 btnBag.setOnClickListener {
-                    onBagClicked(btnBag,favoriteAndProduct)
+                    onBagClicked(btnBag, favoriteAndProduct)
                 }
             }
         }

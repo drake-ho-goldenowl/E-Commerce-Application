@@ -20,7 +20,8 @@ class ListReviewAdapter(
     private val setRecyclerView: (RecyclerView, Review) -> Unit,
 ) :
     ListAdapter<Review, ListReviewAdapter.ItemViewHolder>(DiffCallback) {
-    private var isHelpful = false
+
+    var isHelpful: Boolean = false
 
     class ItemViewHolder(
         private val setNameAndAvatar: (TextView, CircleImageView, String) -> Unit,
@@ -28,9 +29,10 @@ class ListReviewAdapter(
         private val setHelpfulButton: (Review, TextView, ImageView) -> Unit,
         private val setRecyclerVIew: (RecyclerView, Review) -> Unit,
         private var isHelpful: Boolean,
-        private var binding: ItemReviewBinding,
+        private val binding: ItemReviewBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(review: Review) {
             binding.apply {
                 txtDescription.text = review.description
@@ -48,15 +50,13 @@ class ListReviewAdapter(
                 setHelpfulButton(review, txtHelpful, icLike)
                 setRecyclerVIew(recyclerViewImageReview, review)
                 btnHelpful.setOnClickListener {
+                    isHelpful = !isHelpful
                     onHelpfulClicked(review, txtHelpful, icLike, isHelpful)
                 }
             }
         }
     }
 
-    fun setIsHelpful(isHelpful: Boolean) {
-        this.isHelpful = isHelpful
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(

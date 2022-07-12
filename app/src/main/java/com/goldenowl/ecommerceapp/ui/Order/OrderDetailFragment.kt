@@ -20,10 +20,10 @@ import java.text.SimpleDateFormat
 @AndroidEntryPoint
 class OrderDetailFragment : Fragment() {
     private val viewModel: OrderViewModel by activityViewModels()
-    private lateinit var binding: FragmentOrderDetailBinding
     private val adapter = ListProductOrderAdapter()
-    private lateinit var listProductOrder: List<ProductOrder>
     private val loadingDialog = LoadingDialog(this)
+    private lateinit var binding: FragmentOrderDetailBinding
+    private lateinit var listProductOrder: List<ProductOrder>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

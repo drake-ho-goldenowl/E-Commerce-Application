@@ -4,19 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.ShippingAddress
 import com.goldenowl.ecommerceapp.databinding.FragmentAddShippingAddressBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddShippingAddressFragment : Fragment() {
+class AddShippingAddressFragment : BaseFragment() {
     private lateinit var binding: FragmentAddShippingAddressBinding
     private val viewModel: ShippingAddressViewModel by viewModels()
     private var shippingAddress: ShippingAddress? = null
@@ -25,9 +24,9 @@ class AddShippingAddressFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         arguments?.let { it ->
-            val idAddress = it.getString(ID_ADDRESS).toString()
-            if (idAddress.isNotBlank()) {
-                viewModel.setIdAddress(idAddress)
+            val idAddress = it.getString(ID_ADDRESS)
+            if (!idAddress.isNullOrBlank()) {
+                viewModel.getAddress(idAddress)
             }
         }
         binding = FragmentAddShippingAddressBinding.inflate(inflater, container, false)
@@ -46,11 +45,8 @@ class AddShippingAddressFragment : Fragment() {
             }
 
             toastMessage.observe(viewLifecycleOwner) {
-                Toast.makeText(
-                    context,
-                    it,
-                    Toast.LENGTH_SHORT
-                ).show()
+                toastMessage(it)
+                toastMessage.postValue("")
             }
 
             alertFullName.observe(viewLifecycleOwner) {
@@ -207,11 +203,16 @@ class AddShippingAddressFragment : Fragment() {
 
     private fun setFragmentListener() {
         setFragmentResultListener(REQUEST_KEY) { _, bundle ->
-            val result = bundle.getString(BUNDLE_KEY_NAME)
+            val result = bundle.getString(BUNDLE_KEY_NAME_COUNTRY)
             result?.let {
                 binding.editTextCountry.setText(it)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.setAddressLiveData()
     }
 
     companion object {
@@ -221,8 +222,5 @@ class AddShippingAddressFragment : Fragment() {
         const val ALERT_REGION = "Region must more than 1"
         const val ALERT_ZIP_CODE = "Zip Code must more than 1"
         const val ALERT_COUNTRY = "Please choose country"
-        const val REQUEST_KEY = "request_key_country"
-        const val BUNDLE_KEY_NAME = "bundle_name_country"
-        const val ID_ADDRESS = "idAddress"
     }
 }

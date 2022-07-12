@@ -36,8 +36,19 @@ class ProfileLoginFragment : Fragment() {
             }
 
             payment.observe(viewLifecycleOwner) {
-                binding.txtSubTitlePayment.text = it
+                if (it != null) {
+                    if (it.number[0] == '4') {
+                        binding.txtSubTitlePayment.text =
+                            "Visa  **${it.number.substring(it.number.length - 2)}"
+                    } else {
+                        binding.txtSubTitlePayment.text =
+                            "Mastercard  **${it.number.substring(it.number.length - 2)}"
+                    }
+                } else {
+                    binding.txtSubTitlePayment.text = ""
+                }
             }
+
             totalOrder.observe(viewLifecycleOwner) {
                 binding.txtSubTitleOrder.text = "Already have $it orders"
             }

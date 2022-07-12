@@ -1,90 +1,26 @@
 package com.goldenowl.ecommerceapp.ui.PaymentMethod
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.Card
-import com.goldenowl.ecommerceapp.data.UserManager
+import com.goldenowl.ecommerceapp.data.PaymentRepository
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
-import com.goldenowl.ecommerceapp.utilities.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
-    private val userManager: UserManager,
-    private val rsa: RSA,
-    private val db: FirebaseFirestore,
+    private val paymentRepository: PaymentRepository,
 ) : BaseViewModel() {
-    val listCard: MutableLiveData<List<Card>> = MutableLiveData()
-    val alertName: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertNumberCard: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertExpertDate: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertCVV: MutableLiveData<Boolean> = MutableLiveData(false)
-    val dismiss: MutableLiveData<Boolean> = MutableLiveData(false)
+    val cards = paymentRepository.listCard
+    val alertName = MutableLiveData(false)
+    val alertNumberCard = MutableLiveData(false)
+    val alertExpertDate = MutableLiveData(false)
+    val alertCVV = MutableLiveData(false)
 
-    private fun setPaymentOnFirebase(card: Card) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(PAYMENT_USER)
-            .document(card.id).set(card).addOnSuccessListener {
-                toastMessage.postValue(SUCCESS)
-            }
-            .addOnFailureListener {
-                toastMessage.postValue(FAIL)
-            }
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(PAYMENT_USER)
-            .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
-    }
-
-    private fun deletePaymentOnFirebase(card: Card) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(PAYMENT_USER)
-            .document(card.id).delete()
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(PAYMENT_USER)
-            .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
-    }
 
     fun fetchData() {
-        viewModelScope.launch {
-            db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
-                PAYMENT_USER
-            ).addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    return@addSnapshotListener
-                }
-                if (snapshot != null) {
-                    val list: MutableList<Card> = mutableListOf()
-                    for (document in snapshot) {
-                        if (document.id != LAST_EDIT) {
-                            val card = document.toObject<Card>()
-                            card.name = rsa.decrypt(card.name)
-                            card.number = rsa.decrypt(card.number)
-                            card.cvv = rsa.decrypt(card.cvv)
-                            card.expireDate = rsa.decrypt(card.expireDate)
-                            list.add(card)
-                        }
-                    }
-                    listCard.postValue(list)
-                }
-            }
-        }
-    }
-
-    private fun createCard(
-        name: String,
-        number: String,
-        expertDate: String,
-        cvv: String,
-    ): Card {
-        return Card(
-            id = Date().time.toString(),
-            name = rsa.encrypt(name),
-            number = rsa.encrypt(number),
-            expireDate = rsa.encrypt(expertDate),
-            cvv = rsa.encrypt(cvv)
-        )
+        paymentRepository.fetchData()
     }
 
     fun insertCard(
@@ -99,25 +35,17 @@ class PaymentViewModel @Inject constructor(
             checkExpertDate(expertDate) &&
             checkCVV(cvv)
         ) {
-            viewModelScope.launch {
-                val card = createCard(name, number, expertDate, cvv)
-                setPaymentOnFirebase(card)
-                if (default) {
-                    setDefaultPayment(card.id)
-                }
-                dismiss.postValue(true)
-            }
+            paymentRepository.insertCard(name, number, expertDate, cvv, default)
+            dismiss.postValue(true)
         }
     }
 
     fun setDefaultPayment(idCard: String) {
-        userManager.setPayment(idCard)
-        userManager.writeProfile(db, userManager.getUser())
+        paymentRepository.setDefaultPayment(idCard)
     }
 
     fun removeDefaultPayment() {
-        userManager.setPayment("")
-        userManager.writeProfile(db, userManager.getUser())
+        paymentRepository.removeDefaultPayment()
     }
 
     private fun checkName(name: String): Boolean {
@@ -167,21 +95,11 @@ class PaymentViewModel @Inject constructor(
         return true
     }
 
-    fun checkDefaultCard(idCard: String): Boolean {
-        return userManager.getPayment() == idCard
-    }
-
     fun deleteCard(card: Card) {
-        viewModelScope.launch {
-            if (checkDefaultCard(card.id)) {
-                removeDefaultPayment()
-            }
-            deletePaymentOnFirebase(card)
-        }
+        paymentRepository.deleteCard(card)
     }
 
-    companion object {
-        const val SUCCESS = "Add success"
-        const val FAIL = "Add fail"
+    fun checkDefaultCard(idCard: String): Boolean {
+        return paymentRepository.checkDefaultCard(idCard)
     }
 }

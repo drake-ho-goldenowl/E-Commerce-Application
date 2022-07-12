@@ -1,20 +1,13 @@
 package com.goldenowl.ecommerceapp.ui.ShippingAddress
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.ShippingAddress
 import com.goldenowl.ecommerceapp.data.ShippingAddressRepository
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
-import com.goldenowl.ecommerceapp.utilities.ADDRESS_USER
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT
-import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
-import com.goldenowl.ecommerceapp.utilities.VALUE_LAST_EDIT
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -23,37 +16,33 @@ import javax.inject.Inject
 class ShippingAddressViewModel @Inject constructor(
     private val shippingAddressRepository: ShippingAddressRepository,
     private val userManager: UserManager,
-    private val db : FirebaseFirestore
+    private val db: FirebaseFirestore
 ) : BaseViewModel() {
-    val listAll = shippingAddressRepository.getAll().asLiveData()
-    val alertFullName: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertAddress: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertCity: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertSate: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertZipCode: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertCountry: MutableLiveData<Boolean> = MutableLiveData(false)
-    val dismiss: MutableLiveData<Boolean> = MutableLiveData(false)
-    private val statusIdAddress = MutableStateFlow("")
-    val address = statusIdAddress.flatMapLatest {
-        shippingAddressRepository.getShippingAddress(it)
-    }.asLiveData()
+    val listAddress = shippingAddressRepository.listAddress
+    val address = shippingAddressRepository.address
 
-    fun setIdAddress(id: String) {
-        statusIdAddress.value = id
+    val alertFullName = MutableLiveData(false)
+    val alertAddress = MutableLiveData(false)
+    val alertCity = MutableLiveData(false)
+    val alertSate = MutableLiveData(false)
+    val alertZipCode = MutableLiveData(false)
+    val alertCountry = MutableLiveData(false)
+
+
+    fun getAddress(id: String) {
+        shippingAddressRepository.getAddress(id)
+    }
+
+    fun fetchAddress() {
+        shippingAddressRepository.fetchAddress()
     }
 
     private fun setAddressOnFirebase(address: ShippingAddress) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
-            .document(address.id.toString()).set(address)
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
-            .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
+        shippingAddressRepository.setAddressOnFirebase(address)
     }
 
     private fun deleteAddressOnFirebase(address: ShippingAddress) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
-            .document(address.id.toString()).delete()
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ADDRESS_USER)
-            .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
+        shippingAddressRepository.deleteAddressOnFirebase(address)
     }
 
 
@@ -101,14 +90,11 @@ class ShippingAddressViewModel @Inject constructor(
             checkZipCode(zipCode) &&
             checkCountry(country)
         ) {
-            viewModelScope.launch {
-                val shippingAddress =
-                    createShippingAddress(fullName, address, city, state, zipCode, country)
-                shippingAddressRepository.insert(shippingAddress)
-                setAddressOnFirebase(shippingAddress)
-                toastMessage.postValue(SUCCESS)
-                dismiss.postValue(true)
-            }
+            val shippingAddress =
+                createShippingAddress(fullName, address, city, state, zipCode, country)
+            setAddressOnFirebase(shippingAddress)
+            toastMessage.postValue(SUCCESS)
+            dismiss.postValue(true)
         }
     }
 
@@ -137,7 +123,6 @@ class ShippingAddressViewModel @Inject constructor(
                     this.zipCode = zipCode
                     this.country = country
                 }
-                shippingAddressRepository.update(shippingAddress)
                 setAddressOnFirebase(shippingAddress)
                 toastMessage.postValue(SUCCESS_EDIT)
                 dismiss.postValue(true)
@@ -204,13 +189,14 @@ class ShippingAddressViewModel @Inject constructor(
     }
 
     fun deleteShippingAddress(shippingAddress: ShippingAddress) {
-        viewModelScope.launch {
-            if (checkDefaultShippingAddress(shippingAddress.id.toString())) {
-                removeDefaultAddress()
-            }
-            shippingAddressRepository.delete(shippingAddress)
-            deleteAddressOnFirebase(shippingAddress)
+        if (checkDefaultShippingAddress(shippingAddress.id.toString())) {
+            removeDefaultAddress()
         }
+        deleteAddressOnFirebase(shippingAddress)
+    }
+
+    fun setAddressLiveData() {
+        shippingAddressRepository.address.postValue(null)
     }
 
     companion object {

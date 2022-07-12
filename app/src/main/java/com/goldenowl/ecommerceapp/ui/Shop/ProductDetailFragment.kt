@@ -28,16 +28,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class ProductDetailFragment : BaseFragment() {
     private val viewModel: ShopViewModel by viewModels()
     private lateinit var binding: FragmentProductDetailBinding
+    private lateinit var adapterRelated: ListProductGridAdapter
     private lateinit var colors: MutableList<String>
     private lateinit var sizes: MutableList<String>
-
     private var selectSize: Int? = null
     private var selectColor: Int? = null
-
-    private lateinit var idProduct: String
-    private lateinit var product: Product
-
-    private lateinit var adapterRelated: ListProductGridAdapter
+    private var idProduct = ""
     private val handlerFragment = Handler()
 
     override fun onCreateView(
@@ -46,19 +42,26 @@ class ProductDetailFragment : BaseFragment() {
     ): View {
         arguments?.let {
             idProduct = it.getString(ID_PRODUCT).toString()
+            if (idProduct.isNotBlank()) {
+                viewModel.isLoading.postValue(true)
+                viewModel.setProduct(idProduct)
+            } else {
+                findNavController().navigateUp()
+            }
         }
         binding = FragmentProductDetailBinding.inflate(inflater, container, false)
 
-
-        viewModel.setProduct(idProduct)
-
         adapterRelated = ListProductGridAdapter({
+            if (it.id != idProduct) {
+                viewModel.isLoading.postValue(true)
+            }
             viewModel.setProduct(it.id)
             binding.nestedScrollView.apply {
                 scrollTo(0, 0)
             }
-        }, { _,product ->
+        }, { btnFavorite, product ->
             val bottomSheetSize = BottomSheetFavorite(product, null, null)
+            viewModel.btnFavorite.postValue(btnFavorite)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
         }, { view, product ->
             viewModel.setButtonFavorite(requireContext(), view, product.id)
@@ -70,34 +73,45 @@ class ProductDetailFragment : BaseFragment() {
     }
 
     fun changePrice() {
-        if (selectColor != null && selectSize != null) {
-            binding.txtPrice.text = "\$${product.colors[selectColor!!].sizes[selectSize!!].price}"
+        val product = viewModel.product.value
+        product?.let {
+            if (selectColor != null && selectSize != null) {
+                binding.txtPrice.text = "\$${it.colors[selectColor!!].sizes[selectSize!!].price}"
+            }
         }
     }
 
     private fun observeSetup() {
-        viewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
-            toastMessage(str)
-        }
+        viewModel.apply {
+            toastMessage.observe(viewLifecycleOwner) { str ->
+                toastMessage(str)
+                toastMessage.postValue("")
+            }
 
-        viewModel.product.observe(viewLifecycleOwner) {
-            product = it
-            colors = viewModel.getAllColor()
-            sizes = viewModel.getAllSize()
-            colors.add(DEFAULT_COLOR)
-            sizes.add(DEFAULT_SIZE)
-            viewModel.setCategory(product.categoryName)
-            bind()
-        }
+            product.observe(viewLifecycleOwner) {
+                if (it != null) {
+                    colors = viewModel.getAllColor()
+                    sizes = viewModel.getAllSize()
+                    colors.add(DEFAULT_COLOR)
+                    sizes.add(DEFAULT_SIZE)
+                    viewModel.setCategory(it.categoryName)
+                    bind(it)
+                    viewModel.isLoading.postValue(false)
+                }
+            }
 
-        viewModel.products.observe(viewLifecycleOwner) {
-            adapterRelated.submitList(it)
-            binding.txtNumberRelated.text = "${it.size} items"
-        }
+            products.observe(viewLifecycleOwner) {
+                adapterRelated.submitList(it.filter { product -> product.id != idProduct })
+                binding.txtNumberRelated.text = "${it.size - 1} items"
+            }
 
+            isLoading.observe(viewLifecycleOwner) {
+                setLoading(it)
+            }
+        }
     }
 
-    fun bind() {
+    fun bind(product: Product) {
         binding.apply {
             MaterialToolbar.title = product.title
 
@@ -217,6 +231,7 @@ class ProductDetailFragment : BaseFragment() {
 
             btnFavorite.setOnClickListener {
                 val select = selectColor ?: 0
+                viewModel.btnFavorite.postValue(btnFavorite)
                 val bottomSheetSize =
                     BottomSheetFavorite(product, selectSize, product.colors[select].color)
                 bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
@@ -249,13 +264,16 @@ class ProductDetailFragment : BaseFragment() {
         setFragmentResultListener(REQUEST_KEY) { _, bundle ->
             val result = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
             if (result) {
-                binding.btnFavorite.background = ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.btn_favorite_active
-                )
+                viewModel.btnFavorite.value?.let {
+                    it.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.btn_favorite_active
+                    )
+                }
             }
         }
     }
+
 
     private fun autoScroll() {
         handlerFragment.removeMessages(0)

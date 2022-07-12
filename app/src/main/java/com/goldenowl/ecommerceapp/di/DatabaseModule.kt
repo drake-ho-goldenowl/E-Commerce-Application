@@ -1,7 +1,7 @@
 package com.goldenowl.ecommerceapp.di
 
 import android.content.Context
-import com.goldenowl.ecommerceapp.data.*
+import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.utilities.RSA
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -23,32 +23,33 @@ import javax.inject.Singleton
 class DatabaseModule {
     @Singleton
     @Provides
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
-        return AppDatabase.getInstance(context)
+    fun provideFirebaseApp(@ApplicationContext context: Context): FirebaseApp {
+        var result = FirebaseApp.initializeApp(context)
+        while (result == null) {
+            result = FirebaseApp.initializeApp(context)
+        }
+        return result
     }
 
+    @Singleton
     @Provides
-    fun provideFirebaseApp(@ApplicationContext context: Context): FirebaseApp? {
-        return FirebaseApp.initializeApp(context)
-    }
-
-    @Provides
-    fun provideFirebaseFireStore(@ApplicationContext context: Context): FirebaseFirestore {
-        FirebaseApp.initializeApp(context)
+    fun provideFirebaseFireStore(): FirebaseFirestore {
         return Firebase.firestore
     }
 
+    @Singleton
     @Provides
-    fun provideFirebaseAuth(@ApplicationContext context: Context): FirebaseAuth {
-        FirebaseApp.initializeApp(context)
+    fun provideFirebaseAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance()
     }
 
+    @Singleton
     @Provides
     fun provideUserManager(@ApplicationContext context: Context): UserManager {
         return UserManager.getInstance(context)
     }
 
+    @Singleton
     @Provides
     fun provideGoogleSignInClient(@ApplicationContext context: Context): GoogleSignInClient {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -58,40 +59,9 @@ class DatabaseModule {
         return GoogleSignIn.getClient(context, gso)
     }
 
+    @Singleton
     @Provides
     fun provideKeyStoreWrapper(): RSA {
         return RSA()
     }
-
-    @Provides
-    fun provideProductDao(appDatabase: AppDatabase): ProductDao {
-        return appDatabase.productDao()
-    }
-
-    @Provides
-    fun provideFavoriteDao(appDatabase: AppDatabase): FavoriteDao {
-        return appDatabase.favoriteDao()
-    }
-
-    @Provides
-    fun provideBagDao(appDatabase: AppDatabase): BagDao {
-        return appDatabase.bagDao()
-    }
-
-    @Provides
-    fun providePromotionDao(appDatabase: AppDatabase): PromotionDao {
-        return appDatabase.promotionDao()
-    }
-
-    @Provides
-    fun provideShippingAddress(appDatabase: AppDatabase): ShippingAddressDao {
-        return appDatabase.shippingAddressDao()
-    }
-
-    @Provides
-    fun provideOrderDao(appDatabase: AppDatabase): OrderDao {
-        return appDatabase.orderDao()
-    }
-
-
 }

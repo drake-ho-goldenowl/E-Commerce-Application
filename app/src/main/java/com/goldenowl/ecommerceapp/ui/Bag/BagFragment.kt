@@ -32,6 +32,7 @@ class BagFragment : BaseFragment() {
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
+        viewModel.isLoading.postValue(true)
         viewModel.fetchBag()
         adapterBag = ListBagAdapter({
             val action = BagFragmentDirections.actionBagFragmentToProductDetailFragment(
@@ -65,13 +66,15 @@ class BagFragment : BaseFragment() {
     private fun observeSetup() {
         viewModel.apply {
             bagAndProduct.observe(viewLifecycleOwner) {
+                calculatorTotal(it, sale.value ?: 0)
                 adapterBag.submitList(it)
                 allBag = it
-                calculatorTotal(it, sale.value ?: 0)
+                isLoading.postValue(false)
             }
 
             toastMessage.observe(viewLifecycleOwner) {
                 toastMessage(it)
+                toastMessage.postValue("")
             }
 
             totalPrice.observe(viewLifecycleOwner) {
@@ -79,7 +82,11 @@ class BagFragment : BaseFragment() {
             }
 
             sale.observe(viewLifecycleOwner) {
-                viewModel.calculatorTotal(allBag, it)
+                viewModel.fetchBag()
+            }
+
+            isLoading.observe(viewLifecycleOwner) {
+                setLoading(it)
             }
         }
     }

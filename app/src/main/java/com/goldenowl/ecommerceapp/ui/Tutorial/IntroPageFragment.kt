@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.goldenowl.ecommerceapp.databinding.FragmentIntroPageBinding
 
-class IntroPageFragment(private val img: Int,private val nameTopic: String) : Fragment() {
+class IntroPageFragment(private val img: Int, private val nameTopic: String) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

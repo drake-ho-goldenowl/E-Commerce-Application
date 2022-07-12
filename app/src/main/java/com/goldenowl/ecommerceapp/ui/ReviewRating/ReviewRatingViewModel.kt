@@ -1,6 +1,5 @@
 package com.goldenowl.ecommerceapp.ui.ReviewRating
 
-import android.util.Log
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,6 +7,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
+import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.REVIEW_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.Timestamp
@@ -16,6 +16,9 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -25,77 +28,123 @@ import javax.inject.Inject
 class ReviewRatingViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val userManager: UserManager,
-    private val db : FirebaseFirestore
+    private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
-    val listReview: MutableLiveData<List<Review>> = MutableLiveData()
-    val listRating: MutableLiveData<List<Int>> = MutableLiveData()
-    val alertStar: MutableLiveData<Boolean> = MutableLiveData(false)
-    val alertDescription: MutableLiveData<Boolean> = MutableLiveData(false)
-    val dismiss: MutableLiveData<Boolean> = MutableLiveData(false)
+    private val storageReference: StorageReference = FirebaseStorage.getInstance().reference
+
+    val listReview = MutableLiveData<List<Review>>(emptyList())
+    val listRating = MutableLiveData<List<Int>>(emptyList())
+    val alertStar = MutableLiveData(false)
+    val alertDescription = MutableLiveData(false)
+    val statusFilterImage = MutableLiveData(false)
     private val idUser = if (userManager.isLogged()) {
         userManager.getAccessToken()
     } else {
         null
     }
-    private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
-    var allReview: List<Review>? = null
-    val statusFilterImage: MutableLiveData<Boolean> = MutableLiveData(false)
-    lateinit var product: MutableLiveData<Product>
+
+    private val statusIdProduct = MutableStateFlow("")
+    val product = statusIdProduct.flatMapLatest {
+        getProduct(it)
+    }.asLiveData()
+
 
     fun isLogged(): Boolean {
         return userManager.isLogged()
     }
-    fun fetchRatingProduct(product: Product) {
-        db.collection(REVIEW_FIREBASE).whereEqualTo(ID_PRODUCT, product.id).get()
+
+    fun fetchRatingProduct(idProduct: String) {
+        db.collection(REVIEW_FIREBASE)
+            .whereEqualTo(ID_PRODUCT, idProduct)
+            .get()
             .addOnSuccessListener { documents ->
-                viewModelScope.launch {
-                    val list: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0)
-                    for (document in documents) {
-                        val review = document.toObject<Review>()
-                        if (review.star in 1..5) {
-                            list[review.star.toInt() - 1]++
+                val list: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0)
+                for (document in documents) {
+                    val review = document.toObject<Review>()
+                    if (review.star in 1..5) {
+                        list[review.star.toInt() - 1]++
+                    }
+                }
+
+                listRating.postValue(list)
+                db.collection(PRODUCT_FIREBASE)
+                    .document(idProduct)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        val productNew = document.toObject<Product>()
+                        productNew?.let {
+                            productNew.numberReviews = productNew.getTotalRating(list)
+                            productNew.reviewStars = productNew.getAverageRating(list)
+                            db.collection(PRODUCT_FIREBASE)
+                                .document(idProduct)
+                                .set(productNew)
                         }
                     }
-                    product.numberReviews = product.getTotalRating(list)
-                    product.reviewStars = product.getAverageRating(list)
-                    listRating.postValue(list)
-                    productRepository.update(product)
-                }
             }
     }
 
-    fun getDataLive(idProduct: String) {
-        viewModelScope.launch {
-            product =
-                productRepository.getProduct(idProduct).asLiveData() as MutableLiveData<Product>
-            db.collection(REVIEW_FIREBASE).whereEqualTo("idProduct", idProduct)
-                .addSnapshotListener { value, e ->
-                    if (e != null) {
-                        Log.w(TAG, "Listen failed.", e)
-                        return@addSnapshotListener
+    fun getRatingProduct(idProduct: String) {
+        db.collection(REVIEW_FIREBASE)
+            .whereEqualTo(ID_PRODUCT, idProduct)
+            .get()
+            .addOnSuccessListener { documents ->
+                val list: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0)
+                for (document in documents) {
+                    val review = document.toObject<Review>()
+                    if (review.star in 1..5) {
+                        list[review.star.toInt() - 1]++
                     }
-                    val list: MutableList<Review> = mutableListOf()
-                    for (doc in value!!) {
-                        list.add(doc.toObject())
-                    }
-                    allReview = list
-                    filterImage(statusFilterImage.value ?: false)
                 }
-        }
+                listRating.postValue(list)
+            }
+    }
+
+    fun setIdProduct(idProduct: String) {
+        statusIdProduct.value = idProduct
+    }
+
+    private fun getProduct(idProduct: String): Flow<Product> {
+        return productRepository.getProduct(idProduct)
+    }
+
+    fun getReview(idProduct: String) {
+        db.collection(REVIEW_FIREBASE)
+            .whereEqualTo(ID_PRODUCT, idProduct)
+            .get()
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Review>()
+                for (doc in documents) {
+                    list.add(doc.toObject())
+                }
+                listReview.postValue(list)
+            }
     }
 
     private fun setReviewOnFirebase(review: Review) {
-        db.collection(REVIEW_FIREBASE).document(review.createdTimer?.seconds.toString()).set(review)
+        db.collection(REVIEW_FIREBASE)
+            .document(review.createdTimer?.seconds.toString())
+            .set(review)
+            .addOnSuccessListener {
+                toastMessage.postValue(BottomAddReview.SUCCESS)
+                dismiss.postValue(true)
+                isLoading.postValue(false)
+                getReview(review.idProduct)
+            }
+            .addOnFailureListener {
+                toastMessage.postValue(BottomAddReview.SUCCESS)
+                dismiss.postValue(true)
+                isLoading.postValue(false)
+            }
     }
 
-    fun filterImage(isCheck: Boolean) {
-        if (isCheck) {
-            listReview.postValue(listReview.value?.filter {
+    fun filterImage(isCheck: Boolean): List<Review>? {
+        return if (isCheck) {
+            listReview.value?.filter {
                 it.listImage.isNotEmpty()
-            })
+            }
         } else {
-            listReview.postValue(allReview)
+            listReview.value
         }
     }
 
@@ -136,7 +185,9 @@ class ReviewRatingViewModel @Inject constructor(
 
     fun getNameAndAvatarUser(idUser: String): LiveData<Pair<String, String>> {
         val result = MutableLiveData<Pair<String, String>>()
-        db.collection(USER_FIREBASE).document(idUser).get()
+        db.collection(USER_FIREBASE)
+            .document(idUser)
+            .get()
             .addOnSuccessListener { documentSnapshot ->
                 val user = documentSnapshot.toObject<User>()
                 user?.let {
@@ -147,34 +198,42 @@ class ReviewRatingViewModel @Inject constructor(
     }
 
     fun removeHelpful(review: Review) {
-        if (idUser == null) {
-            return
+        if (idUser != null) {
+            db.collection(REVIEW_FIREBASE)
+                .document(review.createdTimer?.seconds.toString())
+                .collection(HELPFUL)
+                .document(idUser)
+                .delete()
         }
-        db.collection(REVIEW_FIREBASE).document(review.createdTimer?.seconds.toString())
-            .collection(HELPFUL).document(idUser).delete()
     }
 
     fun addHelpful(review: Review) {
-        if (idUser == null) {
-            return
+        if (idUser != null) {
+            val data = hashMapOf(ID_USER to idUser)
+            db.collection(REVIEW_FIREBASE)
+                .document(review.createdTimer?.seconds.toString())
+                .collection(HELPFUL)
+                .document(idUser)
+                .set(data)
         }
-        val data = hashMapOf("idUser" to idUser)
-        db.collection(REVIEW_FIREBASE).document(review.createdTimer?.seconds.toString())
-            .collection(HELPFUL).document(idUser).set(data)
+
     }
 
 
     fun checkHelpfulForUser(review: Review): LiveData<Boolean> {
         val result = MutableLiveData(false)
-        if (idUser == null) {
-            return result
-        }
-        db.collection(REVIEW_FIREBASE).document(review.createdTimer?.seconds.toString())
-            .collection(HELPFUL).document(idUser).get().addOnSuccessListener {
-                if (it.data != null) {
-                    result.postValue(true)
+        if (idUser != null) {
+            db.collection(REVIEW_FIREBASE)
+                .document(review.createdTimer?.seconds.toString())
+                .collection(HELPFUL)
+                .document(idUser)
+                .get()
+                .addOnSuccessListener {
+                    if (it.data != null) {
+                        result.postValue(true)
+                    }
                 }
-            }
+        }
         return result
     }
 
@@ -204,9 +263,8 @@ class ReviewRatingViewModel @Inject constructor(
     }
 
     fun insertReview(review: Review) {
-        viewModelScope.launch {
-            setReviewOnFirebase(review)
-        }
+        setReviewOnFirebase(review)
+        fetchRatingProduct(review.idProduct)
     }
 
     companion object {

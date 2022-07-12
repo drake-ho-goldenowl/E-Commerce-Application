@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
@@ -12,9 +11,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
+import com.goldenowl.ecommerceapp.ui.BaseBottomSheetDialog
 import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_IS_FAVORITE
 import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -23,7 +22,7 @@ class BottomSheetFavorite(
     private val product: Product,
     private val selectSizeInt: Int? = null,
     private var color: String? = null,
-    ) : BottomSheetDialogFragment() {
+) : BaseBottomSheetDialog() {
     private val viewModel: FavoriteViewModel by viewModels()
     private var selectSize: String? = null
 
@@ -60,14 +59,11 @@ class BottomSheetFavorite(
     private fun observeSetup() {
         viewModel.apply {
             toastMessage.observe(viewLifecycleOwner) { str ->
-                Toast.makeText(
-                    context,
-                    str,
-                    Toast.LENGTH_SHORT
-                ).show()
+                toastMessage(str)
+                toastMessage.postValue("")
             }
 
-            disMiss.observe(viewLifecycleOwner) {
+            dismiss.observe(viewLifecycleOwner) {
                 if (it) {
                     dismiss()
                 }

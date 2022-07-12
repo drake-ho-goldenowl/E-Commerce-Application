@@ -12,7 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListPromotionAdapter
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutPromotionBinding
-import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_NAME
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_NAME_PROMOTION
 import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_SALE
 import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -91,7 +91,10 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
     }
 
     private fun sendData(select: String, sale: Long) {
-        setFragmentResult(REQUEST_KEY, bundleOf(BUNDLE_KEY_NAME to select, BUNDLE_KEY_SALE to sale))
+        setFragmentResult(
+            REQUEST_KEY,
+            bundleOf(BUNDLE_KEY_NAME_PROMOTION to select, BUNDLE_KEY_SALE to sale)
+        )
     }
 
     companion object {

@@ -12,12 +12,12 @@ const val INTRODUCTION_3 = 2
 const val INTRODUCTION_4 = 3
 
 
-class TutorialPagerAdapter(fragment: Fragment) :FragmentStateAdapter(fragment){
+class TutorialPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     private val tabFragmentsCreators: Map<Int, () -> Fragment> = mapOf(
-        INTRODUCTION_1 to { IntroPageFragment(R.drawable.ic_intro1,"Introduction 1") },
-        INTRODUCTION_2 to { IntroPageFragment(R.drawable.ic_intro2,"Introduction 2") },
-        INTRODUCTION_3 to { IntroPageFragment(R.drawable.ic_intro3,"Introduction 3") },
-        INTRODUCTION_4 to { IntroPageFragment(R.drawable.ic_intro4,"Introduction 4") },
+        INTRODUCTION_1 to { IntroPageFragment(R.drawable.ic_intro1, "Introduction 1") },
+        INTRODUCTION_2 to { IntroPageFragment(R.drawable.ic_intro2, "Introduction 2") },
+        INTRODUCTION_3 to { IntroPageFragment(R.drawable.ic_intro3, "Introduction 3") },
+        INTRODUCTION_4 to { IntroPageFragment(R.drawable.ic_intro4, "Introduction 4") },
     )
 
     override fun getItemCount(): Int {
@@ -25,6 +25,6 @@ class TutorialPagerAdapter(fragment: Fragment) :FragmentStateAdapter(fragment){
     }
 
     override fun createFragment(position: Int): Fragment {
-        return tabFragmentsCreators[position]?.invoke() ?:throw IndexOutOfBoundsException()
+        return tabFragmentsCreators[position]?.invoke() ?: throw IndexOutOfBoundsException()
     }
 }

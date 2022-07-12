@@ -24,7 +24,7 @@ class ListPromotionAdapter(private val onApplyClicked: (Promotion) -> Unit) :
                 txtName.text = promotion.name
                 txtIdPromotion.text = promotion.id
 
-                GlideDefault.show(itemView.context,promotion.backgroundImage,imgPromotion,true)
+                GlideDefault.show(itemView.context, promotion.backgroundImage, imgPromotion, true)
 
                 btnApply.setOnClickListener {
                     onApplyClicked(promotion)

@@ -92,7 +92,7 @@ sealed class ListImageReviewViewHolder(binding: ViewBinding) :
                 if (isUri) {
                     imgReview.setImageURI(Uri.parse(uri))
                 } else {
-                    GlideDefault.show(itemView.context,uri,imgReview)
+                    GlideDefault.show(itemView.context, uri, imgReview)
                 }
             }
         }

@@ -99,7 +99,7 @@ class BottomSheetChangePassword : BottomSheetDialogFragment() {
 
         viewModel.validChangePasswordLiveData.observe(this) {
             if (it) {
-                Notification(requireContext()).notify("Notification","Update password success")
+                Notification(requireContext()).notify("Notification", "Update password success")
                 this.dismiss()
             }
         }

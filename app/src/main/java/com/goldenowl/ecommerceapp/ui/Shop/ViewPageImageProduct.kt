@@ -17,7 +17,7 @@ class ViewPageImageProduct(private val url: String) : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = ItemViewPagerImageProductBinding.inflate(inflater, container, false)
-        GlideDefault.show(requireContext(),url,binding.imgProductDetail)
+        GlideDefault.show(requireContext(), url, binding.imgProductDetail)
         return binding.root
     }
 }

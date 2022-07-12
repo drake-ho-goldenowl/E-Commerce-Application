@@ -2,7 +2,6 @@ package com.goldenowl.ecommerceapp.ui.Favorite
 
 import android.content.Context
 import android.view.View
-import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.data.BagRepository
 import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.FavoriteRepository
@@ -19,7 +18,6 @@ class FavoriteViewModel @Inject constructor(
 ) :
     BaseViewModel() {
     val favoriteAndProducts = favoriteRepository.favoriteAndProduct
-    val disMiss = MutableLiveData(false)
 
     fun fetchFavorites() {
         favoriteRepository.fetchFavoriteAndProduct()
@@ -31,12 +29,13 @@ class FavoriteViewModel @Inject constructor(
 
 
     fun removeFavorite(favorite: Favorite) {
+        isLoading.postValue(true)
         favoriteRepository.removeFavoriteFirebase(favorite)
     }
 
     fun insertFavorite(idProduct: String, size: String, color: String) {
         favoriteRepository.insertFavorite(idProduct, color, size)
-        disMiss.postValue(true)
+        dismiss.postValue(true)
     }
 
 

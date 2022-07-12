@@ -14,6 +14,7 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListFavoriteAdapter
 import com.goldenowl.ecommerceapp.data.FavoriteAndProduct
 import com.goldenowl.ecommerceapp.databinding.FragmentFavoritesBinding
+import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,12 +23,14 @@ class FavoritesFragment : Fragment() {
     private lateinit var adapterFavorite: ListFavoriteAdapter
     private lateinit var binding: FragmentFavoritesBinding
     private var allFavorites: List<FavoriteAndProduct> = emptyList()
+    private val loadingDialog = LoadingDialog(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
+        viewModel.isLoading.postValue(true)
         viewModel.fetchFavorites()
         adapterFavorite = ListFavoriteAdapter({
             viewModel.removeFavorite(it.favorite)
@@ -36,7 +39,7 @@ class FavoritesFragment : Fragment() {
                 idProduct = it.product.id
             )
             findNavController().navigate(action)
-        }, { buttonView,favoriteAndProduct->
+        }, { buttonView, favoriteAndProduct ->
             viewModel.insertBag(
                 favoriteAndProduct.product.id,
                 favoriteAndProduct.product.colors[0].color.toString(),
@@ -104,11 +107,23 @@ class FavoritesFragment : Fragment() {
 
 
     private fun observeSetup() {
-        viewModel.favoriteAndProducts.observe(viewLifecycleOwner) {
-            if (allFavorites != it){
-                allFavorites = it
-                adapterFavorite.submitList(it)
+        viewModel.apply {
+            favoriteAndProducts.observe(viewLifecycleOwner) {
+                if (allFavorites != it) {
+                    allFavorites = it
+                    adapterFavorite.submitList(it)
+                }
+                isLoading.postValue(false)
+            }
+
+            isLoading.observe(viewLifecycleOwner) {
+                if (it) {
+                    loadingDialog.startLoading()
+                } else {
+                    loadingDialog.dismiss()
+                }
             }
         }
+
     }
 }

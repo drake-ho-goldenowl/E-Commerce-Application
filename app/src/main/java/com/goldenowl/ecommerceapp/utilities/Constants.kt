@@ -1,7 +1,5 @@
 package com.goldenowl.ecommerceapp.utilities
 
-import java.util.*
-
 const val IS_FIRST = "IS_FIRST"
 const val REQUEST_SIGN_IN = 101
 const val USER_FIREBASE = "users"
@@ -14,13 +12,14 @@ const val ADDRESS_USER = "address"
 const val PAYMENT_USER = "payment"
 const val ORDER_USER = "order"
 
-const val LAST_EDIT = "LAST_EDIT"
-const val VALUE_LAST_EDIT = "lastEdit"
 const val HISTORY = "HISTORY"
 const val SALE = "Sale"
 const val NEW = "New"
 
 val NON_DIGITS = Regex("[^\\d]")
+const val MIN = 100000
+const val MAX = 999999
+const val TRACKING_NUMBER = "IW3475453455"
 
 const val PRIVATE_KEY =
     "MIICXQIBAAKBgQCS3jRCamZ6RVE2QdFTAIlhdN55FMcqCxX+UlPrbMT/hYQrS1XF\n" +
@@ -36,7 +35,3 @@ const val PRIVATE_KEY =
             "NfQWZ+BUkTaAwvsI/w/txQzx5UPdF3Z5fAg8iU17JyCFoy8SDzRsG5XQj53n0SiP\n" +
             "iAgJ6Z/m2Vc8LmSE7m0CQQCIt1gnu9GmbBd68w/wLk89BhOcZlCHQm09A+2axXUx\n" +
             "Lc5VoNQrgLqNL0a6EhoqhZDPzKo/qJ/E2M+P2YKqnkEK\n"
-
-
-var LAST_EDIT_TIME_FAVORITES: Date? = null
-var LAST_EDIT_TIME_BAG: Date? = null

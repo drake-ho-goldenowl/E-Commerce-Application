@@ -4,7 +4,6 @@ import android.widget.TextView
 import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -13,40 +12,48 @@ class BagViewModel @Inject constructor(
     private val favoriteRepository: FavoriteRepository,
     private val userManager: UserManager,
     private val bagRepository: BagRepository,
-    private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
     val bagAndProduct = bagRepository.bagAndProduct
     val totalPrice = MutableLiveData(0)
     val sale = MutableLiveData(0L)
-    val disMiss = MutableLiveData(false)
 
     fun fetchBag() {
-        bagRepository.fetchBagAndProduct()
+         bagRepository.fetchBagAndProduct()
     }
 
     fun insertBag(idProduct: String, color: String, size: String) {
         bagRepository.insertBag(idProduct, color, size)
-        disMiss.postValue(true)
+        dismiss.postValue(true)
     }
 
     fun removeBagFirebase(bag: Bag) {
+        isLoading.postValue(true)
         bagRepository.removeBagFirebase(bag)
     }
 
     private fun updateBagFirebase(bag: Bag, isFetch: Boolean = true) {
-        bagRepository.updateBagFirebase(bag,isFetch)
+        bagRepository.updateBagFirebase(bag, isFetch)
     }
 
-    private fun changeQuantityAndCalculator(old: BagAndProduct, new: Bag) {
-        val index = bagAndProduct.value?.indexOf(old) ?: -1
-        if (index != -1) {
-            var list = mutableListOf<BagAndProduct>()
-            bagAndProduct.value?.let {
-                it[index].bag = new
-                list = it
+    private fun changeQuantityAndCalculator(old: BagAndProduct, new: Bag, isPlus: Boolean = true) {
+        val size = old.product.getColorAndSize(
+            new.color,
+            new.size
+        )
+        if (size != null) {
+            var salePercent = 0
+            if (old.product.salePercent != null) {
+                salePercent = old.product.salePercent
             }
-            calculatorTotal(list, sale.value ?: 0)
+            val price = size.price * (100 - salePercent) / 100
+            if (isPlus) {
+                val total = totalPrice.value?.plus(price) ?: 0
+                totalPrice.postValue(total.toInt())
+            } else {
+                val total = totalPrice.value?.minus(price) ?: 0
+                totalPrice.postValue(total.toInt())
+            }
         }
     }
 
@@ -66,7 +73,7 @@ class BagViewModel @Inject constructor(
             newBag.quantity -= 1
             textView.text = newBag.quantity.toString()
             updateBagFirebase(newBag, false)
-            changeQuantityAndCalculator(bagAndProduct, newBag)
+            changeQuantityAndCalculator(bagAndProduct, newBag, false)
         } else {
             removeBagFirebase(bagAndProduct.bag)
         }

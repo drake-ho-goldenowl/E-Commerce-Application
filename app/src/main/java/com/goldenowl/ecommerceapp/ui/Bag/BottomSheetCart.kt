@@ -4,14 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.goldenowl.ecommerceapp.ui.BaseBottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -20,7 +19,7 @@ class BottomSheetCart(
     private val product: Product,
     private var selectSizeInt: Int,
     private val selectColorInt: Int
-) : BottomSheetDialogFragment() {
+) : BaseBottomSheetDialog() {
     private val viewModel: BagViewModel by viewModels()
     private lateinit var binding: BottomLayoutSelectSizeBinding
     private lateinit var adapter: ListSizeAdapter
@@ -52,17 +51,14 @@ class BottomSheetCart(
 
     private fun setupObserve() {
         viewModel.apply {
-            disMiss.observe(viewLifecycleOwner) {
+            dismiss.observe(viewLifecycleOwner) {
                 if (it) {
                     dismiss()
                 }
             }
             toastMessage.observe(viewLifecycleOwner) { str ->
-                Toast.makeText(
-                    context,
-                    str,
-                    Toast.LENGTH_SHORT
-                ).show()
+                toastMessage(str)
+                toastMessage.postValue("")
             }
         }
     }

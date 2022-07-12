@@ -29,12 +29,18 @@ class ShopViewModel @Inject constructor(
     private val db: FirebaseFirestore
 ) :
     BaseViewModel() {
-    val statusFilter = MutableStateFlow(Triple("", "", 0))
+    private val statusIdProduct = MutableStateFlow("")
+    private val statusFilter = MutableStateFlow(Pair("", ""))
+    val product: LiveData<Product> = statusIdProduct.flatMapLatest {
+        productRepository.getProduct(it)
+    }.asLiveData()
+    val statusSort = MutableLiveData(0)
     val allCategory = productRepository.getAllCategory().asLiveData()
     var lastVisible = ""
     var loadMore = MutableLiveData(true)
     val products: MutableLiveData<List<Product>>
     val btnFavorite = MutableLiveData<View>()
+
     init {
         products = statusFilter.flatMapLatest {
             if (it.first.isNotBlank() && it.second.isNotBlank()) {
@@ -150,6 +156,7 @@ class ShopViewModel @Inject constructor(
     }
 
     fun loadMore(list: List<Product>) {
+        isLoading.postValue(true)
         statusFilter.value.apply {
             if (this.first.isNotBlank() && this.second.isNotBlank()) {
                 loadMoreCategoryAndSearch(this.second, this.first, list)
@@ -180,6 +187,7 @@ class ShopViewModel @Inject constructor(
                 } else {
                     loadMore.postValue(false)
                 }
+                isLoading.postValue(false)
             }
     }
 
@@ -206,6 +214,10 @@ class ShopViewModel @Inject constructor(
                     } else {
                         loadMore.postValue(false)
                     }
+                    isLoading.postValue(false)
+                }
+                .addOnFailureListener {
+                    isLoading.postValue(false)
                 }
         }
 
@@ -233,6 +245,7 @@ class ShopViewModel @Inject constructor(
                 } else {
                     loadMore.postValue(false)
                 }
+                isLoading.postValue(false)
             }
     }
 
@@ -259,6 +272,7 @@ class ShopViewModel @Inject constructor(
                 } else {
                     loadMore.postValue(false)
                 }
+                isLoading.postValue(false)
             }
     }
 
@@ -300,13 +314,9 @@ class ShopViewModel @Inject constructor(
                 } else {
                     loadMore.postValue(false)
                 }
+                isLoading.postValue(false)
             }
     }
-
-    private val statusIdProduct = MutableStateFlow("")
-    val product: LiveData<Product> = statusIdProduct.flatMapLatest {
-        productRepository.getProduct(it)
-    }.asLiveData()
 
 
     fun setProduct(idProduct: String) {
@@ -314,7 +324,7 @@ class ShopViewModel @Inject constructor(
     }
 
     fun filterSort(products: List<Product>): List<Product> {
-        return when (statusFilter.value.third) {
+        return when (statusSort.value) {
             0 -> products.sortedByDescending {
                 it.isPopular
             }
@@ -336,7 +346,7 @@ class ShopViewModel @Inject constructor(
     }
 
     fun setCategory(category: String) {
-        statusFilter.value = Triple(category, statusFilter.value.second, statusFilter.value.third)
+        statusFilter.value = Pair(category, statusFilter.value.second)
     }
 
     fun getCategory(): String {
@@ -344,11 +354,11 @@ class ShopViewModel @Inject constructor(
     }
 
     fun setSearch(search: String) {
-        statusFilter.value = Triple(statusFilter.value.first, search, statusFilter.value.third)
+        statusFilter.value = Pair(statusFilter.value.first, search)
     }
 
     fun setSort(select: Int) {
-        statusFilter.value = Triple(statusFilter.value.first, statusFilter.value.second, select)
+        statusSort.value = select
     }
 
     fun getAllSize(): MutableList<String> {

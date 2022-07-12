@@ -19,28 +19,38 @@ class ListBagAdapter(
     private val onItemClicked: (BagAndProduct) -> Unit,
     private val onAddClicked: (BagAndProduct) -> Unit,
     private val onDeleteClicked: (BagAndProduct) -> Unit,
-    private val onPlusQuantityClicked: (BagAndProduct,TextView) -> Unit,
-    private val onMinusQuantityClicked: (BagAndProduct,TextView) -> Unit,
+    private val onPlusQuantityClicked: (BagAndProduct, TextView) -> Unit,
+    private val onMinusQuantityClicked: (BagAndProduct, TextView) -> Unit,
 ) :
     ListAdapter<BagAndProduct, ListBagAdapter.ItemViewHolder>(DiffCallback) {
 
-    class ItemViewHolder(private val context: Context,
-                         private val onAddClicked: (BagAndProduct) -> Unit,
-                         private val onDeleteClicked: (BagAndProduct) -> Unit,
-                         private val onPlusQuantityClicked: (BagAndProduct,TextView) -> Unit,
-                         private val onMinusQuantityClicked: (BagAndProduct,TextView) -> Unit,
-                         private var binding: ItemBagBinding) :
+    class ItemViewHolder(
+        private val context: Context,
+        private val onAddClicked: (BagAndProduct) -> Unit,
+        private val onDeleteClicked: (BagAndProduct) -> Unit,
+        private val onPlusQuantityClicked: (BagAndProduct, TextView) -> Unit,
+        private val onMinusQuantityClicked: (BagAndProduct, TextView) -> Unit,
+        private var binding: ItemBagBinding
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(bagAndProduct: BagAndProduct) {
             binding.apply {
-                GlideDefault.show(itemView.context,bagAndProduct.product.images[0],imgProduct,true)
+                GlideDefault.show(
+                    itemView.context,
+                    bagAndProduct.product.images[0],
+                    imgProduct,
+                    true
+                )
                 txtName.text = bagAndProduct.product.title
                 txtColorInput.text = bagAndProduct.bag.color
                 txtSizeInput.text = bagAndProduct.bag.size
                 txtQuantity.text = bagAndProduct.bag.quantity.toString()
 
-                val size = bagAndProduct.product.getColorAndSize(bagAndProduct.bag.color,bagAndProduct.bag.size)
+                val size = bagAndProduct.product.getColorAndSize(
+                    bagAndProduct.bag.color,
+                    bagAndProduct.bag.size
+                )
                 if (bagAndProduct.product.salePercent != null && size != null) {
                     txtPrice.paintFlags = txtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     txtSalePrice.visibility = View.VISIBLE
@@ -52,15 +62,17 @@ class ListBagAdapter(
                     txtPrice.paintFlags = 0
                     txtSalePercent.visibility = View.GONE
                     txtSalePrice.visibility = View.GONE
-
+                }
+                size?.let {
+                    txtPrice.text = "${size.price}\$"
                 }
 
                 btnMinus.setOnClickListener {
-                    onMinusQuantityClicked(bagAndProduct,txtQuantity)
+                    onMinusQuantityClicked(bagAndProduct, txtQuantity)
                 }
 
                 btnPlus.setOnClickListener {
-                    onPlusQuantityClicked(bagAndProduct,txtQuantity)
+                    onPlusQuantityClicked(bagAndProduct, txtQuantity)
                 }
 
                 btnMore.setOnClickListener { view ->

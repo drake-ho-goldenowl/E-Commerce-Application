@@ -11,6 +11,7 @@ import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.roundToInt
@@ -30,37 +31,33 @@ class BagRepository @Inject constructor(
                 .collection(BAG_FIREBASE)
                 .get()
                 .addOnSuccessListener { documents ->
-                    val list = mutableListOf<BagAndProduct>()
-                    for (document in documents) {
-                        val bag = document.toObject<Bag>()
-                        db.collection(PRODUCT_FIREBASE).document(bag.idProduct).get()
-                            .addOnSuccessListener { document2 ->
-                                document2.toObject<Product>()?.let {
-                                    list.add(BagAndProduct(bag, it))
+                    if (documents.size() == 0) {
+                        bagAndProduct.postValue(mutableListOf())
+                    } else {
+                        val list = mutableListOf<BagAndProduct>()
+                        for (document in documents) {
+                            val bag = document.toObject<Bag>()
+                            db.collection(PRODUCT_FIREBASE).document(bag.idProduct).get()
+                                .addOnSuccessListener { document2 ->
+                                    document2.toObject<Product>()?.let {
+                                        list.add(BagAndProduct(bag, it))
+                                    }
+                                    bagAndProduct.postValue(list)
+
                                 }
-                                bagAndProduct.postValue(list)
-                            }
+                        }
                     }
                 }
         }
     }
 
-    private fun addBagFirebase(bag: Bag) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
-            BAG_FIREBASE
-        ).add(bag)
-            .addOnSuccessListener {
-                bag.id = it.id
-                updateBagFirebase(bag)
-            }
-    }
-
-    fun insertBag(idProduct: String, color: String, size: String) {
+    fun insertBag(idProduct: String, color: String, size: String, quantity: Long = 1) {
         val bag = Bag(
+            id = Date().time.toString(),
             idProduct = idProduct,
             color = color,
             size = size,
-            quantity = 1,
+            quantity = quantity,
         )
         checkExist(bag)
     }
@@ -77,11 +74,28 @@ class BagRepository @Inject constructor(
 
     }
 
+    fun removeAllFirebase() {
+        db.collection(USER_FIREBASE)
+            .document(userManager.getAccessToken())
+            .collection(BAG_FIREBASE)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    document.reference.delete()
+                        .addOnSuccessListener {
+                            bagAndProduct.postValue(mutableListOf())
+                        }
+
+                }
+            }
+    }
+
     fun updateBagFirebase(bag: Bag, isFetch: Boolean = true) {
         db.collection(USER_FIREBASE)
             .document(userManager.getAccessToken())
             .collection(BAG_FIREBASE)
-            .document(bag.id).set(bag)
+            .document(bag.id)
+            .set(bag)
             .addOnSuccessListener {
                 if (isFetch) {
                     fetchBagAndProduct()
@@ -103,7 +117,7 @@ class BagRepository @Inject constructor(
                         plusQuantity(document.toObject())
                     }
                 } else {
-                    addBagFirebase(bag)
+                    updateBagFirebase(bag)
                 }
             }
     }

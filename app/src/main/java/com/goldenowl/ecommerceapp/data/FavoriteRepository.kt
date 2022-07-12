@@ -11,6 +11,7 @@ import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,38 +25,33 @@ class FavoriteRepository @Inject constructor(
     fun fetchFavoriteAndProduct() {
         if (userManager.isLogged()) {
             db.collection(USER_FIREBASE)
-                .document(userManager.getAccessToken()).collection(FAVORITE_FIREBASE)
+                .document(userManager.getAccessToken())
+                .collection(FAVORITE_FIREBASE)
                 .get()
                 .addOnSuccessListener { documents ->
-                    val list = mutableListOf<FavoriteAndProduct>()
-                    for (document in documents) {
-                        val favorite = document.toObject<Favorite>()
-                        db.collection(PRODUCT_FIREBASE).document(favorite.idProduct).get()
-                            .addOnSuccessListener { document2 ->
-                                document2.toObject<Product>()?.let {
-                                    list.add(FavoriteAndProduct(favorite, it))
+                    if (documents.size() == 0) {
+                        favoriteAndProduct.postValue(mutableListOf())
+                    } else {
+                        val list = mutableListOf<FavoriteAndProduct>()
+                        for (document in documents) {
+                            val favorite = document.toObject<Favorite>()
+                            db.collection(PRODUCT_FIREBASE).document(favorite.idProduct).get()
+                                .addOnSuccessListener { document2 ->
+                                    document2.toObject<Product>()?.let {
+                                        list.add(FavoriteAndProduct(favorite, it))
+                                    }
+                                    favoriteAndProduct.postValue(list)
                                 }
-                                favoriteAndProduct.postValue(list)
-                            }
+                        }
                     }
                 }
         }
     }
 
 
-    private fun addFavoriteFirebase(favorite: Favorite) {
-        db.collection(USER_FIREBASE)
-            .document(userManager.getAccessToken())
-            .collection(FAVORITE_FIREBASE)
-            .add(favorite)
-            .addOnSuccessListener {
-                favorite.id = it.id
-                updateFavoriteFirebase(favorite)
-            }
-    }
-
     fun insertFavorite(idProduct: String, color: String, size: String) {
         val favorite = Favorite(
+            id = Date().time.toString(),
             idProduct = idProduct,
             color = color,
             size = size,
@@ -77,7 +73,8 @@ class FavoriteRepository @Inject constructor(
         db.collection(USER_FIREBASE)
             .document(userManager.getAccessToken())
             .collection(FAVORITE_FIREBASE)
-            .document(favorite.id).set(favorite)
+            .document(favorite.id)
+            .set(favorite)
             .addOnSuccessListener {
                 fetchFavoriteAndProduct()
             }
@@ -93,7 +90,7 @@ class FavoriteRepository @Inject constructor(
             .get()
             .addOnSuccessListener { documents ->
                 if (documents.size() == 0) {
-                    addFavoriteFirebase(favorite)
+                    updateFavoriteFirebase(favorite)
                 }
             }
     }
@@ -109,13 +106,12 @@ class FavoriteRepository @Inject constructor(
                 .whereEqualTo(BaseViewModel.ID_PRODUCT, idProduct)
                 .get()
                 .addOnSuccessListener { document ->
-                    if (document.size() > 0){
+                    if (document.size() > 0) {
                         buttonView.background = ContextCompat.getDrawable(
                             context,
                             R.drawable.btn_favorite_active
                         )
-                    }
-                    else{
+                    } else {
                         buttonView.background = ContextCompat.getDrawable(
                             context,
                             R.drawable.btn_favorite_no_active

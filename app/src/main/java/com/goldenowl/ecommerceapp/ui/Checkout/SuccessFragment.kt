@@ -14,9 +14,9 @@ class SuccessFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentSuccessBinding.inflate(inflater,container,false)
+        val binding = FragmentSuccessBinding.inflate(inflater, container, false)
 
-        binding.btnContinueShopping.setOnClickListener{
+        binding.btnContinueShopping.setOnClickListener {
             findNavController().navigate(R.id.homeFragment)
         }
         return binding.root

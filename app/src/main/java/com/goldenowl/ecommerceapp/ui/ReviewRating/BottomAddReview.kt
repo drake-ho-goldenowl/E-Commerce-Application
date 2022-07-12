@@ -9,15 +9,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListImageReview
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutAddYourReviewBinding
-import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
+import com.goldenowl.ecommerceapp.ui.BaseBottomSheetDialog
 import com.goldenowl.ecommerceapp.utilities.FileUtil
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.format
@@ -27,9 +25,9 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment() {
+class BottomAddReview(private val idProduct: String) : BaseBottomSheetDialog() {
     private lateinit var binding: BottomLayoutAddYourReviewBinding
-    private val viewModel: ReviewRatingViewModel by viewModels()
+    private val viewModel: ReviewRatingViewModel by activityViewModels()
     private var starVote: Long = 0
     private var description: String = ""
     private val listImage: MutableSet<String> = mutableSetOf()
@@ -42,13 +40,13 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
     ): View {
         binding = BottomLayoutAddYourReviewBinding.inflate(inflater, container, false)
 
-        adapter = ListImageReview( true, {
+        adapter = ListImageReview(true, {
 
         }, {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(
-                Intent.createChooser(intent, "Select Picture"),
+                Intent.createChooser(intent, TITLE_PICK_IMAGE),
                 PICK_IMAGE_REQUEST
             )
         })
@@ -100,8 +98,7 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
                 val review =
                     viewModel.createReview(idProduct, description, starVote, listImage.toList())
                 review?.let {
-                    val loadingDialog = LoadingDialog(this@BottomAddReview)
-                    loadingDialog.startLoading()
+                    viewModel.isLoading.postValue(true)
                     if (listImage.isNotEmpty()) {
                         val result = viewModel.uploadImage(
                             review.createdTimer?.seconds.toString(),
@@ -111,23 +108,17 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
                             review.listImage = it
                             if (review.listImage.size == listImage.size) {
                                 viewModel.insertReview(review)
-                                loadingDialog.dismiss()
-                                viewModel.toastMessage.postValue(SUCCESS)
-                                viewModel.dismiss.postValue(true)
                             }
                         }
                         result.second.observe(viewLifecycleOwner) {
                             if (!it) {
-                                loadingDialog.dismiss()
                                 viewModel.toastMessage.postValue(FAILURE)
                                 viewModel.dismiss.postValue(true)
+                                viewModel.isLoading.postValue(false)
                             }
                         }
                     } else {
                         viewModel.insertReview(review)
-                        loadingDialog.dismiss()
-                        viewModel.toastMessage.postValue(SUCCESS)
-                        viewModel.dismiss.postValue(true)
                     }
                 }
             }
@@ -135,34 +126,38 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
     }
 
     private fun setupObserve() {
-        viewModel.dismiss.observe(viewLifecycleOwner) {
-            if (it) {
-                dismiss()
+        viewModel.apply {
+            dismiss.observe(viewLifecycleOwner) {
+                if (it) {
+                    dismiss()
+                }
             }
-        }
-        viewModel.alertStar.observe(viewLifecycleOwner) {
-            if (it) {
-                binding.txtAlertStar.visibility = View.VISIBLE
-            } else {
-                binding.txtAlertStar.visibility = View.GONE
+            alertStar.observe(viewLifecycleOwner) {
+                if (it) {
+                    binding.txtAlertStar.visibility = View.VISIBLE
+                } else {
+                    binding.txtAlertStar.visibility = View.GONE
+                }
+            }
+
+            alertDescription.observe(viewLifecycleOwner) {
+                if (it) {
+                    binding.txtAlertDescription.visibility = View.VISIBLE
+                } else {
+                    binding.txtAlertDescription.visibility = View.GONE
+                }
+            }
+
+            toastMessage.observe(viewLifecycleOwner) {
+                toastMessage(it)
+                toastMessage.postValue("")
+            }
+
+            isLoading.observe(viewLifecycleOwner){
+                setLoading(it)
             }
         }
 
-        viewModel.alertDescription.observe(viewLifecycleOwner) {
-            if (it) {
-                binding.txtAlertDescription.visibility = View.VISIBLE
-            } else {
-                binding.txtAlertDescription.visibility = View.GONE
-            }
-        }
-
-        viewModel.toastMessage.observe(viewLifecycleOwner) {
-            Toast.makeText(
-                context,
-                it,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -193,6 +188,7 @@ class BottomAddReview(private val idProduct: String) : BottomSheetDialogFragment
 
     companion object {
         const val TAG = "BOTTOM_ADD_REVIEW"
+        const val TITLE_PICK_IMAGE = "Select Picture"
         const val PICK_IMAGE_REQUEST = 100
         const val SUCCESS = "Upload success"
         const val FAILURE = "Upload failure"

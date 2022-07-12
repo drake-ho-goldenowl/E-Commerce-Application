@@ -21,6 +21,8 @@ class LoadingDialog(private val fragment: Fragment) {
     }
 
     fun dismiss() {
-        isDialog.dismiss()
+        if (::isDialog.isInitialized) {
+            isDialog.dismiss()
+        }
     }
 }

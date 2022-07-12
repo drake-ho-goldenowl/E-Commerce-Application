@@ -5,25 +5,25 @@ import com.google.gson.Gson
 import java.util.*
 
 
-class Converters  {
+class Converters {
     @TypeConverter
-    fun dateToTimestamp(value: Long?): Date?{
-        return if(value == null) null else Date(value)
+    fun dateToTimestamp(value: Long?): Date? {
+        return if (value == null) null else Date(value)
     }
 
     @TypeConverter
-    fun dateToTimestamp(date: Date?): Long?{
+    fun dateToTimestamp(date: Date?): Long? {
         return date?.time
     }
 
     @TypeConverter
-    fun imagesToJson(value: List<String>?): String?{
+    fun imagesToJson(value: List<String>?): String? {
         return Gson().toJson(value)
     }
 
     @TypeConverter
-    fun jsonToImages(value: String?): List<String>{
-        return Gson().fromJson(value,Array<String>::class.java).toList()
+    fun jsonToImages(value: String?): List<String> {
+        return Gson().fromJson(value, Array<String>::class.java).toList()
     }
 
     @TypeConverter
@@ -32,8 +32,8 @@ class Converters  {
     }
 
     @TypeConverter
-    fun jsonToColor(value: String?): List<Color>{
-        return Gson().fromJson(value,Array<Color>::class.java).toList()
+    fun jsonToColor(value: String?): List<Color> {
+        return Gson().fromJson(value, Array<Color>::class.java).toList()
     }
 
     @TypeConverter
@@ -42,8 +42,8 @@ class Converters  {
     }
 
     @TypeConverter
-    fun jsonToDelivery(value: String?): Delivery{
-        return Gson().fromJson(value,Delivery::class.java)
+    fun jsonToDelivery(value: String?): Delivery {
+        return Gson().fromJson(value, Delivery::class.java)
     }
 
     @TypeConverter
@@ -52,17 +52,17 @@ class Converters  {
     }
 
     @TypeConverter
-    fun jsonToProductOrder(value: String?): List<ProductOrder>{
-        return Gson().fromJson(value,Array<ProductOrder>::class.java).toList()
+    fun jsonToProductOrder(value: String?): List<ProductOrder> {
+        return Gson().fromJson(value, Array<ProductOrder>::class.java).toList()
     }
 
     @TypeConverter
-    fun tagsToJson(value: List<Tag>?): String?{
+    fun tagsToJson(value: List<Tag>?): String? {
         return Gson().toJson(value)
     }
 
     @TypeConverter
-    fun jsonToTags(value: String?): List<Tag>{
-        return Gson().fromJson(value,Array<Tag>::class.java).toList()
+    fun jsonToTags(value: String?): List<Tag> {
+        return Gson().fromJson(value, Array<Tag>::class.java).toList()
     }
 }

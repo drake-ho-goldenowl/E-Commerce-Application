@@ -13,7 +13,6 @@ class DatePickerFragment(private val editText: TextInputEditText, private val do
     DatePickerDialog.OnDateSetListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dateString = dob.split("/")
-        println(dateString[2].toInt() + dateString[1].toInt() + dateString[0].toInt())
         val dialog = DatePickerDialog(
             requireContext(),
             this,

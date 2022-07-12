@@ -39,7 +39,7 @@
         android:valueTo="100.0"
         android:stepSize="1.0"
         android:layout_marginTop="20dp"
-        app:values="@array/initial_slider_values"/>
+        app:values="@array/initial_slider_values" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,6 +49,7 @@
         android:layout_marginTop="50dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="48dp">
+
         <Button
             android:id="@+id/btnReset"
             style="@style/buttonTheme"
@@ -58,6 +59,7 @@
             android:fontFamily="@font/metropolis_bold"
             android:textAllCaps="true"
             android:text="Reset" />
+
         <Button
             android:id="@+id/btnConfirm"
             style="@style/buttonTheme"
@@ -69,7 +71,6 @@
             android:textAllCaps="true"
             android:text="Confirm" />
     </LinearLayout>
-
 
 
 </LinearLayout>

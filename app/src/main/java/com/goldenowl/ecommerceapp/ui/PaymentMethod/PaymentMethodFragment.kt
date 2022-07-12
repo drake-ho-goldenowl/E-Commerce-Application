@@ -41,13 +41,19 @@ class PaymentMethodFragment : Fragment() {
             }.show()
         })
 
-        viewModel.listCard.observe(viewLifecycleOwner) {
-            adapter.dataSet = it
-            adapter.notifyDataSetChanged()
-        }
-
+        setupObserve()
         bind()
         return binding.root
+    }
+
+    private fun setupObserve() {
+        viewModel.apply {
+            cards.observe(viewLifecycleOwner) {
+                adapter.dataSet = it
+                adapter.notifyDataSetChanged()
+            }
+        }
+
     }
 
     private fun bind() {

@@ -43,18 +43,10 @@ class CatalogFragment : BaseFragment() {
             } else {
                 viewModel.setSearch("")
             }
+            viewModel.isLoading.postValue(true)
         }
-
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCatalogBinding.inflate(inflater, container, false)
         viewModel.setSort(0)
         viewModel.lastVisible = ""
-
         if (nameTitle.isNullOrBlank()) {
             viewModel.setCategory("")
         } else {
@@ -65,6 +57,14 @@ class CatalogFragment : BaseFragment() {
                 viewModel.setCategory(nameTitle.toString())
             }
         }
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentCatalogBinding.inflate(inflater, container, false)
         observeSetup()
         adapterSetup()
         bind()
@@ -91,7 +91,7 @@ class CatalogFragment : BaseFragment() {
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }, { btnFavorite, product ->
+        }, { _, product ->
             val bottomSheetSize = BottomSheetFavorite(product)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
         }, { view, product ->
@@ -129,17 +129,20 @@ class CatalogFragment : BaseFragment() {
                 else {
                     listProduct = product
                 }
-                binding.progressBar.visibility = View.INVISIBLE
+                isLoading.postValue(false)
                 adapterProductGrid.submitList(product)
                 adapterProduct.submitList(product)
             }
-
-            loadMore.observe(viewLifecycleOwner) {
-                if (!it) {
-                    binding.progressBar.visibility = View.INVISIBLE
-                } else {
+            isLoading.observe(viewLifecycleOwner) {
+                if (it) {
                     binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    binding.progressBar.visibility = View.INVISIBLE
                 }
+            }
+            statusSort.observe(viewLifecycleOwner) {
+                adapterProductGrid.submitList(products.value?.let { it1 -> filterSort(it1) })
+                adapterProduct.submitList(products.value?.let { it1 -> filterSort(it1) })
             }
         }
     }
@@ -152,7 +155,7 @@ class CatalogFragment : BaseFragment() {
                 appBarLayout.topAppBar.title = nameTitle
             }
 
-            if (viewModel.statusFilter.value.third == 1) {
+            if (viewModel.statusSort.value == 1) {
                 appBarLayout.btnSort.text = getString(R.string.newest)
             }
 
@@ -160,8 +163,9 @@ class CatalogFragment : BaseFragment() {
                 if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                     viewModel.products.value?.let {
                         if (viewModel.loadMore.value == true) {
-                            progressBar.visibility = View.VISIBLE
                             viewModel.loadMore(it)
+                        } else {
+                            viewModel.isLoading.postValue(false)
                         }
                     }
                 }
@@ -208,7 +212,7 @@ class CatalogFragment : BaseFragment() {
             }
 
             appBarLayout.btnSort.setOnClickListener {
-                val bottomSheetSort = BottomSheetSort(viewModel.statusFilter.value.third)
+                val bottomSheetSort = BottomSheetSort(viewModel.statusSort.value ?: 0)
                 bottomSheetSort.show(parentFragmentManager, BottomSheetSort.TAG)
             }
 

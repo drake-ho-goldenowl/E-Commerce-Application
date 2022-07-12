@@ -2,17 +2,13 @@ package com.goldenowl.ecommerceapp.ui.Profile
 
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import com.goldenowl.ecommerceapp.data.Card
 import com.goldenowl.ecommerceapp.data.OrderRepository
+import com.goldenowl.ecommerceapp.data.PaymentRepository
 import com.goldenowl.ecommerceapp.data.ShippingAddressRepository
 import com.goldenowl.ecommerceapp.data.UserManager
-import com.goldenowl.ecommerceapp.utilities.*
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.hdodenhof.circleimageview.CircleImageView
 import javax.inject.Inject
@@ -21,14 +17,13 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
     private val shippingAddressRepository: ShippingAddressRepository,
-    private val rsa: RSA,
+    private val paymentRepository: PaymentRepository,
     private val userManager: UserManager,
-    private val db: FirebaseFirestore,
     private val firebaseAuth: FirebaseAuth
 ) : ViewModel() {
-    val totalAddress = shippingAddressRepository.getSize().asLiveData()
-    val payment = MutableLiveData("")
-    val totalOrder = orderRepository.getSize().asLiveData()
+    val totalAddress = shippingAddressRepository.countAddress()
+    val payment = paymentRepository.card
+    val totalOrder = orderRepository.getSize()
 
     fun setupProfileUI(
         fragment: Fragment,
@@ -50,32 +45,12 @@ class ProfileViewModel @Inject constructor(
 
     fun getPayment() {
         if (userManager.getPayment().isNotBlank()) {
-            db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
-                PAYMENT_USER
-            ).document(userManager.getPayment()).get().addOnSuccessListener { doc ->
-                if (doc.exists() && doc != null) {
-                    val card = doc.toObject<Card>()
-                    card?.let {
-                        it.number = rsa.decrypt(it.number)
-                        if (it.number[0] == '4') {
-                            payment.postValue("Visa  **${it.number.substring(card.number.length - 2)}")
-                        } else {
-                            payment.postValue("Mastercard  **${it.number.substring(card.number.length - 2)}")
-                        }
-                    }
-                } else {
-                    payment.postValue("")
-                }
-            }
-        } else {
-            payment.postValue("")
+            paymentRepository.getCard(userManager.getPayment())
         }
     }
 
     fun logOut() {
         firebaseAuth.signOut()
         userManager.logOut()
-        LAST_EDIT_TIME_FAVORITES = null
-        LAST_EDIT_TIME_BAG = null
     }
 }

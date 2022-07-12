@@ -38,11 +38,10 @@ class ItemListOrder(private val statusType: Int) : Fragment() {
     ): View {
         val binding = ItemViewPagerListOrderBinding.inflate(inflater, container, false)
 
-        viewModel.allOrder.observe(viewLifecycleOwner) { data ->
-            viewModel.filterStatus(data, statusType).observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-            }
+        viewModel.getOrderStatus(statusType).observe(viewLifecycleOwner) { data ->
+            adapter.submitList(data)
         }
+
         binding.apply {
             recyclerViewOrder.adapter = adapter
             recyclerViewOrder.layoutManager = LinearLayoutManager(context)

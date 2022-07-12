@@ -10,10 +10,10 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.goldenowl.ecommerceapp.data.User
 import com.goldenowl.ecommerceapp.data.UserManager
-import com.goldenowl.ecommerceapp.utilities.Hash
-import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.ui.OnSignInStartedListener
+import com.goldenowl.ecommerceapp.utilities.Hash
+import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -50,6 +50,7 @@ class AuthViewModel @Inject constructor(
         if (!validName(name) || !validEmail(email) || !validPassword(password)) {
             return
         }
+        isLoading.postValue(true)
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -74,6 +75,7 @@ class AuthViewModel @Inject constructor(
                 } else {
                     toastMessage.postValue(REGISTRATION_FAIL)
                 }
+                isLoading.postValue(false)
             }
     }
 
@@ -81,14 +83,15 @@ class AuthViewModel @Inject constructor(
         if (emailText.isBlank()) {
             toastMessage.postValue("Please enter email")
         } else {
+            isLoading.postValue(true)
             firebaseAuth.sendPasswordResetEmail(emailText)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         toastMessage.postValue("Email sent.")
-                    }
-                    else{
+                    } else {
                         toastMessage.postValue("Email invalid")
                     }
+                    isLoading.postValue(false)
                 }
         }
     }
@@ -97,6 +100,7 @@ class AuthViewModel @Inject constructor(
         if (!validEmail(email) || !validPasswordLogin(password)) {
             return
         }
+        isLoading.postValue(true)
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -107,6 +111,7 @@ class AuthViewModel @Inject constructor(
                 } else {
                     toastMessage.postValue("Login Failure: " + task.exception)
                 }
+                isLoading.postValue(false)
             }
     }
 
@@ -130,9 +135,11 @@ class AuthViewModel @Inject constructor(
                     }
                 }
                 userLiveData.postValue(user)
+                isLoading.postValue(false)
                 toastMessage.postValue(LOGIN_SUCCESS)
             } else {
                 toastMessage.postValue(LOGIN_FAIL)
+                isLoading.postValue(false)
             }
         }
 
@@ -149,6 +156,7 @@ class AuthViewModel @Inject constructor(
 
     // GOOGLE
     fun firebaseAuthWithGoogle(idToken: String) {
+        isLoading.postValue(true)
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener {
             if (it.isSuccessful) {
@@ -158,6 +166,7 @@ class AuthViewModel @Inject constructor(
                 }
             } else {
                 toastMessage.postValue(LOGIN_FAIL)
+                isLoading.postValue(false)
             }
         }
     }
@@ -181,18 +190,18 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun handleFacebookAccessToken(token: AccessToken) {
+        isLoading.postValue(true)
         val credential = FacebookAuthProvider.getCredential(token.token)
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
                     val user = firebaseAuth.currentUser
                     user?.let {
                         actionLoginOrCreateFirebase(user, null)
                     }
                 } else {
-                    // If sign in fails, display a message to the user.
                     toastMessage.postValue(LOGIN_FAIL)
+                    isLoading.postValue(false)
                 }
             }
     }
@@ -269,6 +278,7 @@ class AuthViewModel @Inject constructor(
             true
         }
     }
+
     companion object {
         const val LOGIN_SUCCESS = "Login Success"
         const val LOGIN_FAIL = "Login Fail"

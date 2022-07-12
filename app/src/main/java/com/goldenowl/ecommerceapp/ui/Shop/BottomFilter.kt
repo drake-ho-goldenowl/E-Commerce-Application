@@ -11,14 +11,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.text.NumberFormat
 import java.util.*
 
-class BottomFilter(private var min: Float = 30F , private var max: Float = 50F): BottomSheetDialogFragment()  {
+class BottomFilter(private var min: Float = 30F, private var max: Float = 50F) :
+    BottomSheetDialogFragment() {
     private lateinit var binding: BottomLayoutFilterBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = BottomLayoutFilterBinding.inflate(inflater,container,false)
+        binding = BottomLayoutFilterBinding.inflate(inflater, container, false)
 
         bind()
         return binding.root
@@ -32,7 +33,7 @@ class BottomFilter(private var min: Float = 30F , private var max: Float = 50F):
                 format.currency = Currency.getInstance("USD")
                 format.format(value.toDouble())
             }
-            rangeSlider.values = listOf(min,max)
+            rangeSlider.values = listOf(min, max)
 
             rangeSlider.addOnChangeListener { rangeSlider, _, _ ->
                 min = rangeSlider.values[0]
@@ -60,7 +61,7 @@ class BottomFilter(private var min: Float = 30F , private var max: Float = 50F):
         )
     }
 
-    companion object{
+    companion object {
         const val TAG = "BOTTOM_FILTER"
         const val REQUEST_KEY = "request_key"
         const val BUNDLE_KEY_MIN = "bundle_min"

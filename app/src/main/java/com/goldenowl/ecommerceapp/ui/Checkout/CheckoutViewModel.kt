@@ -1,66 +1,54 @@
 package com.goldenowl.ecommerceapp.ui.Checkout
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
+import androidx.lifecycle.asLiveData
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
-import com.goldenowl.ecommerceapp.utilities.*
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
     private val shippingAddressRepository: ShippingAddressRepository,
+    private val paymentRepository: PaymentRepository,
     private val orderRepository: OrderRepository,
     private val bagRepository: BagRepository,
-    private val rsa: RSA,
+    private val promotionRepository: PromotionRepository,
     private val userManager: UserManager,
-    private val db: FirebaseFirestore,
 ) : BaseViewModel() {
-    private val statusIdAddress = MutableStateFlow("")
     private val statusIdPayment = MutableStateFlow("")
     val success: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val bag = bagRepository.bagAndProduct
+    val shippingAddress = shippingAddressRepository.address
 
     init {
         bagRepository.fetchBagAndProduct()
     }
-    val shippingAddress = statusIdAddress.flatMapLatest {
-        shippingAddressRepository.getShippingAddress(it)
-    }.asLiveData()
 
     val payment = statusIdPayment.flatMapLatest {
         getPayment(it).asFlow()
     }.asLiveData()
 
+
     private fun getPayment(idPayment: String): LiveData<Card> {
-        val result = MutableLiveData<Card>()
-        if (!idPayment.isNullOrBlank()) {
-            db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(
-                PAYMENT_USER
-            ).document(idPayment).get().addOnSuccessListener { documentSnapShpt ->
-                val card = documentSnapShpt.toObject<Card>()
-                card?.let {
-                    it.number = rsa.decrypt(it.number)
-                    result.postValue(it)
-                }
-            }
+        val result = paymentRepository.card
+        if (idPayment.isNotBlank()) {
+            paymentRepository.getCard(idPayment)
         } else {
-            result.postValue(Card())
+            paymentRepository.card.postValue(null)
         }
         return result
     }
 
     fun getPromotion(idPromotion: String): LiveData<Promotion> {
-        val result = MutableLiveData<Promotion>()
-        db.collection(PROMOTION_FIREBASE).document(idPromotion).get().addOnSuccessListener {
-            result.postValue(it.toObject())
+        val result = promotionRepository.promotion
+        if (idPromotion.isNotBlank()) {
+            promotionRepository.getPromotion(idPromotion)
         }
         return result
     }
@@ -100,13 +88,9 @@ class CheckoutViewModel @Inject constructor(
             delivery,
             sale.toString(),
         )
-        viewModelScope.launch {
-            setOrderOnFirebase(order)
-            orderRepository.insert(order)
-//            bagRepository.deleteAll()
-//            bagRepository.updateBagFirebase(db, userManager.getAccessToken())
-            success.postValue(true)
-        }
+        setOrderOnFirebase(order)
+        bagRepository.removeAllFirebase()
+        success.postValue(true)
     }
 
     private fun createOrder(
@@ -179,14 +163,15 @@ class CheckoutViewModel @Inject constructor(
     }
 
     private fun setOrderOnFirebase(order: Order) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ORDER_USER)
-            .document(order.id).set(order)
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken()).collection(ORDER_USER)
-            .document(LAST_EDIT).set(mapOf(VALUE_LAST_EDIT to Date().time))
+        orderRepository.setOrderFirebase(order)
     }
 
     fun setIdAddressDefault() {
-        statusIdAddress.value = userManager.getAddress()
+        if (userManager.getAddress().isNotBlank()) {
+            shippingAddressRepository.getAddress(userManager.getAddress())
+        } else {
+            shippingAddressRepository.address.postValue(null)
+        }
     }
 
     fun setIdPaymentDefault() {

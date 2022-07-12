@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.StatusPagerAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentOrdersBinding
-import com.goldenowl.ecommerceapp.ui.Order.OrderViewModel.Companion.statuses
+import com.goldenowl.ecommerceapp.ui.BaseViewModel.Companion.statuses
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 

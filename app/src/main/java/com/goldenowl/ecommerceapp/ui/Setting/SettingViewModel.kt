@@ -13,8 +13,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     val userManager: UserManager,
-    private val db : FirebaseFirestore
-    ) : BaseViewModel() {
+    private val db: FirebaseFirestore
+) : BaseViewModel() {
     val validNameLiveData: MutableLiveData<String> = MutableLiveData()
     private var storageReference: StorageReference = FirebaseStorage.getInstance().reference
     fun updateName(nameText: String) {
