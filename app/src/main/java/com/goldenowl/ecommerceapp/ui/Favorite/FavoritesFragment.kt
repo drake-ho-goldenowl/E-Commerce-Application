@@ -30,7 +30,9 @@ class FavoritesFragment : Fragment() {
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
-        viewModel.isLoading.postValue(true)
+        else{
+            viewModel.isLoading.postValue(true)
+        }
         viewModel.fetchFavorites()
         adapterFavorite = ListFavoriteAdapter({
             viewModel.removeFavorite(it.favorite)

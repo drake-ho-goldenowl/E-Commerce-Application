@@ -32,7 +32,9 @@ class BagFragment : BaseFragment() {
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
-        viewModel.isLoading.postValue(true)
+        else{
+            viewModel.isLoading.postValue(true)
+        }
         viewModel.fetchBag()
         adapterBag = ListBagAdapter({
             val action = BagFragmentDirections.actionBagFragmentToProductDetailFragment(
