@@ -40,7 +40,7 @@ class CheckoutViewModel @Inject constructor(
         if (idPayment.isNotBlank()) {
             paymentRepository.getCard(idPayment)
         } else {
-            paymentRepository.card.postValue(null)
+            paymentRepository.card.postValue(Card())
         }
         return result
     }
@@ -170,7 +170,7 @@ class CheckoutViewModel @Inject constructor(
         if (userManager.getAddress().isNotBlank()) {
             shippingAddressRepository.getAddress(userManager.getAddress())
         } else {
-            shippingAddressRepository.address.postValue(null)
+            shippingAddressRepository.address.postValue(ShippingAddress())
         }
     }
 

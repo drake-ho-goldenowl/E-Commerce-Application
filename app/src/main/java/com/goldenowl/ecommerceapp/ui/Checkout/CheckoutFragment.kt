@@ -71,7 +71,7 @@ class CheckoutFragment : BaseFragment() {
 
             shippingAddress.observe(viewLifecycleOwner) {
                 binding.apply {
-                    if (it == null) {
+                    if (it.address.isBlank()) {
                         layoutShippingAddress.visibility = View.INVISIBLE
                         btnAddShippingAddress.visibility = View.VISIBLE
                     } else {
@@ -94,14 +94,15 @@ class CheckoutFragment : BaseFragment() {
                         imgLogoCard.setImageResource(R.drawable.ic_mastercard)
                         txtNumberCard.text =
                             "* * * *  * * * *  * * * *  ${it.number.substring(it.number.length - 4)}"
+                        card = it
                     } else if (it.number[0] == '5') {
                         itemPayment.visibility = View.VISIBLE
                         btnAddPayment.visibility = View.GONE
                         imgLogoCard.setImageResource(R.drawable.ic_visa2)
                         txtNumberCard.text =
                             "* * * *  * * * *  * * * *  ${it.number.substring(it.number.length - 4)}"
+                        card = it
                     }
-                    card = it
                 }
             }
 

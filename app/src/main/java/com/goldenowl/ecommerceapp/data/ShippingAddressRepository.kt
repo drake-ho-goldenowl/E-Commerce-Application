@@ -56,7 +56,7 @@ class ShippingAddressRepository @Inject constructor(
                 if (result.exists() && result != null) {
                     address.postValue(result.toObject())
                 } else {
-                    address.postValue(null)
+                    address.postValue(ShippingAddress())
                 }
             }
     }

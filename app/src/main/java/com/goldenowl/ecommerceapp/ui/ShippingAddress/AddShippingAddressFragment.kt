@@ -116,14 +116,16 @@ class AddShippingAddressFragment : BaseFragment() {
             }
             address.observe(viewLifecycleOwner) {
                 it?.let { shipping ->
-                    binding.apply {
-                        shippingAddress = shipping
-                        editTextFullName.setText(shipping.fullName)
-                        editTextAddress.setText(shipping.address)
-                        editTextCity.setText(shipping.city)
-                        editTextState.setText(shipping.state)
-                        editTextZipCode.setText(shipping.zipCode)
-                        editTextCountry.setText(shipping.country)
+                    if (shipping.address.isNotBlank()) {
+                        binding.apply {
+                            shippingAddress = shipping
+                            editTextFullName.setText(shipping.fullName)
+                            editTextAddress.setText(shipping.address)
+                            editTextCity.setText(shipping.city)
+                            editTextState.setText(shipping.state)
+                            editTextZipCode.setText(shipping.zipCode)
+                            editTextCountry.setText(shipping.country)
+                        }
                     }
                 }
 

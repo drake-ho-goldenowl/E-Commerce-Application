@@ -196,7 +196,7 @@ class ShippingAddressViewModel @Inject constructor(
     }
 
     fun setAddressLiveData() {
-        shippingAddressRepository.address.postValue(null)
+        shippingAddressRepository.address.postValue(ShippingAddress())
     }
 
     companion object {

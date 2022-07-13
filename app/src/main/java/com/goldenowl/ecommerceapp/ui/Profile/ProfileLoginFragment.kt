@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileLoginBinding
@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ProfileLoginFragment : BaseFragment() {
     private lateinit var binding: FragmentProfileLoginBinding
-    private val viewModel: ProfileViewModel by activityViewModels()
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,9 +35,8 @@ class ProfileLoginFragment : BaseFragment() {
             totalAddress.observe(viewLifecycleOwner) {
                 binding.txtSubTitleShipping.text = "$it addresses"
             }
-
             payment.observe(viewLifecycleOwner) {
-                if (it != null) {
+                if (it.id.isNotBlank()) {
                     if (it.number[0] == '4') {
                         binding.txtSubTitlePayment.text =
                             "Visa  **${it.number.substring(it.number.length - 2)}"
@@ -48,14 +47,13 @@ class ProfileLoginFragment : BaseFragment() {
                 } else {
                     binding.txtSubTitlePayment.text = ""
                 }
-                viewModel.isLoading.postValue(false)
             }
 
             totalOrder.observe(viewLifecycleOwner) {
                 binding.txtSubTitleOrder.text = "Already have $it orders"
             }
 
-            isLoading.observe(viewLifecycleOwner){
+            isLoading.observe(viewLifecycleOwner) {
                 setLoading(it)
             }
         }
@@ -82,6 +80,7 @@ class ProfileLoginFragment : BaseFragment() {
                 findNavController().navigate(R.id.action_profileFragment_to_settingFragment)
             }
         }
+        viewModel.isLoading.postValue(false)
     }
 
     override fun onResume() {

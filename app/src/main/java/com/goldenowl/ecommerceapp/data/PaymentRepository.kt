@@ -63,9 +63,14 @@ class PaymentRepository @Inject constructor(
             .document(idCard)
             .get()
             .addOnSuccessListener { document ->
-                val temp = document.toObject<Card>()
-                temp?.let {
-                    card.postValue(decryptCard(it))
+                if (document.exists() && document.data != null){
+                    val temp = document.toObject<Card>()
+                    temp?.let {
+                        card.postValue(decryptCard(it))
+                    }
+                }
+                else{
+                    card.postValue(Card())
                 }
             }
     }
