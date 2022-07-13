@@ -23,7 +23,7 @@ class BagRepository @Inject constructor(
     private val userManager: UserManager,
 ) {
     val bagAndProduct = MutableLiveData<MutableList<BagAndProduct>>()
-
+    private val bags = MutableLiveData<List<Bag>>()
     fun fetchBagAndProduct() {
         if (userManager.isLogged()) {
             db.collection(USER_FIREBASE)
@@ -35,6 +35,7 @@ class BagRepository @Inject constructor(
                         bagAndProduct.postValue(mutableListOf())
                     } else {
                         val list = mutableListOf<BagAndProduct>()
+                        val listBag = mutableListOf<Bag>()
                         for (document in documents) {
                             val bag = document.toObject<Bag>()
                             db.collection(PRODUCT_FIREBASE).document(bag.idProduct).get()
@@ -45,7 +46,29 @@ class BagRepository @Inject constructor(
                                     bagAndProduct.postValue(list)
 
                                 }
+                            listBag.add(bag)
                         }
+                        bags.postValue(listBag)
+                    }
+                }
+        }
+    }
+
+    fun getBags() {
+        if (userManager.isLogged()) {
+            db.collection(USER_FIREBASE)
+                .document(userManager.getAccessToken())
+                .collection(BAG_FIREBASE)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.size() > 0) {
+                        val list = mutableListOf<Bag>()
+                        for (document in documents) {
+                            list.add(document.toObject())
+                        }
+                        bags.postValue(list)
+                    } else {
+                        bags.postValue(mutableListOf())
                     }
                 }
         }
@@ -151,18 +174,17 @@ class BagRepository @Inject constructor(
     }
 
     fun setButtonBag(context: Context, buttonView: View, favorite: Favorite) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken())
-            .collection(BAG_FIREBASE)
-            .whereEqualTo(BaseViewModel.SIZE, favorite.size)
-            .whereEqualTo(BaseViewModel.COLOR, favorite.color)
-            .whereEqualTo(BaseViewModel.ID_PRODUCT, favorite.idProduct)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.size() > 0) {
+        bags.value?.let {
+            for (bag in it) {
+                if (bag.size == favorite.size &&
+                    bag.color == favorite.color &&
+                    bag.idProduct == favorite.idProduct
+                ) {
                     buttonView.background = ContextCompat.getDrawable(
                         context,
                         R.drawable.btn_bag_active
                     )
+                    break
                 } else {
                     buttonView.background = ContextCompat.getDrawable(
                         context,
@@ -170,5 +192,6 @@ class BagRepository @Inject constructor(
                     )
                 }
             }
+        }
     }
 }

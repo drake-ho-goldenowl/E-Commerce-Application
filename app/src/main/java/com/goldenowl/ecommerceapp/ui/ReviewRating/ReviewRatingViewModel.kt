@@ -54,7 +54,7 @@ class ReviewRatingViewModel @Inject constructor(
         return userManager.isLogged()
     }
 
-    fun fetchRatingProduct(idProduct: String) {
+    private fun fetchRatingProduct(idProduct: String) {
         db.collection(REVIEW_FIREBASE)
             .whereEqualTo(ID_PRODUCT, idProduct)
             .get()

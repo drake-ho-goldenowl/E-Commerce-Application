@@ -22,6 +22,7 @@ class FavoriteRepository @Inject constructor(
     private val userManager: UserManager,
 ) {
     val favoriteAndProduct = MutableLiveData<MutableList<FavoriteAndProduct>>()
+    val listIdProductFavorite = MutableLiveData<List<String>>()
     fun fetchFavoriteAndProduct() {
         if (userManager.isLogged()) {
             db.collection(USER_FIREBASE)
@@ -46,6 +47,7 @@ class FavoriteRepository @Inject constructor(
                     }
                 }
         }
+        getListIdProductFavorite()
     }
 
 
@@ -67,6 +69,25 @@ class FavoriteRepository @Inject constructor(
             .addOnSuccessListener {
                 fetchFavoriteAndProduct()
             }
+    }
+
+    fun getListIdProductFavorite() {
+        if (userManager.isLogged()) {
+            db.collection(USER_FIREBASE)
+                .document(userManager.getAccessToken())
+                .collection(FAVORITE_FIREBASE)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.size() > 0) {
+                        val list = mutableSetOf<String>()
+                        for (document in documents) {
+                            val favorite = document.toObject<Favorite>()
+                            list.add(favorite.idProduct)
+                        }
+                        listIdProductFavorite.postValue(list.toList())
+                    }
+                }
+        }
     }
 
     private fun updateFavoriteFirebase(favorite: Favorite) {
@@ -100,24 +121,19 @@ class FavoriteRepository @Inject constructor(
             buttonView.visibility = View.GONE
         } else {
             buttonView.visibility = View.VISIBLE
-            db.collection(USER_FIREBASE)
-                .document(userManager.getAccessToken())
-                .collection(FAVORITE_FIREBASE)
-                .whereEqualTo(BaseViewModel.ID_PRODUCT, idProduct)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document.size() > 0) {
-                        buttonView.background = ContextCompat.getDrawable(
-                            context,
-                            R.drawable.btn_favorite_active
-                        )
-                    } else {
-                        buttonView.background = ContextCompat.getDrawable(
-                            context,
-                            R.drawable.btn_favorite_no_active
-                        )
-                    }
+            listIdProductFavorite.value?.let {
+                if (it.contains(idProduct)) {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_active
+                    )
+                } else {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_no_active
+                    )
                 }
+            }
         }
     }
 }

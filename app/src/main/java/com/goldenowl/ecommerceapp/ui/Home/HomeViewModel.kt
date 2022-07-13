@@ -25,6 +25,10 @@ class HomeViewModel @Inject constructor(
     val category = productRepository.getAllCategory().asLiveData()
     val btnFavorite = MutableLiveData<View>()
 
+    init {
+        favoriteRepository.getListIdProductFavorite()
+    }
+
     fun getProductWithCategory(category: String): MutableLiveData<List<Product>> {
         val result: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
         db.collection(PRODUCT_FIREBASE)
@@ -69,25 +73,6 @@ class HomeViewModel @Inject constructor(
             }
         return result
     }
-
-
-//    private fun fetchRatingProduct(product: Product) {
-//        db.collection(REVIEW_FIREBASE).whereEqualTo(ID_PRODUCT, product.id).get()
-//            .addOnSuccessListener { documents ->
-//                viewModelScope.launch {
-//                    val listRating: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0)
-//                    for (document in documents) {
-//                        val review = document.toObject<Review>()
-//                        if (review.star in 1..5) {
-//                            listRating[review.star.toInt() - 1]++
-//                        }
-//                    }
-//                    product.numberReviews = product.getTotalRating(listRating)
-//                    product.reviewStars = product.getAverageRating(listRating)
-//                    productRepository.insert(product)
-//                }
-//            }
-//    }
 
     fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {
         favoriteRepository.setButtonFavorite(context, buttonView, idProduct)

@@ -13,8 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentSettingBinding
+import com.goldenowl.ecommerceapp.ui.ChangePassword.BottomSheetChangePassword
 import com.goldenowl.ecommerceapp.ui.General.DatePickerFragment
-import com.goldenowl.ecommerceapp.ui.Profile.BottomSheetChangePassword
 import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -5,24 +5,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileLoginBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProfileLoginFragment : Fragment() {
+class ProfileLoginFragment : BaseFragment() {
     private lateinit var binding: FragmentProfileLoginBinding
-    private val viewModel: ProfileViewModel by viewModels()
+    private val viewModel: ProfileViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileLoginBinding.inflate(inflater, container, false)
+        viewModel.isLoading.postValue(true)
         setupObserve()
         bind()
         return binding.root
@@ -47,10 +48,15 @@ class ProfileLoginFragment : Fragment() {
                 } else {
                     binding.txtSubTitlePayment.text = ""
                 }
+                viewModel.isLoading.postValue(false)
             }
 
             totalOrder.observe(viewLifecycleOwner) {
                 binding.txtSubTitleOrder.text = "Already have $it orders"
+            }
+
+            isLoading.observe(viewLifecycleOwner){
+                setLoading(it)
             }
         }
     }
@@ -75,7 +81,6 @@ class ProfileLoginFragment : Fragment() {
             settingLayout.setOnClickListener {
                 findNavController().navigate(R.id.action_profileFragment_to_settingFragment)
             }
-
         }
     }
 

@@ -20,6 +20,7 @@ import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
+
 @AndroidEntryPoint
 class RatingProductFragment : BaseFragment() {
     private lateinit var binding: FragmentRatingProductBinding

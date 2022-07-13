@@ -19,6 +19,10 @@ class FavoriteViewModel @Inject constructor(
     BaseViewModel() {
     val favoriteAndProducts = favoriteRepository.favoriteAndProduct
 
+    init {
+        bagRepository.getBags()
+    }
+
     fun fetchFavorites() {
         favoriteRepository.fetchFavoriteAndProduct()
     }

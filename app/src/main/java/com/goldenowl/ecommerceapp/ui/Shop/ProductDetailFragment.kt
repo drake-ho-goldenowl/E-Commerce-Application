@@ -96,7 +96,6 @@ class ProductDetailFragment : BaseFragment() {
                     sizes.add(DEFAULT_SIZE)
                     viewModel.setCategory(it.categoryName)
                     bind(it)
-                    viewModel.isLoading.postValue(false)
                 }
             }
 
@@ -257,6 +256,7 @@ class ProductDetailFragment : BaseFragment() {
                     )
                 findNavController().navigate(action)
             }
+            viewModel.isLoading.postValue(false)
         }
     }
 

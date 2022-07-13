@@ -1,4 +1,4 @@
-package com.goldenowl.ecommerceapp.ui.Profile
+package com.goldenowl.ecommerceapp.ui.ChangePassword
 
 import android.os.Bundle
 import android.text.Editable
@@ -6,16 +6,14 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
-import com.goldenowl.ecommerceapp.utilities.Notification
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutChangePasswordBinding
-import com.goldenowl.ecommerceapp.ui.ChangePassword.ChangePasswordViewModel
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.goldenowl.ecommerceapp.ui.BaseBottomSheetDialog
+import com.goldenowl.ecommerceapp.utilities.Notification
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BottomSheetChangePassword : BottomSheetDialogFragment() {
+class BottomSheetChangePassword : BaseBottomSheetDialog() {
     private lateinit var binding: BottomLayoutChangePasswordBinding
     private val viewModel: ChangePasswordViewModel by viewModels()
     override fun onCreateView(
@@ -80,29 +78,28 @@ class BottomSheetChangePassword : BottomSheetDialogFragment() {
     }
 
     private fun observeSetup() {
-        viewModel.validOldPasswordLiveData.observe(this) {
-            alertOldPassword(it)
-        }
-        viewModel.validNewPasswordLiveData.observe(this) {
-            alertNewPassword(it)
-        }
-        viewModel.validRepeatPasswordLiveData.observe(this) {
-            alertRepeatPassword(it)
-        }
-        viewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
-            Toast.makeText(
-                this.context,
-                str,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        viewModel.apply {
+            validOldPasswordLiveData.observe(viewLifecycleOwner) {
+                alertOldPassword(it)
+            }
+            validNewPasswordLiveData.observe(viewLifecycleOwner) {
+                alertNewPassword(it)
+            }
+            validRepeatPasswordLiveData.observe(viewLifecycleOwner) {
+                alertRepeatPassword(it)
+            }
+            toastMessage.observe(viewLifecycleOwner) { str ->
+                toastMessage(str)
+            }
 
-        viewModel.validChangePasswordLiveData.observe(this) {
-            if (it) {
-                Notification(requireContext()).notify("Notification", "Update password success")
-                this.dismiss()
+            validChangePasswordLiveData.observe(viewLifecycleOwner) {
+                if (it) {
+                    Notification(requireContext()).notify("Notification", "Update password success")
+                    dismiss()
+                }
             }
         }
+
     }
 
     private fun alertOldPassword(alert: String) {
