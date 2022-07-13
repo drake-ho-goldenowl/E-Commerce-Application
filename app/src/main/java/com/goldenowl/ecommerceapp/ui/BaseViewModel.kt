@@ -21,6 +21,7 @@ open class BaseViewModel : ViewModel() {
         const val SALE_PERCENT = "salePercent"
         const val STATUS_ORDER = "status"
         const val ID_USER = "idUser"
+        const val IS_POPULAR = "isPopular"
 
         val statuses = listOf("Delivered", "Processing", "Cancelled")
         const val DELIVERED = 0

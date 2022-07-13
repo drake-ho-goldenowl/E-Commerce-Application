@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -47,8 +46,6 @@ class HomeFragment : BaseFragment() {
     private lateinit var adapter: ListHomeAdapter
     private var category: List<String> = emptyList()
     private var product: MutableMap<String, List<Product>> = mutableMapOf()
-    private var loadMore = true
-    private var count = 0
     private val handlerFragment = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +57,7 @@ class HomeFragment : BaseFragment() {
             sharedPref.edit().putBoolean(IS_FIRST, false).apply()
             findNavController().navigate(R.id.viewPageTutorialFragment)
         }
+        viewModel.isLoading.postValue(true)
     }
 
     override fun onCreateView(
@@ -67,11 +65,10 @@ class HomeFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-
         setupAdapter()
         setupObserve()
-        setFragmentListener()
         bind()
+        setFragmentListener()
         return binding.root
     }
 
@@ -97,7 +94,6 @@ class HomeFragment : BaseFragment() {
                     adapterItem.submitList(product[NEW])
                 }
                 else -> {
-                    loadMore = true
                     adapterItem.submitList(product[s])
                 }
             }
@@ -118,28 +114,78 @@ class HomeFragment : BaseFragment() {
         }
     }
 
+    private fun setupScroll() {
+        binding.apply {
+            nestedScrollView.viewTreeObserver?.addOnScrollChangedListener {
+                nestedScrollView.apply {
+                    val view = getChildAt(0)
+                    val diff = view.bottom - (height + scrollY)
+                    if (diff <= 0) {
+                        if (viewModel.loadMore.value == true) {
+                            viewModel.isLoading.postValue(true)
+                            viewModel.loadMore.postValue(false)
+                            if (product.size < category.size + 2) {
+                                viewModel.apply {
+                                    if (product.isEmpty()) {
+                                        getSaleProduct().observe(viewLifecycleOwner) {
+                                            if (it.isNotEmpty()) {
+                                                product[SALE] = it
+                                                adapter.submitList(product.keys.toList())
+                                                viewModel.isLoading.postValue(false)
+                                                viewModel.loadMore.postValue(true)
+                                            }
+                                        }
+                                    } else if (product.size == 1 && checkSale.value == false) {
+                                        getNewProduct().observe(viewLifecycleOwner) { list ->
+                                            if (list.isNotEmpty()) {
+                                                product[NEW] = list
+                                                adapter.submitList(product.keys.toList())
+                                                viewModel.isLoading.postValue(false)
+                                                viewModel.loadMore.postValue(true)
+                                            }
+                                        }
+                                    } else {
+                                        val index = product.size - 2
+                                        getProductWithCategory(this@HomeFragment.category[index])
+                                            .observe(viewLifecycleOwner) {
+                                                if (it.isNotEmpty()) {
+                                                    product[this@HomeFragment.category[index]] =
+                                                        it
+                                                    adapter.submitList(product.keys.toList())
+                                                    viewModel.isLoading.postValue(false)
+                                                    viewModel.loadMore.postValue(true)
+                                                }
+                                            }
+                                    }
+                                }
+                            } else {
+                                viewModel.isLoading.postValue(false)
+                                viewModel.loadMore.postValue(false)
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
     private fun setupObserve() {
         viewModel.apply {
             category.observe(viewLifecycleOwner) {
                 this@HomeFragment.category = it
+                loadMore.postValue(true)
             }
 
-            getSaleProduct().observe(viewLifecycleOwner) {
-                if (it.isNotEmpty()) {
-                    product[SALE] = it
-                    loadMore = true
-                    adapter.submitList(product.keys.toList())
-                    adapter.notifyDataSetChanged()
+            isLoading.observe(viewLifecycleOwner) {
+                if (it) {
+                    binding.progressBar.visibility = View.VISIBLE
+                    setupScroll()
+                } else {
+                    binding.progressBar.visibility = View.GONE
                 }
             }
-            getNewProduct().observe(viewLifecycleOwner) {
-                if (it.isNotEmpty()) {
-                    product[NEW] = it
-                    loadMore = true
-                    adapter.submitList(product.keys.toList())
-                    adapter.notifyDataSetChanged()
-                }
-            }
+
         }
     }
 
@@ -148,33 +194,10 @@ class HomeFragment : BaseFragment() {
             recyclerListHome.adapter = adapter
             recyclerListHome.layoutManager = LinearLayoutManager(context)
             adapter.submitList(product.keys.toList())
-            progressBar.visibility = View.VISIBLE
-            if (!loadMore) {
-                progressBar.visibility = View.GONE
+            setupScroll()
+            if (viewModel.isLoading.value == false){
+                viewModel.isLoading.postValue(false)
             }
-            nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
-                if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
-                    if (loadMore) {
-                        progressBar.visibility = View.VISIBLE
-                        loadMore = false
-                        if (count < category.size) {
-                            viewModel.getProductWithCategory(category[count])
-                                .observe(viewLifecycleOwner) {
-                                    if (it.isNotEmpty()) {
-                                        product[category[count]] = it
-                                        adapter.submitList(product.keys.toList())
-                                        adapter.notifyDataSetChanged()
-                                        count++
-                                    }
-                                }
-                        } else {
-                            progressBar.visibility = View.GONE
-                        }
-                    }
-                }
-            })
-
-
             //set viewPager
             viewPagerHome.apply {
                 val adapterImage: ImageHomeAdapter

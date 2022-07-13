@@ -11,6 +11,7 @@ data class Product(
     val images: List<String> = emptyList(),
     val createdDate: Date? = null,
     val salePercent: Int? = null,
+    @JvmField
     val isPopular: Boolean = false,
     var numberReviews: Int = 0,
     var reviewStars: Float = 0F,

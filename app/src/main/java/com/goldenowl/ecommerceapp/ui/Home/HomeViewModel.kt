@@ -11,7 +11,6 @@ import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,6 +23,8 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
     val category = productRepository.getAllCategory().asLiveData()
     val btnFavorite = MutableLiveData<View>()
+    val loadMore = MutableLiveData(true)
+    val checkSale = MutableLiveData(false)
 
     init {
         favoriteRepository.getListIdProductFavorite()
@@ -62,14 +63,19 @@ class HomeViewModel @Inject constructor(
 
     fun getSaleProduct(): MutableLiveData<List<Product>> {
         val result: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
-        val source = Source.CACHE
-        db.collection(PRODUCT_FIREBASE).whereNotEqualTo(SALE_PERCENT, null).get(source)
+        db.collection(PRODUCT_FIREBASE)
+            .whereNotEqualTo(SALE_PERCENT, null)
+            .get()
             .addOnSuccessListener { documents ->
-                val list = mutableListOf<Product>()
-                for (document in documents) {
-                    list.add(document.toObject())
+                if (documents.size() == 0) {
+                    checkSale.postValue(true)
+                } else {
+                    val list = mutableListOf<Product>()
+                    for (document in documents) {
+                        list.add(document.toObject())
+                    }
+                    result.postValue(list)
                 }
-                result.postValue(list)
             }
         return result
     }

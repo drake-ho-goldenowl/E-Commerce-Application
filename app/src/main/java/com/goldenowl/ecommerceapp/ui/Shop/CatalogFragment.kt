@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -123,15 +122,11 @@ class CatalogFragment : BaseFragment() {
             }
 
             products.observe(viewLifecycleOwner) {
-                var product = viewModel.filterSort(it)
-                if (filterPrice.isNotEmpty()) product =
-                    viewModel.filterPrice(filterPrice[0], filterPrice[1], product)
-                else {
-                    listProduct = product
+                if(it.isNotEmpty()){
+                    listProduct = it
+                    isLoading.postValue(false)
+                    submitList(it)
                 }
-                isLoading.postValue(false)
-                adapterProductGrid.submitList(product)
-                adapterProduct.submitList(product)
             }
             isLoading.observe(viewLifecycleOwner) {
                 if (it) {
@@ -141,8 +136,11 @@ class CatalogFragment : BaseFragment() {
                 }
             }
             statusSort.observe(viewLifecycleOwner) {
-                adapterProductGrid.submitList(products.value?.let { it1 -> filterSort(it1) })
-                adapterProduct.submitList(products.value?.let { it1 -> filterSort(it1) })
+                if(listProduct.isNotEmpty()){
+                    val list = filterSort(listProduct)
+                    submitList(list)
+                    binding.nestedScrollView.scrollTo(0,0)
+                }
             }
         }
     }
@@ -159,17 +157,21 @@ class CatalogFragment : BaseFragment() {
                 appBarLayout.btnSort.text = getString(R.string.newest)
             }
 
-            nestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
-                if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
-                    viewModel.products.value?.let {
-                        if (viewModel.loadMore.value == true) {
-                            viewModel.loadMore(it)
-                        } else {
-                            viewModel.isLoading.postValue(false)
+            nestedScrollView.viewTreeObserver?.addOnScrollChangedListener {
+                nestedScrollView.apply {
+                    val view = getChildAt(0)
+                    val diff = view.bottom - (height + scrollY)
+                    if(diff <= 0){
+                        viewModel.products.value?.let {
+                            if (viewModel.loadMore.value == true) {
+                                viewModel.loadMore(it)
+                            } else {
+                                viewModel.isLoading.postValue(false)
+                            }
                         }
                     }
                 }
-            })
+            }
 
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
@@ -229,7 +231,10 @@ class CatalogFragment : BaseFragment() {
             }
         }
     }
-
+    private fun submitList(list: List<Product>){
+        adapterProduct.submitList(list)
+        adapterProductGrid.submitList(list)
+    }
     private fun setFragmentListener() {
         setFragmentResultListener(REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(BUNDLE_KEY_NAME)
@@ -243,11 +248,13 @@ class CatalogFragment : BaseFragment() {
             if (min >= 0 && max > 0) {
                 filterPrice = listOf(min, max)
                 viewModel.apply {
-                    products.postValue(filterPrice(min, max, listProduct))
+                    submitList(filterPrice(min, max, listProduct))
                 }
+                binding.nestedScrollView.scrollTo(0,0)
             } else {
                 filterPrice = emptyList()
-                viewModel.products.postValue(listProduct)
+                submitList(listProduct)
+                binding.nestedScrollView.scrollTo(0,0)
             }
             val isFavorite = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
             if (isFavorite) {

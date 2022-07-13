@@ -13,7 +13,6 @@ import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.SALE
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Source
 import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -60,7 +59,7 @@ class ShopViewModel @Inject constructor(
         db.collection(PRODUCT_FIREBASE)
             .whereEqualTo(CATEGORY_NAME, category)
             .limit(LIMIT.toLong())
-            .get(source)
+            .get()
             .addOnSuccessListener { documents ->
                 val list = mutableListOf<Product>()
                 for (document in documents) {
@@ -106,7 +105,7 @@ class ShopViewModel @Inject constructor(
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
             .limit(LIMIT.toLong())
-            .get(source)
+            .get()
             .addOnSuccessListener { documents ->
                 val list = mutableListOf<Product>()
                 for (document in documents) {
@@ -128,7 +127,7 @@ class ShopViewModel @Inject constructor(
         val result: MutableLiveData<List<Product>> = MutableLiveData()
         db.collection(PRODUCT_FIREBASE)
             .limit(LIMIT.toLong())
-            .get(source)
+            .get()
             .addOnSuccessListener { documents ->
 
                 val list = mutableListOf<Product>()
@@ -174,9 +173,11 @@ class ShopViewModel @Inject constructor(
         db.collection(PRODUCT_FIREBASE)
             .orderBy(ID)
             .startAfter(lastVisible)
-            .limit(LIMIT.toLong()).get(source).addOnSuccessListener { documents ->
+            .limit(LIMIT.toLong())
+            .get()
+            .addOnSuccessListener { documents ->
                 val temp = mutableListOf<Product>()
-                if (documents.size() != 0) {
+                if (documents.size() > 0) {
                     loadMore.postValue(true)
                     temp.addAll(list)
                     for (document in documents) {
@@ -187,6 +188,10 @@ class ShopViewModel @Inject constructor(
                 } else {
                     loadMore.postValue(false)
                 }
+                isLoading.postValue(false)
+            }
+            .addOnFailureListener {
+                loadMore.postValue(false)
                 isLoading.postValue(false)
             }
     }
@@ -200,7 +205,7 @@ class ShopViewModel @Inject constructor(
                 .orderBy(ID)
                 .startAfter(lastVisible)
                 .limit(LIMIT.toLong())
-                .get(source)
+                .get()
                 .addOnSuccessListener { documents ->
                     val temp = mutableListOf<Product>()
                     if (documents.size() != 0) {
@@ -217,6 +222,7 @@ class ShopViewModel @Inject constructor(
                     isLoading.postValue(false)
                 }
                 .addOnFailureListener {
+                    loadMore.postValue(false)
                     isLoading.postValue(false)
                 }
         }
@@ -228,7 +234,7 @@ class ShopViewModel @Inject constructor(
             .limit(LIMIT.toLong())
             .orderBy(ID)
             .startAfter(lastVisible)
-            .get(source)
+            .get()
             .addOnSuccessListener { documents ->
                 val temp = mutableListOf<Product>()
                 if (documents.size() != 0) {
@@ -245,6 +251,10 @@ class ShopViewModel @Inject constructor(
                 } else {
                     loadMore.postValue(false)
                 }
+                isLoading.postValue(false)
+            }
+            .addOnFailureListener {
+                loadMore.postValue(false)
                 isLoading.postValue(false)
             }
     }
@@ -255,7 +265,7 @@ class ShopViewModel @Inject constructor(
             .orderBy(ID)
             .startAfter(lastVisible)
             .limit(LIMIT.toLong())
-            .get(source)
+            .get()
             .addOnSuccessListener { documents ->
                 val temp = mutableListOf<Product>()
                 if (documents.size() != 0) {
@@ -274,16 +284,19 @@ class ShopViewModel @Inject constructor(
                 }
                 isLoading.postValue(false)
             }
+            .addOnFailureListener {
+                loadMore.postValue(false)
+                isLoading.postValue(false)
+            }
     }
 
     private fun filterSale(): Flow<List<Product>> {
         val result: MutableLiveData<List<Product>> = MutableLiveData(emptyList())
-        val source = Source.CACHE
         db.collection(PRODUCT_FIREBASE)
             .whereNotEqualTo(SALE_PERCENT, null)
             .orderBy(SALE_PERCENT)
             .limit(LIMIT.toLong())
-            .get(source)
+            .get()
             .addOnSuccessListener { documents ->
                 val list = mutableListOf<Product>()
                 for (document in documents) {
@@ -297,10 +310,9 @@ class ShopViewModel @Inject constructor(
     private fun loadMoreSaleProduct(list: List<Product>) {
         db.collection(PRODUCT_FIREBASE)
             .whereNotEqualTo(SALE_PERCENT, null)
-            .orderBy(ID)
             .orderBy(SALE_PERCENT)
             .limit(LIMIT.toLong())
-            .get(source)
+            .get()
             .addOnSuccessListener { documents ->
                 val temp = mutableListOf<Product>()
                 if (documents.size() != 0) {
@@ -358,7 +370,7 @@ class ShopViewModel @Inject constructor(
     }
 
     fun setSort(select: Int) {
-        statusSort.value = select
+        statusSort.postValue(select)
     }
 
     fun getAllSize(): MutableList<String> {
