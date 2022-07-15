@@ -41,12 +41,12 @@
 
 
     <style name="ModalBottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet.Modal">
-        <!--        <item name="background">@drawable/top_round_corner2</item>-->
         <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
+        <item name="backgroundTint">@color/transparent</item>
     </style>
 
     <style name="ShapeAppearance.App.LargeComponent" parent="">
-        <item name="cornerFamily">rounded</item>
+        <item name="cornerFamily">cut</item>
         <item name="cornerSizeTopLeft">50dp</item>
         <item name="cornerSizeTopRight">50dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
