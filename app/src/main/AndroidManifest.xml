@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.Auth.AuthActivity"/>
-        <activity android:name=".NoInternetActivity"/>
+        <activity android:name=".ui.General.NoInternetActivity"/>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
         <meta-data android:name="com.facebook.sdk.AutoLogAppEventsEnabled"

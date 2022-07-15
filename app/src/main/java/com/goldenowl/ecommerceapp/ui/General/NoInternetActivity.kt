@@ -1,9 +1,10 @@
-package com.goldenowl.ecommerceapp
+package com.goldenowl.ecommerceapp.ui.General
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.goldenowl.ecommerceapp.MainActivity
 import com.goldenowl.ecommerceapp.databinding.ActivityNoInternetBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper

@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import com.goldenowl.ecommerceapp.NoInternetActivity
+import com.goldenowl.ecommerceapp.ui.General.NoInternetActivity
 
 class NetworkChangeReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
