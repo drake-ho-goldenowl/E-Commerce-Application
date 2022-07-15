@@ -11,10 +11,12 @@ const val PROMOTION_FIREBASE = "promotions"
 const val ADDRESS_USER = "address"
 const val PAYMENT_USER = "payment"
 const val ORDER_USER = "order"
+const val BLOCK_DEVICE = "block"
 
 const val HISTORY = "HISTORY"
 const val SALE = "Sale"
 const val NEW = "New"
+const val WARNING = "No Internet Connection"
 
 val NON_DIGITS = Regex("[^\\d]")
 const val MIN = 100000

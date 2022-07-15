@@ -32,6 +32,7 @@ class LoginFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
+        authViewModel.initLogin()
 
         observeSetup()
         bind()
@@ -93,6 +94,7 @@ class LoginFragment : BaseFragment() {
                 if (it != null) {
                     startActivity(Intent(activity, MainActivity::class.java))
                     activity?.finish()
+                    resetBlock()
                 }
             }
 
@@ -101,6 +103,9 @@ class LoginFragment : BaseFragment() {
             }
             isLoading.observe(viewLifecycleOwner) {
                 setLoading(it)
+            }
+            isBlock.observe(viewLifecycleOwner){
+                binding.btnLogin.isEnabled = !it
             }
 
         }

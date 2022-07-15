@@ -115,6 +115,7 @@ class SignUpFragment : BaseFragment() {
                 if (it != null) {
                     startActivity(Intent(activity, MainActivity::class.java))
                     activity?.finish()
+                    resetBlock()
                 }
             }
 
@@ -132,6 +133,9 @@ class SignUpFragment : BaseFragment() {
 
             isLoading.observe(viewLifecycleOwner) {
                 setLoading(it)
+            }
+            isBlock.observe(viewLifecycleOwner){
+                binding.btnSignUp.isEnabled = !it
             }
         }
 
