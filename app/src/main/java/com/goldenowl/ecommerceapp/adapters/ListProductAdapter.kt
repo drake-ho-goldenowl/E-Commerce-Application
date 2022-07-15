@@ -7,22 +7,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.ItemProduct2Binding
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListProductAdapter(
     private val onItemClicked: (Product) -> Unit,
-    private val onFavoriteClick: (Product) -> Unit,
+    private val onFavoriteClick: (View, Product) -> Unit,
     private val setFavoriteButton: (View, Product) -> Unit,
 ) :
     ListAdapter<Product, ListProductAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(
-        private val onFavoriteClick: (Product) -> Unit,
+        private val onFavoriteClick: (View, Product) -> Unit,
         private val setFavoriteButton: (View, Product) -> Unit,
         private var binding: ItemProduct2Binding
     ) :
@@ -31,20 +28,10 @@ class ListProductAdapter(
 
         fun bind(product: Product) {
             binding.apply {
-                val circularProgressDrawable = CircularProgressDrawable(itemView.context)
-                circularProgressDrawable.strokeWidth = 5f
-                circularProgressDrawable.centerRadius = 30f
-                circularProgressDrawable.start()
-
-                Glide.with(itemView.context)
-                    .load(product.images[0])
-                    .placeholder(circularProgressDrawable)
-                    .error(R.drawable.img_sample_2)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProduct)
+                GlideDefault.show(itemView.context, product.images[0], imgProduct, true)
                 txtName.text = product.title
                 txtBrandName.text = product.brandName
-                ratingBar.rating = product.reviewStars.toFloat()
+                ratingBar.rating = product.reviewStars
                 txtNumberVote.text = "(${product.numberReviews})"
                 txtPrice.text = "${product.colors[0].sizes[0].price}\$"
 
@@ -62,7 +49,7 @@ class ListProductAdapter(
                 }
                 setFavoriteButton(btnFavorite, product)
                 btnFavorite.setOnClickListener {
-                    onFavoriteClick(product)
+                    onFavoriteClick(btnFavorite, product)
                 }
             }
         }

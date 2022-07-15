@@ -7,38 +7,40 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListImageReview
 import com.goldenowl.ecommerceapp.adapters.ListReviewAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentRatingProductBinding
-import com.goldenowl.ecommerceapp.viewmodels.ReviewRatingViewModel
+import com.goldenowl.ecommerceapp.ui.BaseFragment
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
+
 @AndroidEntryPoint
-class RatingProductFragment : Fragment() {
+class RatingProductFragment : BaseFragment() {
     private lateinit var binding: FragmentRatingProductBinding
     private lateinit var idProduct: String
     private lateinit var adapterReview: ListReviewAdapter
-    private val viewModel: ReviewRatingViewModel by viewModels()
+    private val viewModel: ReviewRatingViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         arguments?.let {
             idProduct = it.getString(ID_PRODUCT).toString()
+            if (idProduct.isNotBlank()) {
+                viewModel.isLoading.postValue(true)
+                viewModel.setIdProduct(idProduct)
+            } else {
+                findNavController().popBackStack(R.id.productDetailFragment, false)
+            }
         }
         binding = FragmentRatingProductBinding.inflate(inflater, container, false)
-
-        if (idProduct.isNotBlank()) {
-            viewModel.getDataLive(idProduct)
-        }
 
         adapterReview = ListReviewAdapter({
 
@@ -46,29 +48,26 @@ class RatingProductFragment : Fragment() {
             val result = viewModel.getNameAndAvatarUser(userID)
             result.observe(viewLifecycleOwner) {
                 txtName.text = it.first
-                Glide.with(this)
-                    .load(it.second)
-                    .error(R.drawable.img_sample_2)
-                    .into(imgAvatar)
+                GlideDefault.show(requireContext(), it.second, imgAvatar,false)
             }
         }, { review, txtHelpful, icLike, isHelpful ->
             if (isHelpful) {
-                viewModel.removeHelpful(review)
+                viewModel.addHelpful(review)
 
             } else {
-                viewModel.addHelpful(review)
-                adapterReview.setIsHelpful(true)
+                viewModel.removeHelpful(review)
             }
             setColorHelpful(isHelpful, txtHelpful, icLike)
+
         }, { review, txtHelpful, icLike ->
             viewModel.checkHelpfulForUser(review)
                 .observe(viewLifecycleOwner) {
-                    adapterReview.setIsHelpful(it)
+                    adapterReview.isHelpful = it
                     setColorHelpful(it, txtHelpful, icLike)
                 }
         }, { recyclerView, review ->
 
-            val adapter = ListImageReview(this@RatingProductFragment, false, {}, {})
+            val adapter = ListImageReview(false, {}, {})
             adapter.dataSet = review.listImage
             adapter.notifyDataSetChanged()
 
@@ -109,25 +108,39 @@ class RatingProductFragment : Fragment() {
     }
 
     private fun setupObserve() {
-        viewModel.listReview.observe(viewLifecycleOwner) {
-            adapterReview.submitList(it)
-            viewModel.product.value?.let { product ->
-                viewModel.fetchRatingProduct(product)
-            }
-            binding.txtNumberReview.text = "${it.size} reviews"
-        }
-        viewModel.product.observe(viewLifecycleOwner) { product ->
-            if (product != null) {
-                viewModel.listRating.value?.let { list ->
-                    setupRatingStatistics(product, list)
+        viewModel.apply {
+            listReview.observe(viewLifecycleOwner) {
+                filterImage(statusFilterImage.value ?: false)?.let { list ->
+                    adapterReview.submitList(list)
+                    binding.txtNumberReview.text = "${list.size} reviews"
+                    isLoading.postValue(false)
                 }
             }
-        }
-        viewModel.statusFilterImage.observe(viewLifecycleOwner) {
-            if (viewModel.allReview != null) {
-                viewModel.filterImage(it)
+
+            product.observe(viewLifecycleOwner) { product ->
+                if (product != null) {
+                    getReview(product.id)
+                    getRatingProduct(product.id)
+                }
+            }
+
+            listRating.observe(viewLifecycleOwner) {
+                product.value?.let { list ->
+                    setupRatingStatistics(list, it)
+                }
+            }
+
+            statusFilterImage.observe(viewLifecycleOwner) {
+                filterImage(it)?.let { list ->
+                    adapterReview.submitList(list)
+                    binding.txtNumberReview.text = "${list.size} reviews"
+                }
+            }
+            isLoading.observe(viewLifecycleOwner) {
+                setLoading(it)
             }
         }
+
     }
 
     private fun setupRatingStatistics(product: Product, ratingProduct: List<Int>) {
@@ -173,7 +186,4 @@ class RatingProductFragment : Fragment() {
         }
     }
 
-    companion object {
-        const val ID_PRODUCT = "idProduct"
-    }
 }

@@ -7,19 +7,17 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutAddPaymentBinding
+import com.goldenowl.ecommerceapp.ui.BaseBottomSheetDialog
 import com.goldenowl.ecommerceapp.utilities.NON_DIGITS
-import com.goldenowl.ecommerceapp.viewmodels.PaymentViewModel
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class BottomAddPayment : BottomSheetDialogFragment() {
+class BottomAddPayment : BaseBottomSheetDialog() {
     private lateinit var binding: BottomLayoutAddPaymentBinding
     private val viewModel: PaymentViewModel by viewModels()
 
@@ -88,11 +86,8 @@ class BottomAddPayment : BottomSheetDialogFragment() {
             }
 
             toastMessage.observe(viewLifecycleOwner) {
-                Toast.makeText(
-                    context,
-                    it,
-                    Toast.LENGTH_SHORT
-                ).show()
+                toastMessage(it)
+                toastMessage.postValue("")
             }
         }
     }

@@ -1,10 +1,16 @@
 package com.goldenowl.ecommerceapp.data
 
-import android.util.Log
+import android.content.Context
+import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
+import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.FAVORITE_FIREBASE
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_FAVORITES
-import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
+import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
+import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -12,65 +18,122 @@ import javax.inject.Singleton
 
 @Singleton
 class FavoriteRepository @Inject constructor(
-    private val favoriteDao: FavoriteDao
+    private val db: FirebaseFirestore,
+    private val userManager: UserManager,
 ) {
-    suspend fun insert(favorite: Favorite) = favoriteDao.insert(favorite)
-
-    suspend fun update(favorite: Favorite) = favoriteDao.update(favorite)
-
-    suspend fun delete(favorite: Favorite) = favoriteDao.delete(favorite)
-
-    suspend fun deleteAll() = favoriteDao.deleteAll()
-
-
-    fun getFavorite(idProduct: String, size: String, color: String) =
-        favoriteDao.getFavorite(idProduct, size, color)
-
-    fun getAllCategory() = favoriteDao.getAllCategory()
-
-    fun getAll() = favoriteDao.getAll()
-
-    fun getAllFavoriteAndProduct() = favoriteDao.getAllFavoriteAndProduct()
-
-    suspend fun checkProductHaveFavorite(idProduct: String): Boolean {
-        return favoriteDao.checkProductHaveFavorite(idProduct).isNotEmpty()
+    val favoriteAndProduct = MutableLiveData<MutableList<FavoriteAndProduct>>()
+    val listIdProductFavorite = MutableLiveData<List<String>>()
+    fun fetchFavoriteAndProduct() {
+        if (userManager.isLogged()) {
+            db.collection(USER_FIREBASE)
+                .document(userManager.getAccessToken())
+                .collection(FAVORITE_FIREBASE)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.size() == 0) {
+                        favoriteAndProduct.postValue(mutableListOf())
+                    } else {
+                        val list = mutableListOf<FavoriteAndProduct>()
+                        for (document in documents) {
+                            val favorite = document.toObject<Favorite>()
+                            db.collection(PRODUCT_FIREBASE).document(favorite.idProduct).get()
+                                .addOnSuccessListener { document2 ->
+                                    document2.toObject<Product>()?.let {
+                                        list.add(FavoriteAndProduct(favorite, it))
+                                    }
+                                    favoriteAndProduct.postValue(list)
+                                }
+                        }
+                    }
+                }
+        }
+        getListIdProductFavorite()
     }
 
-    fun filterByCategory(category: String) = favoriteDao.filterByCategory(category)
 
-    fun filterBySearch(search: String) = favoriteDao.filterBySearch(search)
-
-    fun filterByCategoryAndSearch(
-        search: String,
-        category: String,
-    ) = favoriteDao.filterByCategoryAndSearch(search, category)
-
-    private fun createFavorite(idProduct: String, size: String, color: String): Favorite {
-        return Favorite(
-            size = size,
+    fun insertFavorite(idProduct: String, color: String, size: String) {
+        val favorite = Favorite(
+            id = Date().time.toString(),
             idProduct = idProduct,
-            color = color
+            color = color,
+            size = size,
         )
+        checkExist(favorite)
     }
 
-    suspend fun insertFavorite(product: Product, size: String, color: String) {
-        val favorite = createFavorite(product.id, size, color)
-        favoriteDao.insert(favorite)
-    }
-
-    suspend fun updateFavoriteFirebase(db: FirebaseFirestore, uid: String) {
-        val favorites = favoriteDao.getAllList()
-        val docData: MutableMap<String, Any> = HashMap()
-        LAST_EDIT_TIME_FAVORITES = Date()
-        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_FAVORITES ?: Date()
-        docData[FavoriteViewModel.DATA] = favorites
-        db.collection(FAVORITE_FIREBASE).document(uid)
-            .set(docData)
+    fun removeFavoriteFirebase(favorite: Favorite) {
+        db.collection(USER_FIREBASE)
+            .document(userManager.getAccessToken())
+            .collection(FAVORITE_FIREBASE)
+            .document(favorite.id).delete()
             .addOnSuccessListener {
-                Log.d(UserManager.TAG, "DocumentSnapshot added")
+                fetchFavoriteAndProduct()
             }
-            .addOnFailureListener { e ->
-                Log.w(UserManager.TAG, "Error adding document", e)
+    }
+
+    fun getListIdProductFavorite() {
+        if (userManager.isLogged()) {
+            db.collection(USER_FIREBASE)
+                .document(userManager.getAccessToken())
+                .collection(FAVORITE_FIREBASE)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.size() > 0) {
+                        val list = mutableSetOf<String>()
+                        for (document in documents) {
+                            val favorite = document.toObject<Favorite>()
+                            list.add(favorite.idProduct)
+                        }
+                        listIdProductFavorite.postValue(list.toList())
+                    }
+                }
+        }
+    }
+
+    private fun updateFavoriteFirebase(favorite: Favorite) {
+        db.collection(USER_FIREBASE)
+            .document(userManager.getAccessToken())
+            .collection(FAVORITE_FIREBASE)
+            .document(favorite.id)
+            .set(favorite)
+            .addOnSuccessListener {
+                fetchFavoriteAndProduct()
             }
+    }
+
+
+    private fun checkExist(favorite: Favorite) {
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken())
+            .collection(FAVORITE_FIREBASE)
+            .whereEqualTo(BaseViewModel.SIZE, favorite.size)
+            .whereEqualTo(BaseViewModel.COLOR, favorite.color)
+            .whereEqualTo(BaseViewModel.ID_PRODUCT, favorite.idProduct)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.size() == 0) {
+                    updateFavoriteFirebase(favorite)
+                }
+            }
+    }
+
+    fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {
+        if (!userManager.isLogged()) {
+            buttonView.visibility = View.GONE
+        } else {
+            buttonView.visibility = View.VISIBLE
+            listIdProductFavorite.value?.let {
+                if (it.contains(idProduct)) {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_active
+                    )
+                } else {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_favorite_no_active
+                    )
+                }
+            }
+        }
     }
 }

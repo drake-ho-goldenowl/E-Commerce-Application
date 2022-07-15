@@ -4,18 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentForgotPasswordBinding
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ForgotPasswordFragment : Fragment() {
+class ForgotPasswordFragment : BaseFragment() {
     private lateinit var binding: FragmentForgotPasswordBinding
     private val viewModel: AuthViewModel by viewModels()
 
@@ -32,18 +30,19 @@ class ForgotPasswordFragment : Fragment() {
     private fun setupObserve() {
         viewModel.apply {
             toastMessage.observe(viewLifecycleOwner) { str ->
-                Toast.makeText(
-                    context,
-                    str,
-                    Toast.LENGTH_SHORT
-                ).show()
-                if(str == SUCCESS){
+                toastMessage(str)
+                if (str == SUCCESS) {
                     findNavController().navigateUp()
                 }
+                toastMessage.postValue("")
             }
 
             validEmailLiveData.observe(viewLifecycleOwner) {
                 alertEmail(it)
+            }
+
+            isLoading.observe(viewLifecycleOwner) {
+                setLoading(it)
             }
         }
     }
@@ -75,7 +74,8 @@ class ForgotPasswordFragment : Fragment() {
             }
         }
     }
-    companion object{
+
+    companion object {
         const val SUCCESS = "Email sent."
     }
 }

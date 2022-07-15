@@ -1,10 +1,10 @@
 package com.goldenowl.ecommerceapp.ui.Bag
 
 import android.os.Bundle
-import android.view.*
-import android.widget.Toast
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,63 +13,83 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListBagAdapter
 import com.goldenowl.ecommerceapp.data.BagAndProduct
 import com.goldenowl.ecommerceapp.databinding.FragmentBagBinding
-import com.goldenowl.ecommerceapp.viewmodels.BagViewModel
+import com.goldenowl.ecommerceapp.ui.BaseFragment
+import com.goldenowl.ecommerceapp.ui.Promotion.BottomPromotion
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BagFragment : Fragment() {
+class BagFragment : BaseFragment() {
     private lateinit var binding: FragmentBagBinding
     private val viewModel: BagViewModel by viewModels()
 
     private lateinit var adapterBag: ListBagAdapter
-    private lateinit var bags: List<BagAndProduct>
-    private var salePercent: Long = 0
+    private var allBag: List<BagAndProduct> = emptyList()
     private var idPromotion: String = ""
     private var isButtonRemove = false
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.warningFragment)
         }
-        binding = FragmentBagBinding.inflate(inflater, container, false)
-
+        else{
+            viewModel.isLoading.postValue(true)
+        }
+        viewModel.fetchBag()
         adapterBag = ListBagAdapter({
             val action = BagFragmentDirections.actionBagFragmentToProductDetailFragment(
                 idProduct = it.product.id
             )
             findNavController().navigate(action)
         }, {
-            viewModel.insertFavorite(it.product, it.bag.size, it.bag.color)
+            viewModel.insertFavorite(it.product.id, it.bag.size, it.bag.color)
         }, {
-            viewModel.removeBag(it.bag)
-        }, {
-            viewModel.plusQuantity(it.bag)
-        }, {
-            viewModel.minusQuantity(it.bag)
+            viewModel.removeBagFirebase(it.bag)
+        }, { list, textview ->
+            viewModel.plusQuantity(list, textview)
+        }, { list, textview ->
+            viewModel.minusQuantity(list, textview)
         })
-        viewModel.setSearch("")
+        adapterBag.submitList(allBag)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentBagBinding.inflate(inflater, container, false)
 
         observeSetup()
         bind()
         setFragmentListener()
-        setHasOptionsMenu(true)
         return binding.root
     }
 
     private fun observeSetup() {
-        viewModel.bags.observe(viewLifecycleOwner) {
-            adapterBag.submitList(it)
-        }
+        viewModel.apply {
+            bagAndProduct.observe(viewLifecycleOwner) {
+                calculatorTotal(it, sale.value ?: 0)
+                adapterBag.submitList(it)
+                allBag = it
+                isLoading.postValue(false)
+            }
 
-        viewModel.allBags.observe(viewLifecycleOwner) {
-            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(it, salePercent)}\$"
-            bags = it
-        }
+            toastMessage.observe(viewLifecycleOwner) {
+                toastMessage(it)
+                toastMessage.postValue("")
+            }
 
-        viewModel.toastMessage.observe(viewLifecycleOwner) {
-            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+            totalPrice.observe(viewLifecycleOwner) {
+                binding.txtPriceTotal.text = "${it}\$"
+            }
+
+            sale.observe(viewLifecycleOwner) {
+                viewModel.fetchBag()
+            }
+
+            isLoading.observe(viewLifecycleOwner) {
+                setLoading(it)
+            }
         }
     }
 
@@ -92,9 +112,11 @@ class BagFragment : Fragment() {
 
                             override fun onQueryTextChange(newText: String?): Boolean {
                                 if (!newText.isNullOrEmpty()) {
-                                    viewModel.setSearch(newText)
+                                    adapterBag.submitList(allBag.filter { bag ->
+                                        bag.product.title.lowercase().contains(newText.lowercase())
+                                    })
                                 } else {
-                                    viewModel.setSearch("")
+                                    adapterBag.submitList(allBag)
                                 }
                                 return true
                             }
@@ -114,16 +136,14 @@ class BagFragment : Fragment() {
                 if (isButtonRemove) {
                     isButtonRemove = !isButtonRemove
                     binding.editPromoCode.setText("")
-                    salePercent = 0
                     idPromotion = ""
-                    binding.txtPriceTotal.text =
-                        "${viewModel.calculatorTotal(bags, salePercent)}\$"
+                    viewModel.sale.postValue(0)
                     btnRemove.setBackgroundResource(R.drawable.btn_arrow_forward)
                 }
             }
 
             btnCheckOut.setOnClickListener {
-                if (bags.isEmpty()) {
+                if (allBag.isEmpty()) {
                     viewModel.toastMessage.postValue(ALERT_CHECKOUT)
                 } else {
                     val action = BagFragmentDirections.actionBagFragmentToCheckoutFragment(
@@ -135,39 +155,20 @@ class BagFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.top_app_bar, menu)
-        val searchItem = menu.findItem(R.id.ic_search)
-        val searchView = searchItem.actionView as SearchView
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return true
-            }
-        })
-    }
-
     private fun setFragmentListener() {
         setFragmentResultListener(REQUEST_KEY) { _, bundle ->
-            val id = bundle.getString(BUNDLE_KEY_NAME)
+            val id = bundle.getString(BUNDLE_KEY_NAME_PROMOTION)
             val sale = bundle.getLong(BUNDLE_KEY_SALE)
-            salePercent = sale
             idPromotion = id ?: ""
+            viewModel.sale.postValue(sale)
+
             binding.editPromoCode.setText(idPromotion)
-            binding.txtPriceTotal.text = "${viewModel.calculatorTotal(bags, salePercent)}\$"
             binding.btnRemove.setBackgroundResource(R.drawable.ic_close)
             isButtonRemove = true
         }
     }
 
     companion object {
-        const val REQUEST_KEY = "request"
-        const val BUNDLE_KEY_NAME = "bundle_name_promotion"
-        const val BUNDLE_KEY_SALE = "bundle_sale"
         const val ALERT_CHECKOUT = "Please choose one product"
     }
 }

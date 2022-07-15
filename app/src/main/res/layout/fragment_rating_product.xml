@@ -46,7 +46,7 @@
                     android:textSize="14dp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/txtRatingAverage"
-                    app:layout_constraintRight_toRightOf="@id/txtRatingAverage"/>
+                    app:layout_constraintRight_toRightOf="@id/txtRatingAverage" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/layoutRating5"

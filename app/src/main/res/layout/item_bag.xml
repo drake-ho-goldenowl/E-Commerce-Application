@@ -27,7 +27,6 @@
                 android:layout_width="104dp"
                 android:layout_height="104dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/img_sample_2"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -106,22 +105,22 @@
                 android:id="@+id/txtQuantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="22dp"
                 android:text="1"
                 android:textSize="14sp"
                 app:layout_constraintLeft_toRightOf="@id/btnMinus"
-                app:layout_constraintTop_toBottomOf="@id/txtSize" />
+                app:layout_constraintTop_toBottomOf="@id/txtSize"
+                app:layout_constraintRight_toLeftOf="@id/btnPlus" />
 
             <ImageButton
                 android:id="@+id/btnPlus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="37dp"
                 android:layout_marginTop="14dp"
                 android:background="@drawable/btn_plus"
                 android:elevation="10dp"
-                app:layout_constraintLeft_toRightOf="@id/txtQuantity"
+                app:layout_constraintLeft_toRightOf="@id/btnMinus"
                 app:layout_constraintTop_toBottomOf="@id/txtSize" />
 
             <TextView

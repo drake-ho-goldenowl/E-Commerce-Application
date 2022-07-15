@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCountryAdapter
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectCountryBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_NAME_COUNTRY
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -71,13 +73,11 @@ class BottomSelectCountry : BottomSheetDialogFragment() {
     private fun sendData(select: String) {
         setFragmentResult(
             REQUEST_KEY,
-            bundleOf(BUNDLE_KEY_NAME to select)
+            bundleOf(BUNDLE_KEY_NAME_COUNTRY to select)
         )
     }
 
     companion object {
-        const val REQUEST_KEY = "request_key_country"
-        const val BUNDLE_KEY_NAME = "bundle_name_country"
         const val TAG = "BOTTOM_SELECT_COUNTRY"
     }
 

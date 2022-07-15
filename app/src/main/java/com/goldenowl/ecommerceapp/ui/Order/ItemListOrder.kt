@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListOrderAdapter
 import com.goldenowl.ecommerceapp.databinding.ItemViewPagerListOrderBinding
-import com.goldenowl.ecommerceapp.viewmodels.OrderViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,11 +38,10 @@ class ItemListOrder(private val statusType: Int) : Fragment() {
     ): View {
         val binding = ItemViewPagerListOrderBinding.inflate(inflater, container, false)
 
-        viewModel.allOrder.observe(viewLifecycleOwner) { data ->
-            viewModel.filterStatus(data, statusType).observe(viewLifecycleOwner) {
-                adapter.submitList(it)
-            }
+        viewModel.getOrderStatus(statusType).observe(viewLifecycleOwner) { data ->
+            adapter.submitList(data)
         }
+
         binding.apply {
             recyclerViewOrder.adapter = adapter
             recyclerViewOrder.layoutManager = LinearLayoutManager(context)

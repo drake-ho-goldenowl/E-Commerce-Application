@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,12 +11,12 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListDeliveryAdapter
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.databinding.FragmentCheckoutBinding
-import com.goldenowl.ecommerceapp.viewmodels.CheckoutViewModel
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
 @AndroidEntryPoint
-class CheckoutFragment : Fragment() {
+class CheckoutFragment : BaseFragment() {
     private lateinit var binding: FragmentCheckoutBinding
     private lateinit var deliveryAdapter: ListDeliveryAdapter
     private val listDelivery: MutableList<Delivery> = mutableListOf()
@@ -34,9 +32,9 @@ class CheckoutFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // add data Delivery
-        listDelivery.add(Delivery(R.drawable.ic_fedex, "FedEx",15F))
-        listDelivery.add(Delivery(R.drawable.ic_usps, "USPS",10F))
-        listDelivery.add(Delivery(R.drawable.ic_dhl, "DHL",50F))
+        listDelivery.add(Delivery(R.drawable.ic_fedex, "FedEx", 15F))
+        listDelivery.add(Delivery(R.drawable.ic_usps, "USPS", 10F))
+        listDelivery.add(Delivery(R.drawable.ic_dhl, "DHL", 50F))
     }
 
     override fun onCreateView(
@@ -45,13 +43,10 @@ class CheckoutFragment : Fragment() {
     ): View {
         arguments?.let { it ->
             val idPromotion = it.getString(ID_PROMOTION).toString()
-            if (idPromotion.isNotBlank()) {
-                viewModel.getPromotion(idPromotion).observe(viewLifecycleOwner) { promo ->
-                    println(promo)
-                    promotion = promo
-                    totalOrder = viewModel.calculatorTotalOrder(bags, promo.salePercent)
-                    setPrice()
-                }
+            viewModel.getPromotion(idPromotion).observe(viewLifecycleOwner) { promo ->
+                promotion = promo
+                totalOrder = viewModel.calculatorTotalOrder(bags, promo.salePercent)
+                setPrice()
             }
         }
         binding = FragmentCheckoutBinding.inflate(inflater, container, false)
@@ -76,7 +71,7 @@ class CheckoutFragment : Fragment() {
 
             shippingAddress.observe(viewLifecycleOwner) {
                 binding.apply {
-                    if (it == null) {
+                    if (it.address.isBlank()) {
                         layoutShippingAddress.visibility = View.INVISIBLE
                         btnAddShippingAddress.visibility = View.VISIBLE
                     } else {
@@ -99,23 +94,25 @@ class CheckoutFragment : Fragment() {
                         imgLogoCard.setImageResource(R.drawable.ic_mastercard)
                         txtNumberCard.text =
                             "* * * *  * * * *  * * * *  ${it.number.substring(it.number.length - 4)}"
+                        card = it
                     } else if (it.number[0] == '5') {
                         itemPayment.visibility = View.VISIBLE
                         btnAddPayment.visibility = View.GONE
                         imgLogoCard.setImageResource(R.drawable.ic_visa2)
                         txtNumberCard.text =
                             "* * * *  * * * *  * * * *  ${it.number.substring(it.number.length - 4)}"
+                        card = it
                     }
-                    card = it
                 }
             }
 
             toastMessage.observe(viewLifecycleOwner) {
-                Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+                toastMessage(it)
+                toastMessage.postValue("")
             }
 
-            success.observe(viewLifecycleOwner){
-                if (it){
+            success.observe(viewLifecycleOwner) {
+                if (it) {
                     findNavController().navigate(R.id.successFragment)
                 }
             }
@@ -131,7 +128,11 @@ class CheckoutFragment : Fragment() {
             }
 
             deliveryAdapter = ListDeliveryAdapter {
-                delivery = it
+                delivery = if (delivery == it) {
+                    null
+                } else {
+                    it
+                }
                 setPrice()
             }
             deliveryAdapter.submitList(listDelivery)
@@ -185,9 +186,5 @@ class CheckoutFragment : Fragment() {
                 txtAddress.text = "$address\n$city, $state $zipCode, $country"
             }
         }
-    }
-
-    companion object {
-        const val ID_PROMOTION = "idPromotion"
     }
 }

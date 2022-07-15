@@ -20,23 +20,25 @@ class ListCategoriesAdater(private val onItemClicked: (String) -> Unit) :
         private var binding: ItemCategoriesBinding,
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(category: String,positionCurrent: Int, position: Int) {
+        fun bind(category: String, positionCurrent: Int, position: Int) {
             binding.apply {
                 txtCategory.text = category
-                if (position == positionCurrent){
-                    txtCategory.setTextColor(ContextCompat.getColor(context,R.color.black))
-                    layoutItemCategory.background = ContextCompat.getDrawable(context,R.drawable.btn_custom5)
-                }
-                else{
-                    txtCategory.setTextColor(ContextCompat.getColor(context,R.color.white))
-                    layoutItemCategory.background = ContextCompat.getDrawable(context,R.drawable.btn_custom4)
+                if (position == positionCurrent) {
+                    txtCategory.setTextColor(ContextCompat.getColor(context, R.color.black))
+                    layoutItemCategory.background =
+                        ContextCompat.getDrawable(context, R.drawable.btn_custom5)
+                } else {
+                    txtCategory.setTextColor(ContextCompat.getColor(context, R.color.white))
+                    layoutItemCategory.background =
+                        ContextCompat.getDrawable(context, R.drawable.btn_custom4)
                 }
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(parent.context,
+        return ItemViewHolder(
+            parent.context,
             ItemCategoriesBinding.inflate(
                 LayoutInflater.from(
                     parent.context
@@ -51,15 +53,15 @@ class ListCategoriesAdater(private val onItemClicked: (String) -> Unit) :
         val current = getItem(position)
         holder.itemView.setOnClickListener {
             onItemClicked(current.toString())
-            positionCurrent = if(positionCurrent == position){
+            positionCurrent = if (positionCurrent == position) {
                 -1
-            } else{
+            } else {
                 position
             }
             notifyDataSetChanged()
         }
 
-        holder.bind(current,positionCurrent,position)
+        holder.bind(current, positionCurrent, position)
     }
 
     companion object {

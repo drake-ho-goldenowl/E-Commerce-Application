@@ -1,10 +1,16 @@
 package com.goldenowl.ecommerceapp.data
 
-import android.util.Log
+import android.content.Context
+import android.view.View
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.MutableLiveData
+import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.BAG_FIREBASE
-import com.goldenowl.ecommerceapp.utilities.LAST_EDIT_TIME_BAG
-import com.goldenowl.ecommerceapp.viewmodels.FavoriteViewModel
+import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
+import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,68 +19,132 @@ import kotlin.math.roundToInt
 
 @Singleton
 class BagRepository @Inject constructor(
-    private val bagDao: BagDao
+    private val db: FirebaseFirestore,
+    private val userManager: UserManager,
 ) {
+    val bagAndProduct = MutableLiveData<MutableList<BagAndProduct>>()
+    private val bags = MutableLiveData<List<Bag>>()
+    fun fetchBagAndProduct() {
+        if (userManager.isLogged()) {
+            db.collection(USER_FIREBASE)
+                .document(userManager.getAccessToken())
+                .collection(BAG_FIREBASE)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.size() == 0) {
+                        bagAndProduct.postValue(mutableListOf())
+                    } else {
+                        val list = mutableListOf<BagAndProduct>()
+                        val listBag = mutableListOf<Bag>()
+                        for (document in documents) {
+                            val bag = document.toObject<Bag>()
+                            db.collection(PRODUCT_FIREBASE).document(bag.idProduct).get()
+                                .addOnSuccessListener { document2 ->
+                                    document2.toObject<Product>()?.let {
+                                        list.add(BagAndProduct(bag, it))
+                                    }
+                                    bagAndProduct.postValue(list)
 
-    suspend fun insert(bag: Bag) = bagDao.insert(bag)
-
-    suspend fun update(bag: Bag) = bagDao.update(bag)
-
-    suspend fun delete(bag: Bag) = bagDao.delete(bag)
-
-    suspend fun deleteAll() = bagDao.deleteAll()
-
-    fun getAll() = bagDao.getAll()
-
-    fun getAllBagAndProduct() = bagDao.getAllBagAndProduct()
-
-    suspend fun checkBagHaveFavorite(idProduct: String, color: String, size: String): Boolean {
-        return getBag(idProduct, color, size) != null
-    }
-
-    suspend fun updateQuantity(idProduct: String, color: String, size: String, quantity: Long) =
-        bagDao.updateQuantity(idProduct, color, size, quantity)
-
-    private suspend fun getBag(idProduct: String, color: String, size: String) =
-        bagDao.getBag(idProduct, color, size)
-
-    fun filterBySearch(search: String) = bagDao.filterBySearch(search)
-
-    private fun createBag(idProduct: String, color: String, size: String): Bag {
-        return Bag(
-            size = size,
-            color = color,
-            idProduct = idProduct,
-            quantity = 1
-        )
-    }
-
-    suspend fun insertBag(idProduct: String, color: String, size: String) {
-        val bagTemp = getBag(idProduct, color, size)
-        if (bagTemp == null) {
-            val bag = createBag(idProduct, color, size)
-            bagDao.insert(bag)
-        } else {
-            bagDao.updateQuantity(idProduct, color, size, bagTemp.quantity + 1)
+                                }
+                            listBag.add(bag)
+                        }
+                        bags.postValue(listBag)
+                    }
+                }
         }
     }
 
+    fun getBags() {
+        if (userManager.isLogged()) {
+            db.collection(USER_FIREBASE)
+                .document(userManager.getAccessToken())
+                .collection(BAG_FIREBASE)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if (documents.size() > 0) {
+                        val list = mutableListOf<Bag>()
+                        for (document in documents) {
+                            list.add(document.toObject())
+                        }
+                        bags.postValue(list)
+                    } else {
+                        bags.postValue(mutableListOf())
+                    }
+                }
+        }
+    }
 
-    suspend fun updateBagFirebase(db: FirebaseFirestore, uid: String) {
-        val bags = bagDao.getAllList()
-        val docData: MutableMap<String, Any> = HashMap()
-        LAST_EDIT_TIME_BAG = Date()
-        docData[FavoriteViewModel.LAST_EDIT] = LAST_EDIT_TIME_BAG ?: Date()
-        docData[FavoriteViewModel.DATA] = bags
-        db.collection(BAG_FIREBASE).document(uid)
-            .set(docData)
+    fun insertBag(idProduct: String, color: String, size: String, quantity: Long = 1) {
+        val bag = Bag(
+            id = Date().time.toString(),
+            idProduct = idProduct,
+            color = color,
+            size = size,
+            quantity = quantity,
+        )
+        checkExist(bag)
+    }
+
+    fun removeBagFirebase(bag: Bag) {
+        db.collection(USER_FIREBASE)
+            .document(userManager.getAccessToken())
+            .collection(BAG_FIREBASE)
+            .document(bag.id)
+            .delete()
             .addOnSuccessListener {
-                Log.d(UserManager.TAG, "DocumentSnapshot added")
+                fetchBagAndProduct()
             }
-            .addOnFailureListener { e ->
-                Log.w(UserManager.TAG, "Error adding document", e)
+
+    }
+
+    fun removeAllFirebase() {
+        db.collection(USER_FIREBASE)
+            .document(userManager.getAccessToken())
+            .collection(BAG_FIREBASE)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    document.reference.delete()
+                        .addOnSuccessListener {
+                            bagAndProduct.postValue(mutableListOf())
+                        }
+
+                }
             }
     }
+
+    fun updateBagFirebase(bag: Bag, isFetch: Boolean = true) {
+        db.collection(USER_FIREBASE)
+            .document(userManager.getAccessToken())
+            .collection(BAG_FIREBASE)
+            .document(bag.id)
+            .set(bag)
+            .addOnSuccessListener {
+                if (isFetch) {
+                    fetchBagAndProduct()
+                }
+            }
+    }
+
+
+    private fun checkExist(bag: Bag) {
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken())
+            .collection(BAG_FIREBASE)
+            .whereEqualTo(BaseViewModel.SIZE, bag.size)
+            .whereEqualTo(BaseViewModel.COLOR, bag.color)
+            .whereEqualTo(BaseViewModel.ID_PRODUCT, bag.idProduct)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.size() > 0) {
+                    for (document in documents) {
+                        plusQuantity(document.toObject())
+                    }
+                } else {
+                    updateBagFirebase(bag)
+                }
+            }
+    }
+
 
     fun calculatorTotal(lists: List<BagAndProduct>, sale: Long): Int {
         var total = 0.0
@@ -96,4 +166,32 @@ class BagRepository @Inject constructor(
         return total.roundToInt()
     }
 
+
+    private fun plusQuantity(bagAndProduct: BagAndProduct) {
+        val newBag = bagAndProduct.bag
+        newBag.quantity += 1
+        updateBagFirebase(newBag)
+    }
+
+    fun setButtonBag(context: Context, buttonView: View, favorite: Favorite) {
+        bags.value?.let {
+            for (bag in it) {
+                if (bag.size == favorite.size &&
+                    bag.color == favorite.color &&
+                    bag.idProduct == favorite.idProduct
+                ) {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_bag_active
+                    )
+                    break
+                } else {
+                    buttonView.background = ContextCompat.getDrawable(
+                        context,
+                        R.drawable.btn_bag_no_active
+                    )
+                }
+            }
+        }
+    }
 }

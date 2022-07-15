@@ -6,37 +6,34 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ImageProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.adapters.SpinnerAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentProductDetailBinding
 import com.goldenowl.ecommerceapp.ui.Bag.BottomSheetCart
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
 import com.goldenowl.ecommerceapp.utilities.NetworkHelper
-import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ProductDetailFragment : Fragment() {
+class ProductDetailFragment : BaseFragment() {
     private val viewModel: ShopViewModel by viewModels()
     private lateinit var binding: FragmentProductDetailBinding
+    private lateinit var adapterRelated: ListProductGridAdapter
     private lateinit var colors: MutableList<String>
     private lateinit var sizes: MutableList<String>
-
     private var selectSize: Int? = null
     private var selectColor: Int? = null
-
-    private lateinit var idProduct: String
-    private lateinit var product: Product
-
-    private lateinit var adapterRelated: ListProductGridAdapter
+    private var idProduct = ""
     private val handlerFragment = Handler()
 
     override fun onCreateView(
@@ -45,64 +42,75 @@ class ProductDetailFragment : Fragment() {
     ): View {
         arguments?.let {
             idProduct = it.getString(ID_PRODUCT).toString()
+            if (idProduct.isNotBlank()) {
+                viewModel.isLoading.postValue(true)
+                viewModel.setProduct(idProduct)
+            } else {
+                findNavController().navigateUp()
+            }
         }
         binding = FragmentProductDetailBinding.inflate(inflater, container, false)
 
-
-        viewModel.setProduct(idProduct)
-
         adapterRelated = ListProductGridAdapter({
+            if (it.id != idProduct) {
+                viewModel.isLoading.postValue(true)
+            }
             viewModel.setProduct(it.id)
             binding.nestedScrollView.apply {
                 scrollTo(0, 0)
             }
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+        }, { btnFavorite, product ->
+            val bottomSheetSize = BottomSheetFavorite(product, null, null)
+            viewModel.btnFavorite.postValue(btnFavorite)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
         }, { view, product ->
             viewModel.setButtonFavorite(requireContext(), view, product.id)
         })
 
         observeSetup()
+        setFragmentListener()
         return binding.root
     }
 
     fun changePrice() {
-        if (selectColor != null && selectSize != null) {
-            binding.txtPrice.text = "\$${product.colors[selectColor!!].sizes[selectSize!!].price}"
+        val product = viewModel.product.value
+        product?.let {
+            if (selectColor != null && selectSize != null) {
+                binding.txtPrice.text = "\$${it.colors[selectColor!!].sizes[selectSize!!].price}"
+            }
         }
     }
 
     private fun observeSetup() {
-        viewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
-            Toast.makeText(
-                this.context,
-                str,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        viewModel.apply {
+            toastMessage.observe(viewLifecycleOwner) { str ->
+                toastMessage(str)
+                toastMessage.postValue("")
+            }
 
-        viewModel.product.observe(viewLifecycleOwner) {
-            product = it
-            colors = viewModel.getAllColor()
-            sizes = viewModel.getAllSize()
-            colors.add(DEFAULT_COLOR)
-            sizes.add(DEFAULT_SIZE)
-            viewModel.setCategory(product.categoryName)
-            bind()
-        }
+            product.observe(viewLifecycleOwner) {
+                if (it != null) {
+                    colors = viewModel.getAllColor()
+                    sizes = viewModel.getAllSize()
+                    colors.add(DEFAULT_COLOR)
+                    sizes.add(DEFAULT_SIZE)
+                    viewModel.setCategory(it.categoryName)
+                    bind(it)
+                }
+            }
 
-        viewModel.products.observe(viewLifecycleOwner) {
-            adapterRelated.submitList(it)
-            binding.txtNumberRelated.text = "${it.size} items"
-        }
+            products.observe(viewLifecycleOwner) {
+                adapterRelated.submitList(it.filter { product -> product.id != idProduct })
+                binding.txtNumberRelated.text = "${it.size - 1} items"
+            }
 
-        viewModel.favorites.observe(viewLifecycleOwner) {
-            viewModel.setButtonFavorite(requireContext(), binding.btnFavorite, idProduct)
+            isLoading.observe(viewLifecycleOwner) {
+                setLoading(it)
+            }
         }
     }
 
-    fun bind() {
+    fun bind(product: Product) {
         binding.apply {
             MaterialToolbar.title = product.title
 
@@ -147,7 +155,7 @@ class ProductDetailFragment : Fragment() {
             txtBrandName.text = product.brandName
             txtTitle.text = product.title
             txtDescription.text = product.description
-            ratingBar.rating = product.reviewStars.toFloat()
+            ratingBar.rating = product.reviewStars
             txtNumberVote.text = "(${product.numberReviews})"
             txtPrice.text = "\$${product.colors[0].sizes[0].price}"
 
@@ -222,6 +230,7 @@ class ProductDetailFragment : Fragment() {
 
             btnFavorite.setOnClickListener {
                 val select = selectColor ?: 0
+                viewModel.btnFavorite.postValue(btnFavorite)
                 val bottomSheetSize =
                     BottomSheetFavorite(product, selectSize, product.colors[select].color)
                 bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
@@ -246,6 +255,21 @@ class ProductDetailFragment : Fragment() {
                         idProduct = idProduct
                     )
                 findNavController().navigate(action)
+            }
+            viewModel.isLoading.postValue(false)
+        }
+    }
+
+    private fun setFragmentListener() {
+        setFragmentResultListener(REQUEST_KEY) { _, bundle ->
+            val result = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
+            if (result) {
+                viewModel.btnFavorite.value?.let {
+                    it.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.btn_favorite_active
+                    )
+                }
             }
         }
     }
@@ -279,6 +303,5 @@ class ProductDetailFragment : Fragment() {
     companion object {
         const val DEFAULT_SIZE = "Size"
         const val DEFAULT_COLOR = "Color"
-        const val ID_PRODUCT = "idProduct"
     }
 }

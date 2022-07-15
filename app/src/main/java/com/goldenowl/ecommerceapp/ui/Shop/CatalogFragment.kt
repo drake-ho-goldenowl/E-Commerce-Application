@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -15,13 +14,15 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
 import com.goldenowl.ecommerceapp.adapters.ListProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
+import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.FragmentCatalogBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.goldenowl.ecommerceapp.ui.Favorite.BottomSheetFavorite
-import com.goldenowl.ecommerceapp.viewmodels.ShopViewModel
+import com.goldenowl.ecommerceapp.utilities.NEW
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CatalogFragment : Fragment() {
+class CatalogFragment : BaseFragment() {
     private val viewModel: ShopViewModel by viewModels()
     private var nameTitle: String? = null
     private lateinit var binding: FragmentCatalogBinding
@@ -29,34 +30,44 @@ class CatalogFragment : Fragment() {
     private lateinit var adapterProductGrid: ListProductGridAdapter
     private lateinit var adapterCategory: ListCategoriesAdater
     private var isLinearLayoutManager = true
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    private var filterPrice = emptyList<Float>()
+    private var listProduct: List<Product> = emptyList()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         arguments?.let {
             nameTitle = it.getString(NAME_CATEGORY).toString()
             val searchName = it.getString(NAME_PRODUCT)
             if (searchName != null) {
                 viewModel.setSearch(searchName)
-                println(searchName)
-            }
-            else{
+            } else {
                 viewModel.setSearch("")
             }
+            viewModel.isLoading.postValue(true)
         }
-        binding = FragmentCatalogBinding.inflate(inflater, container, false)
+        viewModel.setSort(0)
+        viewModel.lastVisible = ""
         if (nameTitle.isNullOrBlank()) {
             viewModel.setCategory("")
         } else {
-            viewModel.setCategory(nameTitle.toString())
+            if (nameTitle.toString() == NEW) {
+                viewModel.setCategory("")
+                viewModel.setSort(1)
+            } else {
+                viewModel.setCategory(nameTitle.toString())
+            }
         }
-        viewModel.setSort(0)
 
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentCatalogBinding.inflate(inflater, container, false)
         observeSetup()
         adapterSetup()
         bind()
         setFragmentListener()
-
         return binding.root
     }
 
@@ -66,9 +77,10 @@ class CatalogFragment : Fragment() {
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+        }, { btnFavorite, product ->
+            val bottomSheetSize = BottomSheetFavorite(product)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
+            viewModel.btnFavorite.postValue(btnFavorite)
         }, { view, product ->
             viewModel.setButtonFavorite(requireContext(), view, product.id)
         })
@@ -78,8 +90,8 @@ class CatalogFragment : Fragment() {
                 idProduct = it.id
             )
             findNavController().navigate(action)
-        }, {
-            val bottomSheetSize = BottomSheetFavorite(it, null, null)
+        }, { _, product ->
+            val bottomSheetSize = BottomSheetFavorite(product)
             bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
         }, { view, product ->
             viewModel.setButtonFavorite(requireContext(), view, product.id)
@@ -87,29 +99,49 @@ class CatalogFragment : Fragment() {
 
         adapterCategory = ListCategoriesAdater { str ->
             if (binding.appBarLayout.topAppBar.title == str) {
-                viewModel.setCategory("")
-                binding.appBarLayout.topAppBar.title = getString(R.string.all_product)
+                val action = CatalogFragmentDirections.actionCatalogFragmentSelf(
+                    nameCategories = "",
+                    nameProduct = null
+                )
+                findNavController().navigate(action)
             } else {
-                viewModel.setCategory(str)
-                binding.appBarLayout.topAppBar.title = str
+                val action = CatalogFragmentDirections.actionCatalogFragmentSelf(
+                    nameCategories = str,
+                    nameProduct = null
+                )
+                findNavController().navigate(action)
             }
         }
     }
 
     private fun observeSetup() {
-        viewModel.allCategory.observe(viewLifecycleOwner) {
-            adapterCategory.submitList(it)
-        }
+        viewModel.apply {
+            allCategory.observe(viewLifecycleOwner) {
+                adapterCategory.submitList(it)
+                adapterCategory.positionCurrent = it.indexOf(getCategory())
+            }
 
-        viewModel.products.observe(viewLifecycleOwner) {
-            val product = viewModel.filterSort(it)
-            adapterProductGrid.submitList(product)
-            adapterProduct.submitList(product)
-        }
-
-        viewModel.favorites.observe(viewLifecycleOwner) {
-            adapterProductGrid.notifyDataSetChanged()
-            adapterProduct.notifyDataSetChanged()
+            products.observe(viewLifecycleOwner) {
+                if(it.isNotEmpty()){
+                    listProduct = it
+                    isLoading.postValue(false)
+                    submitList(it)
+                }
+            }
+            isLoading.observe(viewLifecycleOwner) {
+                if (it) {
+                    binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    binding.progressBar.visibility = View.INVISIBLE
+                }
+            }
+            statusSort.observe(viewLifecycleOwner) {
+                if(listProduct.isNotEmpty()){
+                    val list = filterSort(listProduct)
+                    submitList(list)
+                    binding.nestedScrollView.scrollTo(0,0)
+                }
+            }
         }
     }
 
@@ -119,6 +151,26 @@ class CatalogFragment : Fragment() {
                 appBarLayout.topAppBar.title = getString(R.string.all_product)
             } else {
                 appBarLayout.topAppBar.title = nameTitle
+            }
+
+            if (viewModel.statusSort.value == 1) {
+                appBarLayout.btnSort.text = getString(R.string.newest)
+            }
+
+            nestedScrollView.viewTreeObserver?.addOnScrollChangedListener {
+                nestedScrollView.apply {
+                    val view = getChildAt(0)
+                    val diff = view.bottom - (height + scrollY)
+                    if(diff <= 0){
+                        viewModel.products.value?.let {
+                            if (viewModel.loadMore.value == true) {
+                                viewModel.loadMore(it)
+                            } else {
+                                viewModel.isLoading.postValue(false)
+                            }
+                        }
+                    }
+                }
             }
 
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
@@ -131,7 +183,16 @@ class CatalogFragment : Fragment() {
             )
 
             appBarLayout.recyclerViewCategories.adapter = adapterCategory
+            appBarLayout.btnFilter.setOnClickListener {
+                if (filterPrice.isNotEmpty()) {
+                    val bottomFilter = BottomFilter(filterPrice[0], filterPrice[1])
+                    bottomFilter.show(parentFragmentManager, BottomFilter.TAG)
+                } else {
+                    val bottomFilter = BottomFilter()
+                    bottomFilter.show(parentFragmentManager, BottomFilter.TAG)
+                }
 
+            }
             //Handle Button Change View
             appBarLayout.btnChangeView.background =
                 if (isLinearLayoutManager)
@@ -153,7 +214,7 @@ class CatalogFragment : Fragment() {
             }
 
             appBarLayout.btnSort.setOnClickListener {
-                val bottomSheetSort = BottomSheetSort(viewModel.statusFilter.value.third)
+                val bottomSheetSort = BottomSheetSort(viewModel.statusSort.value ?: 0)
                 bottomSheetSort.show(parentFragmentManager, BottomSheetSort.TAG)
             }
 
@@ -170,22 +231,40 @@ class CatalogFragment : Fragment() {
             }
         }
     }
-
+    private fun submitList(list: List<Product>){
+        adapterProduct.submitList(list)
+        adapterProductGrid.submitList(list)
+    }
     private fun setFragmentListener() {
         setFragmentResultListener(REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(BUNDLE_KEY_NAME)
             val position = bundle.getInt(BUNDLE_KEY_POSITION)
-            binding.appBarLayout.btnSort.text = result
-            viewModel.setSort(position)
+            if (!result.isNullOrBlank()) {
+                binding.appBarLayout.btnSort.text = result
+                viewModel.setSort(position)
+            }
+            val min = bundle.getFloat(BUNDLE_KEY_MIN)
+            val max = bundle.getFloat(BUNDLE_KEY_MAX)
+            if (min >= 0 && max > 0) {
+                filterPrice = listOf(min, max)
+                viewModel.apply {
+                    submitList(filterPrice(min, max, listProduct))
+                }
+                binding.nestedScrollView.scrollTo(0,0)
+            } else {
+                filterPrice = emptyList()
+                submitList(listProduct)
+                binding.nestedScrollView.scrollTo(0,0)
+            }
+            val isFavorite = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
+            if (isFavorite) {
+                viewModel.btnFavorite.value?.let {
+                    it.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.btn_favorite_active
+                    )
+                }
+            }
         }
-    }
-
-    companion object {
-        const val REQUEST_KEY = "request_key"
-        const val BUNDLE_KEY_NAME = "bundle_name"
-        const val BUNDLE_KEY_POSITION = "bundle_position"
-        const val GRIDVIEW_SPAN_COUNT = 2
-        const val NAME_CATEGORY = "nameCategories"
-        const val NAME_PRODUCT = "nameProduct"
     }
 }

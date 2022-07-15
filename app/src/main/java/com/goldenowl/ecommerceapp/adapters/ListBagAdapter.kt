@@ -6,45 +6,51 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.BagAndProduct
 import com.goldenowl.ecommerceapp.databinding.ItemBagBinding
+import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListBagAdapter(
     private val onItemClicked: (BagAndProduct) -> Unit,
     private val onAddClicked: (BagAndProduct) -> Unit,
     private val onDeleteClicked: (BagAndProduct) -> Unit,
-    private val onPlusQuantityClicked: (BagAndProduct) -> Unit,
-    private val onMinusQuantityClicked: (BagAndProduct) -> Unit,
+    private val onPlusQuantityClicked: (BagAndProduct, TextView) -> Unit,
+    private val onMinusQuantityClicked: (BagAndProduct, TextView) -> Unit,
 ) :
     ListAdapter<BagAndProduct, ListBagAdapter.ItemViewHolder>(DiffCallback) {
 
-    class ItemViewHolder(private val context: Context,
-                         private val onAddClicked: (BagAndProduct) -> Unit,
-                         private val onDeleteClicked: (BagAndProduct) -> Unit,
-                         private val onPlusQuantityClicked: (BagAndProduct) -> Unit,
-                         private val onMinusQuantityClicked: (BagAndProduct) -> Unit,
-                         private var binding: ItemBagBinding) :
+    class ItemViewHolder(
+        private val context: Context,
+        private val onAddClicked: (BagAndProduct) -> Unit,
+        private val onDeleteClicked: (BagAndProduct) -> Unit,
+        private val onPlusQuantityClicked: (BagAndProduct, TextView) -> Unit,
+        private val onMinusQuantityClicked: (BagAndProduct, TextView) -> Unit,
+        private var binding: ItemBagBinding
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(bagAndProduct: BagAndProduct) {
             binding.apply {
-                Glide.with(itemView.context)
-                    .load(bagAndProduct.product.images[0])
-                    .error(R.drawable.img_sample_2)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(imgProduct)
+                GlideDefault.show(
+                    itemView.context,
+                    bagAndProduct.product.images[0],
+                    imgProduct,
+                    true
+                )
                 txtName.text = bagAndProduct.product.title
                 txtColorInput.text = bagAndProduct.bag.color
                 txtSizeInput.text = bagAndProduct.bag.size
                 txtQuantity.text = bagAndProduct.bag.quantity.toString()
 
-                val size = bagAndProduct.product.getColorAndSize(bagAndProduct.bag.color,bagAndProduct.bag.size)
+                val size = bagAndProduct.product.getColorAndSize(
+                    bagAndProduct.bag.color,
+                    bagAndProduct.bag.size
+                )
                 if (bagAndProduct.product.salePercent != null && size != null) {
                     txtPrice.paintFlags = txtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     txtSalePrice.visibility = View.VISIBLE
@@ -56,15 +62,17 @@ class ListBagAdapter(
                     txtPrice.paintFlags = 0
                     txtSalePercent.visibility = View.GONE
                     txtSalePrice.visibility = View.GONE
-
+                }
+                size?.let {
+                    txtPrice.text = "${size.price}\$"
                 }
 
                 btnMinus.setOnClickListener {
-                    onMinusQuantityClicked(bagAndProduct)
+                    onMinusQuantityClicked(bagAndProduct, txtQuantity)
                 }
 
                 btnPlus.setOnClickListener {
-                    onPlusQuantityClicked(bagAndProduct)
+                    onPlusQuantityClicked(bagAndProduct, txtQuantity)
                 }
 
                 btnMore.setOnClickListener { view ->

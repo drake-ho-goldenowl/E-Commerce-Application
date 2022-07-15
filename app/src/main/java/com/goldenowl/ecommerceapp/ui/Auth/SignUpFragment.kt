@@ -7,16 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.Navigation
 import com.facebook.login.LoginManager
 import com.goldenowl.ecommerceapp.MainActivity
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentSignUpBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment
+import com.goldenowl.ecommerceapp.ui.OnSignInStartedListener
 import com.goldenowl.ecommerceapp.utilities.REQUEST_SIGN_IN
-import com.goldenowl.ecommerceapp.viewmodels.AuthViewModel
-import com.goldenowl.ecommerceapp.viewmodels.OnSignInStartedListener
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.common.api.ApiException
@@ -24,7 +23,7 @@ import com.google.android.material.textfield.TextInputLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SignUpFragment : Fragment() {
+class SignUpFragment : BaseFragment() {
     private lateinit var binding: FragmentSignUpBinding
     private val authViewModel: AuthViewModel by viewModels()
     override fun onCreateView(
@@ -107,31 +106,35 @@ class SignUpFragment : Fragment() {
     }
 
     private fun observeSetup() {
-        authViewModel.toastMessage.observe(this.viewLifecycleOwner) { str ->
-            Toast.makeText(
-                this.context,
-                str,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        authViewModel.userLiveData.observe(this.viewLifecycleOwner) {
-            if (it != null) {
-                startActivity(Intent(activity, MainActivity::class.java))
-                activity?.finish()
+        authViewModel.apply {
+            toastMessage.observe(viewLifecycleOwner) { str ->
+                toastMessage(str)
+                toastMessage.postValue("")
+            }
+            userLiveData.observe(viewLifecycleOwner) {
+                if (it != null) {
+                    startActivity(Intent(activity, MainActivity::class.java))
+                    activity?.finish()
+                }
+            }
+
+            validNameLiveData.observe(viewLifecycleOwner) {
+                alertName(it)
+            }
+
+            validEmailLiveData.observe(viewLifecycleOwner) {
+                alertEmail(it)
+            }
+
+            validPasswordLiveData.observe(viewLifecycleOwner) {
+                alertPassword(it)
+            }
+
+            isLoading.observe(viewLifecycleOwner) {
+                setLoading(it)
             }
         }
 
-        authViewModel.validNameLiveData.observe(this.viewLifecycleOwner) {
-            alertName(it)
-        }
-
-        authViewModel.validEmailLiveData.observe(this.viewLifecycleOwner) {
-            alertEmail(it)
-        }
-
-        authViewModel.validPasswordLiveData.observe(this.viewLifecycleOwner) {
-            alertPassword(it)
-        }
     }
 
     @Deprecated("Deprecated in Java")

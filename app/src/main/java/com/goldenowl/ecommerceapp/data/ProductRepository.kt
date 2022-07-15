@@ -1,32 +1,58 @@
 package com.goldenowl.ecommerceapp.data
 
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asFlow
+import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-
 @Singleton
 class ProductRepository @Inject constructor(
-    private val productDao: ProductDao
+    private val db: FirebaseFirestore
 ) {
-    suspend fun insert(product: Product) = productDao.insert(product)
+    val products = MutableLiveData<List<Product>>()
 
-    suspend fun update(product: Product) = productDao.update(product)
+    fun fetchProduct() {
+        db.collection(PRODUCT_FIREBASE)
+            .get()
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (doc in documents) {
+                    list.add(doc.toObject())
+                }
+                products.postValue(list)
+            }
+    }
 
-    suspend fun delete(product: Product) = productDao.delete(product)
+    fun getProduct(idProduct: String): Flow<Product> {
+        val result = MutableLiveData<Product>()
+        if (idProduct.isNotBlank()) {
+            db.collection(PRODUCT_FIREBASE)
+                .document(idProduct)
+                .get()
+                .addOnSuccessListener { document ->
+                    result.postValue(document.toObject())
+                }
+        }
 
-    fun getProduct(id: String) = productDao.getProduct(id)
+        return result.asFlow()
+    }
 
-    fun getAll() = productDao.getAll()
-
-    fun getAllCategory() = productDao.getAllCategory()
-
-    fun filterByCategory(category: String) = productDao.filterByCategory(category)
-
-    fun filterBySearch(search: String) = productDao.filterBySearch(search)
-
-    fun filterByCategoryAndSearch(
-        search: String,
-        category: String,
-    ) = productDao.filterByCategoryAndSearch(search, category)
-
+    fun getAllCategory(): Flow<List<String>> {
+        val result = MutableLiveData<List<String>>()
+        db.collection(PRODUCT_FIREBASE)
+            .get()
+            .addOnSuccessListener { documents ->
+                val list = mutableSetOf<String>()
+                for (doc in documents) {
+                    val product = doc.toObject<Product>()
+                    list.add(product.categoryName)
+                }
+                result.postValue(list.toList())
+            }
+        return result.asFlow()
+    }
 }

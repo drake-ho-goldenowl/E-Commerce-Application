@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.goldenowl.ecommerceapp.databinding.ItemSpinnerBinding
 
-class SpinnerAdapter(context: Context,private val list: List<String>) :
+class SpinnerAdapter(context: Context, private val list: List<String>) :
     ArrayAdapter<String>(context, 0, list) {
 
     @SuppressLint("ViewHolder")
@@ -20,10 +20,9 @@ class SpinnerAdapter(context: Context,private val list: List<String>) :
             parent,
             false
         )
-        if(position == this.count){
+        if (position == this.count) {
             binding.txtNameItem.text = list[position]
-        }
-        else{
+        } else {
             binding.txtNameItem.text = list[position]
         }
         return binding.root

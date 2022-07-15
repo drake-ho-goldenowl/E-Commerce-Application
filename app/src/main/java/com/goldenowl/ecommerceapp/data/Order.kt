@@ -1,16 +1,11 @@
 package com.goldenowl.ecommerceapp.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.goldenowl.ecommerceapp.utilities.MAX
+import com.goldenowl.ecommerceapp.utilities.MIN
+import com.goldenowl.ecommerceapp.utilities.TRACKING_NUMBER
 import java.util.*
 
-const val MIN = 100000
-const val MAX = 999999
-const val TRACKING_NUMBER = "IW3475453455"
-
-@Entity
 data class Order(
-    @PrimaryKey
     val id: String = (MIN..MAX).random().toString(),
     var products: List<ProductOrder> = emptyList(),
     var trackingNumber: String = TRACKING_NUMBER,

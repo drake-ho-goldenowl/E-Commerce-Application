@@ -17,15 +17,16 @@ class ListDeliveryAdapter(private val onItemClicked: (Delivery) -> Unit) :
 
     class ItemViewHolder(
         private val context: Context,
-        private var binding: ItemDeliveryBinding) :
+        private var binding: ItemDeliveryBinding
+    ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(delivery: Delivery,positionCurrent: Int, position: Int) {
+        fun bind(delivery: Delivery, positionCurrent: Int, position: Int) {
             binding.apply {
                 imgLogo.setImageResource(delivery.logo)
-                if (position == positionCurrent){
-                    layoutItem.background = ContextCompat.getDrawable(context, R.drawable.round_corner)
-                }
-                else{
+                if (position == positionCurrent) {
+                    layoutItem.background =
+                        ContextCompat.getDrawable(context, R.drawable.round_corner)
+                } else {
                     layoutItem.background = null
                 }
             }
@@ -33,7 +34,8 @@ class ListDeliveryAdapter(private val onItemClicked: (Delivery) -> Unit) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(parent.context,
+        return ItemViewHolder(
+            parent.context,
             ItemDeliveryBinding.inflate(
                 LayoutInflater.from(
                     parent.context
@@ -48,14 +50,14 @@ class ListDeliveryAdapter(private val onItemClicked: (Delivery) -> Unit) :
         val current = getItem(position)
         holder.itemView.setOnClickListener {
             onItemClicked(current)
-            positionCurrent = if(positionCurrent == position){
+            positionCurrent = if (positionCurrent == position) {
                 -1
-            } else{
+            } else {
                 position
             }
             notifyDataSetChanged()
         }
-        holder.bind(current,positionCurrent,position)
+        holder.bind(current, positionCurrent, position)
     }
 
     companion object {

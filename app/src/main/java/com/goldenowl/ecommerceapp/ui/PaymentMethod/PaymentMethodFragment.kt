@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListCardAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentPaymentMethodBinding
-import com.goldenowl.ecommerceapp.ui.ConfirmDialog
-import com.goldenowl.ecommerceapp.viewmodels.PaymentViewModel
+import com.goldenowl.ecommerceapp.ui.General.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,13 +41,19 @@ class PaymentMethodFragment : Fragment() {
             }.show()
         })
 
-        viewModel.listCard.observe(viewLifecycleOwner) {
-            adapter.dataSet = it
-            adapter.notifyDataSetChanged()
-        }
-
+        setupObserve()
         bind()
         return binding.root
+    }
+
+    private fun setupObserve() {
+        viewModel.apply {
+            cards.observe(viewLifecycleOwner) {
+                adapter.dataSet = it
+                adapter.notifyDataSetChanged()
+            }
+        }
+
     }
 
     private fun bind() {

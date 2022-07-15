@@ -19,11 +19,10 @@ class AuthActivity : AppCompatActivity(R.layout.activity_auth) {
     }
 
     override fun onBackPressed() {
-        if(host.findNavController().currentDestination?.id == R.id.signUpFragment){
+        if (host.findNavController().currentDestination?.id == R.id.signUpFragment) {
             startActivity(Intent(this, MainActivity::class.java))
             this.finish()
-        }
-        else{
+        } else {
             super.onBackPressed()
         }
     }

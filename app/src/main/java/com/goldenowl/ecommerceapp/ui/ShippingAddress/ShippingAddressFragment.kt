@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListAddressAdapter
 import com.goldenowl.ecommerceapp.databinding.FragmentShippingAddressBinding
-import com.goldenowl.ecommerceapp.ui.ConfirmDialog
-import com.goldenowl.ecommerceapp.viewmodels.ShippingAddressViewModel
+import com.goldenowl.ecommerceapp.ui.General.ConfirmDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,6 +19,12 @@ class ShippingAddressFragment : Fragment() {
     private lateinit var binding: FragmentShippingAddressBinding
     private lateinit var listAddressAdapter: ListAddressAdapter
     private val viewModel: ShippingAddressViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.fetchAddress()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,11 +53,16 @@ class ShippingAddressFragment : Fragment() {
                 viewModel.deleteShippingAddress(it)
             }.show()
         })
-        viewModel.listAll.observe(viewLifecycleOwner) {
-            listAddressAdapter.submitList(it)
-        }
+
+        setupObserve()
         bind()
         return binding.root
+    }
+
+    private fun setupObserve() {
+        viewModel.listAddress.observe(viewLifecycleOwner) {
+            listAddressAdapter.submitList(it)
+        }
     }
 
     private fun bind() {

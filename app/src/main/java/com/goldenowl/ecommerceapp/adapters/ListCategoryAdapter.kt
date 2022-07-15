@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.goldenowl.ecommerceapp.databinding.ItemCategoryBinding
 
-class ListCategoryAdapter (private val onItemClicked: (String) -> Unit) :
+class ListCategoryAdapter(private val onItemClicked: (String) -> Unit) :
     ListAdapter<String, ListCategoryAdapter.ItemViewHolder>(DiffCallback) {
 
     class ItemViewHolder(private var binding: ItemCategoryBinding) :
