@@ -31,6 +31,15 @@ data class Product(
         }
         return sizes.toList()
     }
+    fun getAllColor(): List<String>{
+        val colors = mutableListOf<String>()
+        for (color in this.colors){
+            color.color?.let {
+                colors.add(it)
+            }
+        }
+        return colors
+    }
 
     fun getColorAndSize(colorStr: String, sizeStr: String): Size? {
         for (color in this.colors) {

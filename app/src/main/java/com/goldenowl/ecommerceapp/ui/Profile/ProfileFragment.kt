@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthViewModel
@@ -21,24 +21,11 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
-        binding.appBarLayout.topAppBar.title = getString(R.string.my_profile)
         if (!viewModel.isLogged()) {
-            changeFragment(ProfileNoLoginFragment())
-            return binding.root
+            findNavController().navigate(R.id.action_profileFragment_to_profileNoLoginFragment)
+        } else {
+            findNavController().navigate(R.id.action_profileFragment_to_profileLoginFragment)
         }
-        changeFragment(ProfileLoginFragment())
         return binding.root
-    }
-
-    private fun changeFragment(fragment: Fragment) {
-        val transaction: FragmentTransaction = parentFragmentManager.beginTransaction()
-        transaction.replace(R.id.host_fragment_profile, fragment)
-        transaction.addToBackStack(null)
-        transaction.setReorderingAllowed(true)
-        transaction.commit()
-    }
-
-    companion object {
-        const val TAG = "PROFILE_FRAGMENT"
     }
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.goldenowl.ecommerceapp.R
+import com.goldenowl.ecommerceapp.adapters.ListColorAdapter
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
@@ -17,24 +18,37 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class BottomSheetCart(
     private val product: Product,
-    private var selectSizeInt: Int,
+    private val selectSizeInt: Int,
     private val selectColorInt: Int
 ) : BaseBottomSheetDialog() {
     private val viewModel: BagViewModel by viewModels()
     private lateinit var binding: BottomLayoutSelectSizeBinding
-    private lateinit var adapter: ListSizeAdapter
+    private lateinit var adapterSize: ListSizeAdapter
+    private lateinit var adapterColor: ListColorAdapter
     private var selectSize: String? = null
+    private var selectColor: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val listSize = product.getAllSize()
-        adapter = ListSizeAdapter {
+        val listColor = product.getAllColor()
+        adapterSize = ListSizeAdapter {
             selectSize = it
         }
-        adapter.submitList(listSize)
-
-        adapter.positionCurrent = selectSizeInt
+        adapterSize.submitList(listSize)
+        adapterColor = ListColorAdapter {
+            selectColor = if (selectColor == it) {
+                null
+            } else {
+                it
+            }
+        }
+        adapterColor.submitList(listColor)
+        adapterSize.positionCurrent = selectSizeInt
         selectSize = listSize[selectSizeInt]
+
+        adapterColor.positionCurrent = selectColorInt
+        selectColor = listColor[selectColorInt]
     }
 
     override fun onCreateView(
@@ -66,19 +80,24 @@ class BottomSheetCart(
     fun bind() {
         binding.apply {
             recyclerViewSize.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
-            recyclerViewSize.adapter = adapter
+            recyclerViewSize.adapter = adapterSize
+
+            recyclerViewColor.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
+            recyclerViewColor.adapter = adapterColor
 
             btnAddToCart.text = getString(R.string.add_to_cart)
             btnAddToCart.setOnClickListener {
-                if (!selectSize.isNullOrBlank()) {
+                if (selectSize.isNullOrBlank()) {
+                    viewModel.toastMessage.postValue(WARNING_SELECT_SIZE)
+                } else if (selectColor.isNullOrBlank()) {
+                    viewModel.toastMessage.postValue(WARNING_SELECT_COLOR)
+                } else {
                     viewModel.insertBag(
                         product.id,
-                        product.colors[selectColorInt].color.toString(),
+                        selectColor.toString(),
                         selectSize.toString(),
                     )
-                    viewModel.toastMessage.postValue("Add to Cart Success")
-                } else {
-                    viewModel.toastMessage.postValue("Please select size")
+                    viewModel.toastMessage.postValue(ADD_BAG_SUCCESS)
                 }
             }
 
@@ -87,7 +106,7 @@ class BottomSheetCart(
 
 
     companion object {
-        const val GRIDVIEW_SPAN_COUNT = 3
         const val TAG = "BOTTOM_SHEET_SIZE"
+        const val ADD_BAG_SUCCESS = "Add to Cart Success"
     }
 }

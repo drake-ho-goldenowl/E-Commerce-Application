@@ -28,7 +28,7 @@ class FavoritesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!viewModel.isLogged()) {
-            findNavController().navigate(R.id.warningFragment)
+            findNavController().navigate(R.id.action_favoritesFragment_to_warningFragment)
         }
         else{
             viewModel.isLoading.postValue(true)

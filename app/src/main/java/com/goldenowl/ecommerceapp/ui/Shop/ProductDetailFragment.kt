@@ -31,8 +31,8 @@ class ProductDetailFragment : BaseFragment() {
     private lateinit var adapterRelated: ListProductGridAdapter
     private lateinit var colors: MutableList<String>
     private lateinit var sizes: MutableList<String>
-    private var selectSize: Int? = null
-    private var selectColor: Int? = null
+    private var selectSize: Int = 0
+    private var selectColor: Int = 0
     private var idProduct = ""
     private val handlerFragment = Handler()
 
@@ -92,8 +92,8 @@ class ProductDetailFragment : BaseFragment() {
                 if (it != null) {
                     colors = viewModel.getAllColor()
                     sizes = viewModel.getAllSize()
-                    colors.add(DEFAULT_COLOR)
-                    sizes.add(DEFAULT_SIZE)
+                    selectSize = 0
+                    selectColor = 0
                     viewModel.setCategory(it.categoryName)
                     bind(it)
                 }
@@ -163,7 +163,7 @@ class ProductDetailFragment : BaseFragment() {
             //Spinner Size
             var adapterSize = SpinnerAdapter(requireContext(), sizes)
             spinnerSize.adapter = adapterSize
-            spinnerSize.setSelection(adapterSize.count)
+            spinnerSize.setSelection(0)
             spinnerSize.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -171,12 +171,7 @@ class ProductDetailFragment : BaseFragment() {
                     position: Int,
                     id: Long
                 ) {
-                    selectSize = if (position == adapterSize.count) {
-                        null
-                    } else {
-                        position
-                    }
-
+                    selectSize = position
                     changePrice()
                 }
 
@@ -185,11 +180,10 @@ class ProductDetailFragment : BaseFragment() {
 
             }
 
-
             //Spinner Color
             val adapterColor = SpinnerAdapter(requireContext(), colors)
             spinnerColor.adapter = adapterColor
-            spinnerColor.setSelection(adapterColor.count)
+            spinnerColor.setSelection(0)
             spinnerColor.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
@@ -197,19 +191,7 @@ class ProductDetailFragment : BaseFragment() {
                     position: Int,
                     id: Long
                 ) {
-                    selectColor = if (position == adapterColor.count) {
-                        null
-                    } else {
-                        position
-                    }
-                    if (selectColor != null) {
-                        sizes = viewModel.getAllSizeOfColor(selectColor!!)
-                        sizes.add(DEFAULT_COLOR)
-                        adapterSize = SpinnerAdapter(requireContext(), sizes)
-                        spinnerSize.adapter = adapterSize
-                        spinnerSize.setSelection(adapterSize.count)
-                    }
-
+                    selectColor = position
                     changePrice()
                 }
 
@@ -229,24 +211,15 @@ class ProductDetailFragment : BaseFragment() {
             viewModel.setButtonFavorite(requireContext(), btnFavorite, product.id)
 
             btnFavorite.setOnClickListener {
-                val select = selectColor ?: 0
                 viewModel.btnFavorite.postValue(btnFavorite)
                 val bottomSheetSize =
-                    BottomSheetFavorite(product, selectSize, product.colors[select].color)
+                    BottomSheetFavorite(product, selectSize, product.colors[selectColor].color)
                 bottomSheetSize.show(parentFragmentManager, BottomSheetFavorite.TAG)
             }
 
             btnAddToCart.setOnClickListener {
-                if (selectColor != null && selectSize != null) {
-                    val bottomSheetCart = BottomSheetCart(product, selectSize!!, selectColor!!)
-                    bottomSheetCart.show(parentFragmentManager, BottomSheetCart.TAG)
-                } else {
-                    if (selectSize == null) {
-                        viewModel.toastMessage.postValue("Please select size")
-                    } else {
-                        viewModel.toastMessage.postValue("Please select color")
-                    }
-                }
+                val bottomSheetCart = BottomSheetCart(product, selectSize, selectColor)
+                bottomSheetCart.show(parentFragmentManager, BottomSheetCart.TAG)
             }
 
             btnRatingBar.setOnClickListener {
@@ -298,10 +271,5 @@ class ProductDetailFragment : BaseFragment() {
     override fun onDestroy() {
         handlerFragment.removeMessages(0)
         super.onDestroy()
-    }
-
-    companion object {
-        const val DEFAULT_SIZE = "Size"
-        const val DEFAULT_COLOR = "Color"
     }
 }
