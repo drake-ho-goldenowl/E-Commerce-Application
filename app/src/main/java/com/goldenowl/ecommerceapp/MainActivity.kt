@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.profileFragment,
                 R.id.catalogFragment,
                 R.id.warningFragment,
-                R.id.profileNoLoginLayout,
+                R.id.profileNoLoginFragment,
                 R.id.profileLoginFragment
                 -> binding.bottomNavigation.visibility = View.VISIBLE
                 else -> binding.bottomNavigation.visibility = View.GONE
