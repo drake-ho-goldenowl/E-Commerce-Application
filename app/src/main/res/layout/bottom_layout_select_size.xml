@@ -53,25 +53,9 @@
             android:text="Select color"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:layout_marginTop="10dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <!--        <ImageView-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginEnd="11dp"-->
-        <!--            android:src="@drawable/ic_baseline_keyboard_arrow_down"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:layout_constraintRight_toRightOf="parent"-->
-        <!--            app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--        <com.google.android.material.divider.MaterialDivider-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="0.4dp"-->
-        <!--            app:dividerColor="@color/grey3"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:layout_constraintLeft_toLeftOf="parent"-->
-        <!--            app:layout_constraintRight_toRightOf="parent" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewColor"

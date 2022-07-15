@@ -387,18 +387,6 @@ class ShopViewModel @Inject constructor(
         return sizes.toMutableList()
     }
 
-    fun getAllSizeOfColor(selectColor: Int): MutableList<String> {
-        val sizes: MutableSet<String> = mutableSetOf()
-        product.value?.let {
-            for (size in it.colors[selectColor].sizes) {
-                if (size.quantity > 0) {
-                    sizes.add(size.size)
-                }
-            }
-        }
-        return sizes.toMutableList()
-    }
-
 
     fun getAllColor(): MutableList<String> {
         val colors: MutableSet<String> = mutableSetOf()

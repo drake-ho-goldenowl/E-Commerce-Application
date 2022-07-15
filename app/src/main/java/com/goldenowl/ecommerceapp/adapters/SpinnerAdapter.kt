@@ -20,11 +20,7 @@ class SpinnerAdapter(context: Context, private val list: List<String>) :
             parent,
             false
         )
-        if (position == this.count) {
-            binding.txtNameItem.text = list[position]
-        } else {
-            binding.txtNameItem.text = list[position]
-        }
+        binding.txtNameItem.text = list[position]
         return binding.root
     }
 
@@ -42,6 +38,6 @@ class SpinnerAdapter(context: Context, private val list: List<String>) :
     }
 
     override fun getCount(): Int {
-        return list.size - 1
+        return list.size
     }
 }

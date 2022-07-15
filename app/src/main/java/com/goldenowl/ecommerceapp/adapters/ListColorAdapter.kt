@@ -26,7 +26,6 @@ class ListColorAdapter(private val onItemClicked: (String) -> Unit) :
         fun bind(color: String, positionCurrent: Int, position: Int) {
             binding.apply {
                 txtNameColor.text = color
-                println(IdColor.valueOf(color.uppercase()).id)
                 cardViewColor.setCardBackgroundColor(
                     ContextCompat.getColor(
                         itemView.context,

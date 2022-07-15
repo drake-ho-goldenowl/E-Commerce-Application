@@ -24,4 +24,10 @@ open class BaseBottomSheetDialog : BottomSheetDialogFragment() {
             loadingDialog.dismiss()
         }
     }
+
+    companion object{
+        const val GRIDVIEW_SPAN_COUNT = 3
+        const val WARNING_SELECT_SIZE = "Please select size"
+        const val WARNING_SELECT_COLOR = "Please select color"
+    }
 }
