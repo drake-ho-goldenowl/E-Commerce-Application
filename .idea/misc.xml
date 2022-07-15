@@ -22,6 +22,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_custom4.xml" value="0.1695" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_custom5.xml" value="0.148" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_custom6.xml" value="0.1655" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_custom7.xml" value="0.183" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_favorite_active.xml" value="0.1695" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_favorite_no_active.xml" value="0.17" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/drawable/btn_minus.xml" value="0.173" />
@@ -133,6 +134,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_auth.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_login.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_no_internet.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_setting.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_splash.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/activity_tutorial.xml" value="0.25" />
@@ -143,7 +145,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_change_password.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_filter.xml" value="0.2682291666666667" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_promotion.xml" value="0.26927083333333335" />
-        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_select_country.xml" value="0.2188365650969529" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_select_country.xml" value="0.375" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_select_size.xml" value="0.296398891966759" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/bottom_layout_sort.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/custom_bar_code.xml" value="0.2682291666666667" />
@@ -170,6 +172,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_home.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_intro_page.xml" value="0.45" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_login.xml" value="0.25" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_no_internet.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_order_detail.xml" value="0.1907514450867052" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_orders.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_payment_method.xml" value="0.26927083333333335" />
@@ -214,6 +217,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_product_order.xml" value="0.625" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_promotion.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_review.xml" value="0.12395833333333334" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_select_color.xml" value="0.6040609137055838" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_size.xml" value="0.759493670886076" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_spinner.xml" value="0.2682291666666667" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_view_pager_home.xml" value="0.26927083333333335" />
