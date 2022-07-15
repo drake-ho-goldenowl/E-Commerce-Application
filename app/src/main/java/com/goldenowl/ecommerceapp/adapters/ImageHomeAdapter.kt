@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.goldenowl.ecommerceapp.ui.Home.ViewPageImageHome
 
-class ImageHomeAdapter(fragment: Fragment, listImage: List<Int>, title: List<String>) :
+class ImageHomeAdapter(fragment: Fragment, listImage: List<String>, title: List<String>) :
     FragmentStateAdapter(fragment) {
     private val listImageNew = listOf(listImage.last()) + listImage + listOf(listImage.first())
 

@@ -7,7 +7,8 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
 
-class NetworkHelper {
+
+internal object NetworkHelper{
     fun isNetworkAvailable(context: Context): Boolean {
         var result = false
         (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).apply {

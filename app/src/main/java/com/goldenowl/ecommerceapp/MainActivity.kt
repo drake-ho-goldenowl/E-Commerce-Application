@@ -1,5 +1,9 @@
 package com.goldenowl.ecommerceapp
 
+import android.content.BroadcastReceiver
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -9,19 +13,18 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 import com.goldenowl.ecommerceapp.databinding.ActivityMainBinding
-import com.google.firebase.FirebaseApp
+import com.goldenowl.ecommerceapp.utilities.NetworkChangeReceiver
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    private val br: BroadcastReceiver = NetworkChangeReceiver()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        FirebaseApp.initializeApp(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        FirebaseApp.initializeApp(this)
 
         val host: NavHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment? ?: return
@@ -29,10 +32,16 @@ class MainActivity : AppCompatActivity() {
         val navController = host.navController
 
         setupBottomNavMenu(navController)
-
-
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).apply {
+            addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+        }
+        registerReceiver(br, filter)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(br)
+    }
     private fun setupBottomNavMenu(navController: NavController) {
         binding.bottomNavigation.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->

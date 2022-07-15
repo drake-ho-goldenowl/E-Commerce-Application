@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "901780403692-mo41qe33us8p9rop19i0us18r53jirnm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goldenowl.ecommerceapp",
+            "certificate_hash": "3b859c6d2a631894170415d3c68e58fd37bc8d03"
+          }
+        },
+        {
           "client_id": "901780403692-v39fpjhl0hj5rpur16nadpeemee34psf.apps.googleusercontent.com",
           "client_type": 3
         }

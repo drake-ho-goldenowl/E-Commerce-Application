@@ -1,5 +1,6 @@
 package com.goldenowl.ecommerceapp.ui.Auth
 
+import android.os.CountDownTimer
 import android.util.Patterns
 import androidx.lifecycle.MutableLiveData
 import com.facebook.AccessToken
@@ -12,6 +13,7 @@ import com.goldenowl.ecommerceapp.data.User
 import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.ui.OnSignInStartedListener
+import com.goldenowl.ecommerceapp.utilities.BLOCK_DEVICE
 import com.goldenowl.ecommerceapp.utilities.Hash
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -21,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -39,11 +42,76 @@ class AuthViewModel @Inject constructor(
     val validEmailLiveData: MutableLiveData<String> = MutableLiveData()
     val validPasswordLiveData: MutableLiveData<String> = MutableLiveData()
     val callbackManager: CallbackManager = CallbackManager.Factory.create()
+    var remain = 3
+    private val tokenDevice = MutableLiveData("")
+    val isBlock = MutableLiveData(false)
 
     init {
         if (firebaseAuth.currentUser != null) {
             userLiveData.postValue(firebaseAuth.currentUser)
         }
+    }
+
+    fun initLogin() {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            tokenDevice.postValue(it)
+            getTimeBlock(it)
+        }
+    }
+
+    private fun getTimeBlock(token: String) {
+        db.collection(BLOCK_DEVICE)
+            .document(token)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists() && document.data != null) {
+                    val time = document.get(TIME) as Long - Date().time
+                    if (time < 0) {
+                        resetBlock()
+                    } else {
+                        toastMessage.postValue(
+                            "$WARNING_BLOCK ${time % 60000 / 1000} second"
+                        )
+                        blockLogin(time)
+                    }
+                } else {
+                    resetBlock()
+                }
+            }
+    }
+
+    private fun setTimeBlock() {
+        if (!tokenDevice.value.isNullOrBlank()) {
+            db.collection(BLOCK_DEVICE)
+                .document(tokenDevice.value ?: "")
+                .set(hashMapOf(TIME to (Date().time + TIME_BLOCK)))
+        }
+    }
+
+    private fun deleteTimeBlock() {
+        if (!tokenDevice.value.isNullOrBlank()) {
+            db.collection(BLOCK_DEVICE)
+                .document(tokenDevice.value ?: "")
+                .delete()
+        }
+    }
+
+    fun resetBlock() {
+        isBlock.postValue(false)
+        remain = 3
+        deleteTimeBlock()
+    }
+
+    private fun blockLogin(time: Long = TIME_BLOCK.toLong()) {
+        object : CountDownTimer(time, COUNT_DOWN.toLong()) {
+            override fun onTick(millisUntilFinished: Long) {
+                isBlock.postValue(true)
+            }
+
+            override fun onFinish() {
+                resetBlock()
+            }
+        }.start()
     }
 
     fun signUp(name: String, email: String, password: String) {
@@ -73,7 +141,7 @@ class AuthViewModel @Inject constructor(
                         toastMessage.postValue(REGISTRATION_SUCCESS)
                     }
                 } else {
-                    toastMessage.postValue(REGISTRATION_FAIL)
+                    checkFail(task.exception?.message.toString())
                 }
                 isLoading.postValue(false)
             }
@@ -109,7 +177,7 @@ class AuthViewModel @Inject constructor(
                         actionLoginOrCreateFirebase(user, password)
                     }
                 } else {
-                    toastMessage.postValue("Login Failure: " + task.exception)
+                    checkFail(task.exception?.message.toString())
                 }
                 isLoading.postValue(false)
             }
@@ -138,7 +206,7 @@ class AuthViewModel @Inject constructor(
                 isLoading.postValue(false)
                 toastMessage.postValue(LOGIN_SUCCESS)
             } else {
-                toastMessage.postValue(LOGIN_FAIL)
+                checkFail(task.exception?.message.toString())
                 isLoading.postValue(false)
             }
         }
@@ -165,7 +233,7 @@ class AuthViewModel @Inject constructor(
                     actionLoginOrCreateFirebase(user, null)
                 }
             } else {
-                toastMessage.postValue(LOGIN_FAIL)
+                checkFail(it.exception?.message.toString())
                 isLoading.postValue(false)
             }
         }
@@ -200,7 +268,7 @@ class AuthViewModel @Inject constructor(
                         actionLoginOrCreateFirebase(user, null)
                     }
                 } else {
-                    toastMessage.postValue(LOGIN_FAIL)
+                    checkFail(task.exception?.message.toString())
                     isLoading.postValue(false)
                 }
             }
@@ -259,13 +327,30 @@ class AuthViewModel @Inject constructor(
         } else if (!passwordText.matches(".*[a-z].*".toRegex())) {
             validPasswordLiveData.postValue("Must Contain 1 Lower-case Character")
             return false
-        }
-//        if (!passwordText.matches(".*[@#\$%^&+=].*".toRegex())) {
-//            return "Must Contain 1 Special Character (@#\$%^&+=)"
-//        }
-        else {
+        } else {
             validPasswordLiveData.postValue("")
             return true
+        }
+    }
+
+    private fun checkFail(string: String) {
+        remain -= 1
+        if (remain == 0) {
+            setTimeBlock()
+            blockLogin()
+        }
+        if (string.contains(KEY_NO_USER)) {
+            toastMessage.postValue(WARNING_NO_USER)
+        } else if (string.contains(KEY_INVALID_USER)) {
+            toastMessage.postValue(WARNING_INVALID_USER)
+        } else if (string.contains(KEY_BLOCK)) {
+            setTimeBlock()
+            blockLogin()
+            toastMessage.postValue("$WARNING_BLOCK ${TIME_BLOCK / 1000} second")
+        } else if (string.contains(KEY_ALREADY_EMAIL)) {
+            toastMessage.postValue(WARNING_ALREADY_EMAIL)
+        } else {
+            toastMessage.postValue("Login Failure: $string")
         }
     }
 
@@ -280,13 +365,22 @@ class AuthViewModel @Inject constructor(
     }
 
     companion object {
+        const val KEY_NO_USER = "user may have been deleted"
+        const val WARNING_NO_USER = "Email does not exist"
+        const val KEY_INVALID_USER = "password is invalid"
+        const val WARNING_INVALID_USER = "Wrong password"
+        const val KEY_BLOCK = "due to many failed login attempts"
+        const val WARNING_BLOCK = "The device was blocked login about"
+        const val KEY_ALREADY_EMAIL = "The email address is already"
+        const val WARNING_ALREADY_EMAIL = "The email address is already"
         const val LOGIN_SUCCESS = "Login Success"
-        const val LOGIN_FAIL = "Login Fail"
         const val REGISTRATION_SUCCESS = "Registration Success"
-        const val REGISTRATION_FAIL = "Registration Fail"
         const val EMAIL = "email"
         const val PUBLIC_PROFILE = "public_profile"
         const val USER_FRIEND = "user_friends"
         const val TAG = "Authentication"
+        const val TIME_BLOCK = 30000
+        const val COUNT_DOWN = 1000
+        const val TIME = "time"
     }
 }

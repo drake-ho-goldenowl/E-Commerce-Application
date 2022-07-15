@@ -28,13 +28,17 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HomeFragment : BaseFragment() {
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var adapter: ListHomeAdapter
     private val viewModel: HomeViewModel by viewModels()
+    private var category: List<String> = emptyList()
+    private var product: MutableMap<String, List<Product>> = mutableMapOf()
+    private val handlerFragment = Handler()
     private val listImage = listOf(
-        R.drawable.img_home,
-        R.drawable.img_home_1,
-        R.drawable.img_home_2,
-        R.drawable.img_home_3,
-        R.drawable.img_home_4
+        "https://firebasestorage.googleapis.com/v0/b/e-commerce-application-ceb40.appspot.com/o/home%2Fimg_home.png?alt=media&token=7df7534e-5969-4349-a50f-b21d7f32803e",
+        "https://firebasestorage.googleapis.com/v0/b/e-commerce-application-ceb40.appspot.com/o/home%2Fimg_home_1.png?alt=media&token=dc010e6e-21da-42b3-a348-8084efd3207c",
+        "https://firebasestorage.googleapis.com/v0/b/e-commerce-application-ceb40.appspot.com/o/home%2Fimg_home_2.png?alt=media&token=2d73d133-8c15-4ccb-8fdd-9f242d6447b1",
+        "https://firebasestorage.googleapis.com/v0/b/e-commerce-application-ceb40.appspot.com/o/home%2Fimg_home_3.png?alt=media&token=257fbeb4-20da-4a70-a587-c515e4aaec0c",
+        "https://firebasestorage.googleapis.com/v0/b/e-commerce-application-ceb40.appspot.com/o/home%2Fimg_home_4.png?alt=media&token=8f1ad2d8-8a7f-4237-99a8-3984269881ec",
     )
     private val listTitle = listOf(
         "Summer clothes",
@@ -43,10 +47,6 @@ class HomeFragment : BaseFragment() {
         "Sport clothes",
         "Inform clothes"
     )
-    private lateinit var adapter: ListHomeAdapter
-    private var category: List<String> = emptyList()
-    private var product: MutableMap<String, List<Product>> = mutableMapOf()
-    private val handlerFragment = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,53 +119,56 @@ class HomeFragment : BaseFragment() {
             nestedScrollView.viewTreeObserver?.addOnScrollChangedListener {
                 nestedScrollView.apply {
                     val view = getChildAt(0)
-                    val diff = view.bottom - (height + scrollY)
-                    if (diff <= 0) {
-                        if (viewModel.loadMore.value == true) {
-                            viewModel.isLoading.postValue(true)
-                            viewModel.loadMore.postValue(false)
-                            if (product.size < category.size + 2) {
-                                viewModel.apply {
-                                    if (product.isEmpty()) {
-                                        getSaleProduct().observe(viewLifecycleOwner) {
-                                            if (it.isNotEmpty()) {
-                                                product[SALE] = it
-                                                adapter.submitList(product.keys.toList())
-                                                viewModel.isLoading.postValue(false)
-                                                viewModel.loadMore.postValue(true)
-                                            }
-                                        }
-                                    } else if (product.size == 1 && checkSale.value == false) {
-                                        getNewProduct().observe(viewLifecycleOwner) { list ->
-                                            if (list.isNotEmpty()) {
-                                                product[NEW] = list
-                                                adapter.submitList(product.keys.toList())
-                                                viewModel.isLoading.postValue(false)
-                                                viewModel.loadMore.postValue(true)
-                                            }
-                                        }
-                                    } else {
-                                        val index = product.size - 2
-                                        getProductWithCategory(this@HomeFragment.category[index])
-                                            .observe(viewLifecycleOwner) {
+                    if (view != null) {
+                        val diff = view.bottom - (height + scrollY)
+                        if (diff <= 0) {
+                            if (viewModel.loadMore.value == true) {
+                                viewModel.isLoading.postValue(true)
+                                viewModel.loadMore.postValue(false)
+                                if (product.size < category.size + 2) {
+                                    viewModel.apply {
+                                        if (product.isEmpty()) {
+                                            getSaleProduct().observe(viewLifecycleOwner) {
                                                 if (it.isNotEmpty()) {
-                                                    product[this@HomeFragment.category[index]] =
-                                                        it
+                                                    product[SALE] = it
                                                     adapter.submitList(product.keys.toList())
                                                     viewModel.isLoading.postValue(false)
                                                     viewModel.loadMore.postValue(true)
                                                 }
                                             }
+                                        } else if (product.size == 1 && checkSale.value == false) {
+                                            getNewProduct().observe(viewLifecycleOwner) { list ->
+                                                if (list.isNotEmpty()) {
+                                                    product[NEW] = list
+                                                    adapter.submitList(product.keys.toList())
+                                                    viewModel.isLoading.postValue(false)
+                                                    viewModel.loadMore.postValue(true)
+                                                }
+                                            }
+                                        } else {
+                                            val index = product.size - 2
+                                            if (index >= 0) {
+                                                getProductWithCategory(this@HomeFragment.category[index])
+                                                    .observe(viewLifecycleOwner) {
+                                                        if (it.isNotEmpty()) {
+                                                            product[this@HomeFragment.category[index]] =
+                                                                it
+                                                            adapter.submitList(product.keys.toList())
+                                                            viewModel.isLoading.postValue(false)
+                                                            viewModel.loadMore.postValue(true)
+                                                        }
+                                                    }
+                                            }
+                                        }
                                     }
+                                } else {
+                                    viewModel.isLoading.postValue(false)
+                                    viewModel.loadMore.postValue(false)
                                 }
-                            } else {
-                                viewModel.isLoading.postValue(false)
-                                viewModel.loadMore.postValue(false)
                             }
                         }
                     }
                 }
-
             }
         }
     }
@@ -195,15 +198,13 @@ class HomeFragment : BaseFragment() {
             recyclerListHome.layoutManager = LinearLayoutManager(context)
             adapter.submitList(product.keys.toList())
             setupScroll()
-            if (viewModel.isLoading.value == false){
+            if (viewModel.isLoading.value == false) {
                 viewModel.isLoading.postValue(false)
             }
             //set viewPager
             viewPagerHome.apply {
-                val adapterImage: ImageHomeAdapter
-                val networkHelper = NetworkHelper()
-                if (networkHelper.isNetworkAvailable(requireContext())) {
-                    adapterImage =
+                if (NetworkHelper.isNetworkAvailable(requireContext())) {
+                    val adapterImage =
                         ImageHomeAdapter(this@HomeFragment, listImage, listTitle)
                     adapter = adapterImage
                     setCurrentItem(1, false)
@@ -218,6 +219,12 @@ class HomeFragment : BaseFragment() {
                             }
                         }
                     })
+                } else {
+                    val adapterImage = ImageHomeAdapter(
+                        this@HomeFragment, listOf(listImage[0]),
+                        listOf(listTitle[0])
+                    )
+                    adapter = adapterImage
                 }
 
                 autoScroll()
