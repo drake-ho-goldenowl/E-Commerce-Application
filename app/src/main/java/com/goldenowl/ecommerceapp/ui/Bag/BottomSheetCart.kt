@@ -85,7 +85,7 @@ class BottomSheetCart(
             recyclerViewColor.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
             recyclerViewColor.adapter = adapterColor
 
-            btnAddToCart.text = getString(R.string.add_to_cart)
+            btnAddToCart.text = getString(R.string.add_to_cart).uppercase()
             btnAddToCart.setOnClickListener {
                 if (selectSize.isNullOrBlank()) {
                     viewModel.toastMessage.postValue(WARNING_SELECT_SIZE)
