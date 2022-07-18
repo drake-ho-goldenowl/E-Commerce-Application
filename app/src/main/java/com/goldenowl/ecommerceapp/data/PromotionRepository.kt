@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.utilities.PROMOTION_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,7 +19,12 @@ class PromotionRepository @Inject constructor(
         db.collection(PROMOTION_FIREBASE).get().addOnSuccessListener { documents ->
             val list = mutableListOf<Promotion>()
             for (document in documents) {
-                list.add(document.toObject())
+                val promotion = document.toObject<Promotion>()
+                promotion.endDate?.let {
+                    if (it.time - Date().time > 0) {
+                        list.add(document.toObject())
+                    }
+                }
             }
             promotions.postValue(list)
         }
