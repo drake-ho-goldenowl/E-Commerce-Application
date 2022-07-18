@@ -32,6 +32,7 @@ class BagRepository @Inject constructor(
                 .get()
                 .addOnSuccessListener { documents ->
                     if (documents.size() == 0) {
+                        bags.postValue(emptyList())
                         bagAndProduct.postValue(mutableListOf())
                     } else {
                         val list = mutableListOf<BagAndProduct>()

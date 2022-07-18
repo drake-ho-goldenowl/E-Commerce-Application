@@ -168,6 +168,10 @@
     <string name="apply">Apply</string>
     <string name="helpful">Helpful</string>
     <string name="sample_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nisi nulla purus neque quisque dictum dui. Accumsan fames adipiscing.</string>
+    <string name="default_delivery">2-3 days</string>
+    <string name="notification">Notification</string>
+    <string name="order_success">Order Success</string>
+    <string name="update_password_success">Update password success</string>
     <array name="initial_slider_values">
         <item>20.0</item>
         <item>70.0</item>

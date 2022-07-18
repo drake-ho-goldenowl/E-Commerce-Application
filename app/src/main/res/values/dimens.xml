@@ -12,7 +12,7 @@
     <dimen name="size_logo">36dp</dimen>
     <dimen name="margin_bottom_title_tool_bar">8dp</dimen>
     <dimen name="margin_start_title_tool_bar">14dp</dimen>
-    <dimen name="height_toolbar_expand">140dp</dimen>
+    <dimen name="height_toolbar_expand">130dp</dimen>
     <dimen name="size_text_small">11sp</dimen>
     <dimen name="size_icon">24dp</dimen>
     <dimen name="below_distance">80dp</dimen>
@@ -39,4 +39,5 @@
     <dimen name="height_image_grid">184dp</dimen>
     <dimen name="width_image">104dp</dimen>
     <dimen name="height_image">104dp</dimen>
+    <dimen name="content_inset">48dp</dimen>
 </resources>

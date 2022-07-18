@@ -12,6 +12,7 @@ import com.goldenowl.ecommerceapp.adapters.ListDeliveryAdapter
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.databinding.FragmentCheckoutBinding
 import com.goldenowl.ecommerceapp.ui.BaseFragment
+import com.goldenowl.ecommerceapp.utilities.Notification
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
@@ -110,11 +111,8 @@ class CheckoutFragment : BaseFragment() {
                 toastMessage(it)
                 toastMessage.postValue("")
             }
-
-            success.observe(viewLifecycleOwner) {
-                if (it) {
-                    findNavController().navigate(R.id.successFragment)
-                }
+            isLoading.observe(viewLifecycleOwner){
+                setLoading(it)
             }
         }
     }
@@ -145,6 +143,18 @@ class CheckoutFragment : BaseFragment() {
 
             btnSubmitOrder.setOnClickListener {
                 viewModel.submitOrder(bags, address, card, summary, delivery, promotion)
+                    .observe(viewLifecycleOwner){
+                        if (it) {
+                            Notification(requireContext()).notify(
+                                getString(R.string.notification), getString(
+                                    R.string.order_success
+                                )
+                            )
+                            viewModel.removeAllBag()
+                            viewModel.isLoading.postValue(false)
+                            findNavController().navigate(R.id.successFragment)
+                        }
+                    }
             }
 
             txtChangeAddress.setOnClickListener {
