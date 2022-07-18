@@ -10,9 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-100dp">
+        android:fitsSystemWindows="true">
 
         <include
             android:id="@+id/appBarLayout"
@@ -31,15 +29,15 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/generalProfile"
                     android:layout_width="match_parent"
-                    android:layout_height="116dp"
+                    android:layout_height="@dimen/height_general_profile"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/imgAvatar"
-                        android:layout_width="76dp"
-                        android:layout_height="76dp"
+                        android:layout_width="@dimen/size_circle_image_profile_2"
+                        android:layout_height="@dimen/size_circle_image_profile_2"
                         android:layout_marginStart="14dp"
                         android:layout_marginTop="15dp"
                         android:src="@drawable/img_home"
@@ -54,8 +52,8 @@
                         android:layout_marginStart="5dp"
                         android:layout_marginBottom="34dp"
                         android:fontFamily="@font/metropolis_thin"
-                        android:text="Change your avatar"
-                        android:textSize="14sp"
+                        android:text="@string/change_your_avatar"
+                        android:textSize="@dimen/size_sub_title"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/imgAvatar" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -65,12 +63,11 @@
                     android:id="@+id/txtPersonInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="23dp"
-                    android:layout_marginEnd="17dp"
                     android:fontFamily="@font/metropolis_bold"
-                    android:text="Person Information"
-                    android:textSize="16sp"
+                    android:text="@string/person_information"
+                    android:textSize="@dimen/size_text"
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/generalProfile" />
@@ -79,9 +76,9 @@
                     android:id="@+id/txtLayout_FullName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="21dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:background="@drawable/edit_txt_custom"
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="0dp"
@@ -94,9 +91,9 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextFullName"
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
+                        android:layout_height="@dimen/height_edit_text"
                         android:background="@drawable/edit_txt_custom"
-                        android:hint="Full Name"
+                        android:hint="@string/full_name"
                         android:inputType="text"
                         android:maxLines="1" />
 
@@ -106,9 +103,9 @@
                     android:id="@+id/txtLayout_DOB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="24dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:background="@drawable/edit_txt_custom"
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="0dp"
@@ -121,12 +118,12 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextDateOfBirth"
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
+                        android:layout_height="@dimen/height_edit_text"
                         android:background="@drawable/edit_txt_custom"
                         android:clickable="true"
                         android:cursorVisible="false"
                         android:focusable="false"
-                        android:hint="Date of Birth"
+                        android:hint="@string/date_of_birth"
                         android:inputType="none"
                         android:maxLines="1"
                         tools:ignore="KeyboardInaccessibleWidget" />
@@ -137,12 +134,11 @@
                     android:id="@+id/txtPassword"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="55dp"
-                    android:layout_marginEnd="17dp"
                     android:fontFamily="@font/metropolis_bold"
-                    android:text="Password"
-                    android:textSize="16sp"
+                    android:text="@string/password"
+                    android:textSize="@dimen/size_text"
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtLayout_DOB" />
@@ -151,12 +147,11 @@
                     android:id="@+id/txtChange"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:layout_marginTop="55dp"
-                    android:layout_marginEnd="17dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:fontFamily="@font/metropolis_thin"
-                    android:text="Change"
-                    android:textSize="14sp"
+                    android:text="@string/change"
+                    android:textSize="@dimen/size_sub_title"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtLayout_DOB" />
 
@@ -164,9 +159,9 @@
                     android:id="@+id/txtLayout_Password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="21dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:background="@drawable/edit_txt_custom"
                     app:boxStrokeWidth="0dp"
                     app:boxStrokeWidthFocused="0dp"
@@ -179,15 +174,15 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/editTextPassword"
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
+                        android:layout_height="@dimen/height_edit_text"
                         android:background="@drawable/edit_txt_custom"
                         android:clickable="true"
                         android:cursorVisible="false"
                         android:focusable="false"
-                        android:hint="Password"
+                        android:hint="@string/password"
                         android:inputType="none"
                         android:maxLines="1"
-                        android:text="**********"
+                        android:text="@string/password_default"
                         tools:ignore="KeyboardInaccessibleWidget" />
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -197,12 +192,11 @@
                     android:id="@+id/txtNotification"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="55dp"
-                    android:layout_marginEnd="17dp"
                     android:fontFamily="@font/metropolis_bold"
-                    android:text="Notifications"
-                    android:textSize="16sp"
+                    android:text="@string/notifications"
+                    android:textSize="@dimen/size_text"
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtLayout_Password" />
@@ -211,23 +205,22 @@
                     android:id="@+id/txtSales"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="23dp"
-                    android:layout_marginEnd="17dp"
                     android:fontFamily="@font/metropolis_bold"
-                    android:text="Sales"
-                    android:textSize="14sp"
+                    android:text="@string/sales"
+                    android:textSize="@dimen/size_text"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtNotification" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
-                    android:layout_marginEnd="18dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:thumb="@drawable/switch_thumb"
+                    app:layout_constraintBottom_toBottomOf="@id/txtSales"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtNotification"
+                    app:layout_constraintTop_toTopOf="@id/txtSales"
                     app:track="@drawable/switch_track" />
 
 
@@ -235,23 +228,22 @@
                     android:id="@+id/txtNewArrivals"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="24dp"
-                    android:layout_marginEnd="17dp"
                     android:fontFamily="@font/metropolis_bold"
-                    android:text="New arrivals"
-                    android:textSize="14sp"
+                    android:text="@string/new_arrivals"
+                    android:textSize="@dimen/size_sub_title"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtSales" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
-                    android:layout_marginEnd="18dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:thumb="@drawable/switch_thumb"
+                    app:layout_constraintBottom_toBottomOf="@id/txtNewArrivals"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtSales"
+                    app:layout_constraintTop_toTopOf="@id/txtNewArrivals"
                     app:track="@drawable/switch_track" />
 
 
@@ -259,31 +251,23 @@
                     android:id="@+id/txtDelivery"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="24dp"
-                    android:layout_marginEnd="17dp"
                     android:fontFamily="@font/metropolis_bold"
-                    android:text="Delivery status changes"
-                    android:textSize="14sp"
+                    android:text="@string/delivery_status_changes"
+                    android:textSize="@dimen/size_sub_title"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txtNewArrivals" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="23dp"
-                    android:layout_marginEnd="18dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:thumb="@drawable/switch_thumb"
+                    app:layout_constraintBottom_toBottomOf="@id/txtDelivery"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txtNewArrivals"
+                    app:layout_constraintTop_toTopOf="@id/txtDelivery"
                     app:track="@drawable/switch_track" />
-
-                <FrameLayout
-                    android:id="@+id/standard_bottom_sheet"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 

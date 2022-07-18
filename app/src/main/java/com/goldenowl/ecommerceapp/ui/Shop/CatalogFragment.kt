@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
-import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdater
+import com.goldenowl.ecommerceapp.adapters.ListCategoriesAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductAdapter
 import com.goldenowl.ecommerceapp.adapters.ListProductGridAdapter
 import com.goldenowl.ecommerceapp.data.Product
@@ -28,7 +28,7 @@ class CatalogFragment : BaseFragment() {
     private lateinit var binding: FragmentCatalogBinding
     private lateinit var adapterProduct: ListProductAdapter
     private lateinit var adapterProductGrid: ListProductGridAdapter
-    private lateinit var adapterCategory: ListCategoriesAdater
+    private lateinit var adapterCategory: ListCategoriesAdapter
     private var isLinearLayoutManager = true
     private var filterPrice = emptyList<Float>()
     private var listProduct: List<Product> = emptyList()
@@ -44,7 +44,7 @@ class CatalogFragment : BaseFragment() {
             }
             viewModel.isLoading.postValue(true)
         }
-        viewModel.setSort(0)
+        viewModel.setSort(DEFAULT_SORT)
         viewModel.lastVisible = ""
         if (nameTitle.isNullOrBlank()) {
             viewModel.setCategory("")
@@ -56,6 +56,7 @@ class CatalogFragment : BaseFragment() {
                 viewModel.setCategory(nameTitle.toString())
             }
         }
+        adapterSetup()
 
     }
 
@@ -65,7 +66,6 @@ class CatalogFragment : BaseFragment() {
     ): View {
         binding = FragmentCatalogBinding.inflate(inflater, container, false)
         observeSetup()
-        adapterSetup()
         bind()
         setFragmentListener()
         return binding.root
@@ -97,7 +97,7 @@ class CatalogFragment : BaseFragment() {
             viewModel.setButtonFavorite(requireContext(), view, product.id)
         })
 
-        adapterCategory = ListCategoriesAdater { str ->
+        adapterCategory = ListCategoriesAdapter { str ->
             if (binding.appBarLayout.topAppBar.title == str) {
                 val action = CatalogFragmentDirections.actionCatalogFragmentSelf(
                     nameCategories = "",
@@ -122,7 +122,7 @@ class CatalogFragment : BaseFragment() {
             }
 
             products.observe(viewLifecycleOwner) {
-                if(it.isNotEmpty()){
+                if (it.isNotEmpty()) {
                     listProduct = it
                     isLoading.postValue(false)
                     submitList(it)
@@ -136,10 +136,13 @@ class CatalogFragment : BaseFragment() {
                 }
             }
             statusSort.observe(viewLifecycleOwner) {
-                if(listProduct.isNotEmpty()){
+                if (listProduct.isNotEmpty() && it >= 0) {
                     val list = filterSort(listProduct)
-                    submitList(list)
-                    binding.nestedScrollView.scrollTo(0,0)
+                    listProduct = list
+                    submitList(listProduct)
+                    binding.nestedScrollView.scrollTo(0, 0)
+                } else {
+                    binding.appBarLayout.btnSort.text = getString(R.string.sort)
                 }
             }
         }
@@ -161,13 +164,12 @@ class CatalogFragment : BaseFragment() {
                 nestedScrollView.apply {
                     val view = getChildAt(0)
                     val diff = view.bottom - (height + scrollY)
-                    if(diff <= 0){
-                        viewModel.products.value?.let {
-                            if (viewModel.loadMore.value == true) {
-                                viewModel.loadMore(it)
-                            } else {
-                                viewModel.isLoading.postValue(false)
-                            }
+                    if (diff <= 0) {
+                        if (viewModel.loadMore.value == true) {
+                            viewModel.loadMore(listProduct)
+                            viewModel.setSort(DEFAULT_SORT)
+                        } else {
+                            viewModel.isLoading.postValue(false)
                         }
                     }
                 }
@@ -231,10 +233,12 @@ class CatalogFragment : BaseFragment() {
             }
         }
     }
-    private fun submitList(list: List<Product>){
+
+    private fun submitList(list: List<Product>) {
         adapterProduct.submitList(list)
         adapterProductGrid.submitList(list)
     }
+
     private fun setFragmentListener() {
         setFragmentResultListener(REQUEST_KEY) { _, bundle ->
             val result = bundle.getString(BUNDLE_KEY_NAME)
@@ -250,11 +254,11 @@ class CatalogFragment : BaseFragment() {
                 viewModel.apply {
                     submitList(filterPrice(min, max, listProduct))
                 }
-                binding.nestedScrollView.scrollTo(0,0)
+                binding.nestedScrollView.scrollTo(0, 0)
             } else {
                 filterPrice = emptyList()
                 submitList(listProduct)
-                binding.nestedScrollView.scrollTo(0,0)
+                binding.nestedScrollView.scrollTo(0, 0)
             }
             val isFavorite = bundle.getBoolean(BUNDLE_KEY_IS_FAVORITE, false)
             if (isFavorite) {
@@ -266,5 +270,14 @@ class CatalogFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.setSort(DEFAULT_SORT)
+    }
+
+    companion object {
+        const val DEFAULT_SORT = -1
     }
 }

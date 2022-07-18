@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -12,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="14dp"
+        android:contentDescription="@string/image"
         android:src="@drawable/rectangle" />
 
     <TextView
@@ -19,8 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:text="Sort by"
-        android:textSize="18sp"
+        android:text="@string/sort_by"
+        android:textSize="@dimen/size_title"
         android:textStyle="bold" />
 
     <TextView
@@ -28,39 +27,39 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
-        android:padding="16dp"
-        android:text="Popular"
-        android:textSize="16sp" />
+        android:padding="@dimen/margin_default"
+        android:text="@string/popular"
+        android:textSize="@dimen/size_text" />
 
     <TextView
         android:id="@+id/btnNewest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Newest"
-        android:textSize="16sp" />
+        android:padding="@dimen/margin_default"
+        android:text="@string/newest"
+        android:textSize="@dimen/size_text" />
 
     <TextView
         android:id="@+id/btnCustomerReview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Customer review"
-        android:textSize="16sp" />
+        android:padding="@dimen/margin_default"
+        android:text="@string/customer_review"
+        android:textSize="@dimen/size_text" />
 
     <TextView
         android:id="@+id/btnLowestToHigh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Price: lowest to high"
-        android:textSize="16sp" />
+        android:padding="@dimen/margin_default"
+        android:text="@string/price_lowest_to_high"
+        android:textSize="@dimen/size_text" />
 
     <TextView
         android:id="@+id/btnHighestToLow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Price: highest to low"
-        android:textSize="16sp" />
+        android:padding="@dimen/margin_default"
+        android:text="@string/price_highest_to_low"
+        android:textSize="@dimen/size_text" />
 </LinearLayout>

@@ -23,13 +23,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_splash" />
+                android:src="@drawable/ic_splash"
+                android:contentDescription="@string/image" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Success!"
-                android:textSize="34dp"
+                android:text="@string/success"
+                android:textSize="34sp"
                 android:textStyle="bold"
                 android:layout_marginTop="49dp"
                 android:layout_gravity="center" />
@@ -38,9 +39,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Your order will be delivered soon.\nThank you for choosing our app!"
+                android:text="@string/your_order_will_be_delivered_soon_thank_you_for_choosing_our_app"
                 android:layout_marginTop="12dp"
-                android:textSize="14sp" />
+                android:textSize="@dimen/size_sub_title" />
 
 
         </LinearLayout>
@@ -48,13 +49,13 @@
         <Button
             android:id="@+id/btnContinueShopping"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginStart="16dp"
+            android:layout_height="@dimen/height_button"
+            android:layout_marginStart="@dimen/margin_default"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="@dimen/margin_default"
             android:layout_marginBottom="48dp"
             android:background="@drawable/btn_custom"
-            android:text="Continue shopping"
+            android:text="@string/continue_shopping"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" />

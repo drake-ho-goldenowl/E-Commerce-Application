@@ -9,9 +9,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-100dp">
+        android:fitsSystemWindows="true">
 
         <include
             android:id="@+id/appBarLayout"
@@ -30,7 +28,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/profileNoLoginLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="116dp"
+                    android:layout_height="@dimen/height_general_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -50,11 +48,10 @@
                         android:id="@+id/txtName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="17dp"
-
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="14dp"
-                        android:text="Hello"
-                        android:textSize="18sp"
+                        android:text="@string/hello"
+                        android:textSize="@dimen/size_title"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toRightOf="@+id/imgAvatar"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -63,9 +60,9 @@
                         android:id="@+id/txtEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="17dp"
-                        android:text="Sign in to shop more easily\nand enjoy many promotions"
-                        android:textSize="14sp"
+                        android:layout_marginStart="@dimen/margin_default"
+                        android:text="@string/sign_in_to_shop_more_easily_and_enjoy_many_promotions"
+                        android:textSize="@dimen/size_sub_title"
                         app:layout_constraintLeft_toRightOf="@+id/imgAvatar"
                         app:layout_constraintTop_toBottomOf="@+id/txtName" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -73,7 +70,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/policyLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -83,10 +80,10 @@
                         android:id="@+id/txtTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="Policy"
-                        android:textSize="16sp"
+                        android:text="@string/policy"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -95,10 +92,10 @@
                         android:id="@+id/txtSubTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
-                        android:text="Policy &amp; Term of service"
-                        android:textSize="11sp"
+                        android:text="@string/policy_term_of_service"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
@@ -106,6 +103,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"

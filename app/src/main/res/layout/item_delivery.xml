@@ -20,19 +20,15 @@
             android:id="@+id/imgLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_fedex" />
-
+            android:contentDescription="@string/image" />
 
         <TextView
             android:id="@+id/txtDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
-            android:text="2-3 days"
             android:textColor="@color/grey3"
             android:textSize="11sp" />
-
-
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

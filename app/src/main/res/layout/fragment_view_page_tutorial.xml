@@ -48,7 +48,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/guideline3"
-            app:tabBackground="@drawable/tab_dot_select"
+            app:tabBackground="@drawable/selector_tap_dot"
             app:tabIndicatorHeight="0dp"
             app:tabRippleColor="@null" />
 
@@ -59,7 +59,7 @@
             android:background="@drawable/btn_custom"
             android:paddingStart="50dp"
             android:paddingEnd="50dp"
-            android:text="Get Start"
+            android:text="@string/get_start"
             app:layout_constraintBottom_toTopOf="@id/guideline2"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_custom2"
-            android:text="Skip"
+            android:text="@string/skip"
             android:textColor="@color/black"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="@+id/guideline"
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/btn_custom"
-            android:text="Next"
+            android:text="@string/next"
             app:layout_constraintLeft_toLeftOf="@id/guideline"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@id/guideline2" />

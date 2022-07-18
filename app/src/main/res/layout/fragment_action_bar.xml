@@ -2,7 +2,7 @@
 <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="140dp"
+    android:layout_height="@dimen/height_toolbar_expand"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -10,13 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorOnPrimary"
-        android:fitsSystemWindows="true"
         app:collapsedTitleGravity="center_horizontal"
         app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
         app:collapsedTitleTextColor="@color/black"
         app:contentScrim="@color/colorOnPrimary"
-        app:expandedTitleMarginBottom="5dp"
-        app:expandedTitleMarginStart="14dp"
+        app:expandedTitleMarginBottom="@dimen/margin_bottom_title_tool_bar"
+        app:expandedTitleMarginStart="@dimen/margin_start_title_tool_bar"
         app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
         app:expandedTitleTextColor="@color/black"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -27,7 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_collapseMode="pin"
-            app:title="TEST"
             app:titleCentered="true" />
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
