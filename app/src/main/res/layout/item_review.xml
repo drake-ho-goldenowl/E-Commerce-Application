@@ -12,7 +12,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="12dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="@dimen/radius_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="24dp"
-                android:textSize="16sp"
+                android:textSize="@dimen/size_text"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,12 +38,11 @@
                 android:id="@+id/ratingBar"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="14dp"
+                android:layout_height="@dimen/height_rating_small"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
                 android:numStars="5"
                 android:progressTint="@color/yellow"
-                android:rating="5"
                 android:secondaryProgressTint="@color/transparent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtName" />
@@ -53,9 +52,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="18dp"
-                android:text="August 13, 2019"
                 android:textColor="@color/grey3"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintBottom_toBottomOf="@id/ratingBar"
                 app:layout_constraintRight_toRightOf="parent" />
 
@@ -67,8 +65,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="20dp"
                 android:paddingBottom="10dp"
-                android:text="The dress is great! Very classy and comfortable. It fit perfectly! I'm 5'7 and 130 pounds. I am a 34B chest. This dress would be too long for those who are shorter but could be hemmed. I wouldn't recommend it for those big chested as I am smaller chested and it fit me perfectly. The underarms were not too wide and the dress was made well."
-                android:textSize="14dp"
+                android:textSize="@dimen/size_sub_title"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ratingBar" />
@@ -98,15 +95,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="Helpful"
+                    android:text="@string/helpful"
                     android:textColor="@color/grey3"
-                    android:textSize="11sp" />
+                    android:textSize="@dimen/size_sub_title" />
 
                 <ImageView
                     android:id="@+id/ic_like"
-                    android:padding="9dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@string/button"
+                    android:padding="9dp"
                     android:src="@drawable/ic_like" />
 
             </LinearLayout>

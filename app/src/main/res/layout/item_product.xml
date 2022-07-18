@@ -14,7 +14,7 @@
         android:id="@+id/cardViewImgProduct"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="@dimen/radius_default"
         app:cardElevation="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -26,8 +26,9 @@
 
             <ImageView
                 android:id="@+id/imgProduct"
-                android:layout_width="162dp"
-                android:layout_height="184dp"
+                android:layout_width="@dimen/width_image_grid"
+                android:layout_height="@dimen/height_image_grid"
+                android:contentDescription="@string/image"
                 android:scaleType="centerCrop"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -41,9 +42,8 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/btn_custom"
                 android:gravity="center"
-                android:text="-15%"
                 android:textColor="@color/white"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,11 +56,10 @@
         android:id="@+id/ratingBar"
         style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
-        android:layout_height="14dp"
+        android:layout_height="@dimen/height_rating_small"
         android:layout_marginTop="8dp"
         android:numStars="5"
         android:progressTint="@color/yellow"
-        android:rating="5"
         android:secondaryProgressTint="@color/transparent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardViewImgProduct" />
@@ -71,9 +70,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2.5dp"
         android:gravity="center"
-        android:text="(10)"
         android:textColor="@color/grey3"
-        android:textSize="11sp"
+        android:textSize="@dimen/size_text_small"
         app:layout_constraintBottom_toBottomOf="@+id/ratingBar"
         app:layout_constraintLeft_toRightOf="@id/ratingBar" />
 
@@ -82,9 +80,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="7dp"
-        android:text="Sitlly"
         android:textColor="@color/grey3"
-        android:textSize="11sp"
+        android:textSize="@dimen/size_text_small"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ratingBar" />
 
@@ -93,8 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Sport Dress"
-        android:textSize="16sp"
+        android:textSize="@dimen/size_text"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
@@ -104,9 +100,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        android:text="15$"
         android:textColor="@color/grey3"
-        android:textSize="14sp"
+        android:textSize="@dimen/size_sub_title"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txtName" />
 
@@ -116,19 +111,19 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="3dp"
-        android:text="12$"
         android:textColor="@color/colorPrimary"
-        android:textSize="14sp"
+        android:textSize="@dimen/size_sub_title"
         app:layout_constraintLeft_toRightOf="@id/txtPrice"
         app:layout_constraintTop_toBottomOf="@id/txtName" />
 
     <ImageView
         android:id="@+id/btnFavorite"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/size_logo"
+        android:layout_height="@dimen/size_logo"
         android:layout_marginTop="-20dp"
         android:background="@drawable/btn_favorite_no_active"
         android:button="@null"
+        android:contentDescription="@string/button"
         android:elevation="4dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardViewImgProduct" />

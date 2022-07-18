@@ -9,9 +9,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-100dp">
+        android:fitsSystemWindows="true">
 
         <include
             android:id="@+id/appBarLayout"
@@ -30,14 +28,14 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/generalProfile"
                     android:layout_width="match_parent"
-                    android:layout_height="116dp"
+                    android:layout_height="@dimen/height_general_profile"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/imgAvatar"
-                        android:layout_width="64dp"
+                        android:layout_width="@dimen/size_circle_image_profile"
                         android:layout_height="64dp"
                         android:layout_marginStart="14dp"
                         android:layout_marginTop="15dp"
@@ -49,11 +47,9 @@
                         android:id="@+id/txtName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="17dp"
-
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="14dp"
-                        android:text="Matilda Brown"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/size_title"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toRightOf="@+id/imgAvatar"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -62,9 +58,8 @@
                         android:id="@+id/txtEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="17dp"
-                        android:text="matildabrown@mail.com"
-                        android:textSize="14sp"
+                        android:layout_marginStart="@dimen/margin_default"
+                        android:textSize="@dimen/size_sub_title"
                         app:layout_constraintLeft_toRightOf="@+id/imgAvatar"
                         app:layout_constraintTop_toBottomOf="@+id/txtName" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -72,7 +67,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/myOrderLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -82,10 +77,10 @@
                         android:id="@+id/txtTitleOrder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="My Orders"
-                        android:textSize="16sp"
+                        android:text="@string/my_orders"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -94,10 +89,9 @@
                         android:id="@+id/txtSubTitleOrder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
-                        android:text="Already have 12 orders"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitleOrder" />
 
@@ -105,6 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -116,7 +111,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/shippingLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -126,10 +121,10 @@
                         android:id="@+id/txtTitleShipping"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="Shipping addresses"
-                        android:textSize="16sp"
+                        android:text="@string/shipping_addresses"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -138,10 +133,9 @@
                         android:id="@+id/txtSubTitleShipping"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
-                        android:text="3 ddresses"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitleShipping" />
 
@@ -149,6 +143,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -160,7 +155,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/paymentLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -170,10 +165,10 @@
                         android:id="@+id/txtTitlePayment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="Payment methods"
-                        android:textSize="16sp"
+                        android:text="@string/payment_methods"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -182,9 +177,9 @@
                         android:id="@+id/txtSubTitlePayment"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitlePayment" />
 
@@ -192,6 +187,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -203,7 +199,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/promocodesLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -213,10 +209,10 @@
                         android:id="@+id/txtTitlePromocodes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="Promocodes"
-                        android:textSize="16sp"
+                        android:text="@string/promocodes"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -225,10 +221,10 @@
                         android:id="@+id/txtSubTitlePromocodes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
-                        android:text="You have special promocodes"
-                        android:textSize="11sp"
+                        android:text="@string/you_have_special_promocodes"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitlePromocodes" />
 
@@ -236,6 +232,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -247,7 +244,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/myReviewLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -257,9 +254,9 @@
                         android:id="@+id/txtTitleReview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="My reviews"
+                        android:text="@string/my_reviews"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -269,10 +266,10 @@
                         android:id="@+id/txtSubTitleReview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
                         android:text="Reviews for 4 items"
-                        android:textSize="11sp"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitleReview" />
 
@@ -280,6 +277,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -291,7 +289,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/settingLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -301,10 +299,10 @@
                         android:id="@+id/txtTitleSettings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="Settings"
-                        android:textSize="16sp"
+                        android:text="@string/settings"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -313,10 +311,10 @@
                         android:id="@+id/txtSubTitleSettings"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
-                        android:text="Notifications, password"
-                        android:textSize="11sp"
+                        android:text="@string/notifications_password"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitleSettings" />
 
@@ -324,6 +322,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -335,7 +334,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/policyLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="72dp"
+                    android:layout_height="@dimen/height_layout_button_profile"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -345,10 +344,10 @@
                         android:id="@+id/txtTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="18dp"
-                        android:text="Policy"
-                        android:textSize="16sp"
+                        android:text="@string/policy"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -357,10 +356,10 @@
                         android:id="@+id/txtSubTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="15dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="9dp"
-                        android:text="Policy &amp; Term of service"
-                        android:textSize="11sp"
+                        android:text="@string/policy_term_of_service"
+                        android:textSize="@dimen/size_text_small"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/txtTitle" />
 
@@ -368,6 +367,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
+                        android:contentDescription="@string/button"
                         android:src="@drawable/ic_arrow_right"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -379,13 +379,13 @@
                 <Button
                     android:id="@+id/btnLogout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_height="@dimen/height_button"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="34dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="80dp"
+                    android:layout_marginEnd="@dimen/margin_default"
+                    android:layout_marginBottom="@dimen/below_distance"
                     android:background="@drawable/btn_custom"
-                    android:text="Logout"
+                    android:text="@string/logout"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -395,6 +395,4 @@
         </androidx.core.widget.NestedScrollView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
 </FrameLayout>

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.goldenowl.ecommerceapp.data.Favorite
 import com.goldenowl.ecommerceapp.data.FavoriteAndProduct
 import com.goldenowl.ecommerceapp.data.Size
-import com.goldenowl.ecommerceapp.databinding.ItemProductFavorite2Binding
+import com.goldenowl.ecommerceapp.databinding.ItemProductFavoriteBinding
 import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListFavoriteAdapter(
@@ -25,7 +25,7 @@ class ListFavoriteAdapter(
         private val onCloseClicked: (FavoriteAndProduct) -> Unit,
         private val onBagClicked: (View, FavoriteAndProduct) -> Unit,
         private val setButtonBag: (View, Favorite) -> Unit,
-        private var binding: ItemProductFavorite2Binding
+        private var binding: ItemProductFavoriteBinding
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -96,7 +96,7 @@ class ListFavoriteAdapter(
             onCloseClicked,
             onBagClicked,
             setButtonBag,
-            ItemProductFavorite2Binding.inflate(
+            ItemProductFavoriteBinding.inflate(
                 LayoutInflater.from(
                     parent.context
                 ),

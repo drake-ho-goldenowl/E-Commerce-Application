@@ -10,7 +10,6 @@
         android:layout_height="match_parent"
         android:gravity="left|center_vertical"
         android:padding="12dp"
-        android:text="XL"
-        android:textSize="14sp"
+        android:textSize="@dimen/size_sub_title"
         android:textStyle="bold" />
 </LinearLayout>

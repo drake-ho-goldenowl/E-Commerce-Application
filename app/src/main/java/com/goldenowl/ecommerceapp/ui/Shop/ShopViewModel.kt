@@ -237,13 +237,15 @@ class ShopViewModel @Inject constructor(
             .get()
             .addOnSuccessListener { documents ->
                 val temp = mutableListOf<Product>()
-                if (documents.size() != 0) {
+                if (documents.size() > 0 && list.isNotEmpty()) {
                     loadMore.postValue(true)
                     temp.addAll(list)
                     for (document in documents) {
                         val product = document.toObject<Product>()
                         if (product.title.lowercase().contains(search.lowercase())) {
-                            temp.add(product)
+                            if(!temp.contains(product)){
+                                temp.add(product)
+                            }
                         }
                     }
                     lastVisible = temp[temp.size - 1].id

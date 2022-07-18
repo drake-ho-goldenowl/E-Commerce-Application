@@ -6,6 +6,4 @@
             <item android:drawable="@drawable/ic_baseline_keyboard_arrow_down" android:gravity="center_vertical|right" android:right="12dp" />
         </layer-list>
     </item>
-
-
 </selector>

@@ -35,10 +35,10 @@
                         android:id="@+id/txtShippingAddress"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="31dp"
-                        android:text="Shipping address"
-                        android:textSize="16sp"
+                        android:text="@string/shipping_address"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -47,11 +47,11 @@
                         android:id="@+id/layoutShippingAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="21dp"
-                        android:layout_marginEnd="16dp"
-                        app:cardCornerRadius="8dp"
-                        app:cardElevation="25dp"
+                        android:layout_marginEnd="@dimen/margin_default"
+                        app:cardCornerRadius="@dimen/radius_default"
+                        app:cardElevation="@dimen/elevation_default"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/txtShippingAddress">
 
@@ -65,8 +65,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="28dp"
                                 android:layout_marginTop="18dp"
-                                android:text="Jane Doe"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/size_sub_title"
                                 android:textStyle="bold"
                                 app:layout_constraintLeft_toLeftOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -78,8 +77,7 @@
                                 android:layout_marginStart="28dp"
                                 android:layout_marginTop="7dp"
                                 android:lineSpacingExtra="5dp"
-                                android:text="3 Newbridge Court\nChino Hills, CA 91709, United States"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/size_sub_title"
                                 app:layout_constraintLeft_toLeftOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtName" />
 
@@ -89,9 +87,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="18dp"
                                 android:layout_marginEnd="23dp"
-                                android:text="Change"
+                                android:text="@string/change"
                                 android:textColor="@color/colorPrimary"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/size_text"
                                 app:layout_constraintRight_toRightOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -103,12 +101,12 @@
                         android:id="@+id/btnAddShippingAddress"
                         style="@style/buttonTheme"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="16dp"
+                        android:layout_height="@dimen/height_button"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="26dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="@dimen/margin_default"
                         android:layout_marginBottom="10dp"
-                        android:text="Please add shipping address"
+                        android:text="@string/please_add_shipping_address"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/txtShippingAddress" />
@@ -117,7 +115,7 @@
                         android:id="@+id/layoutPayment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="57dp"
                         android:layout_marginEnd="39dp"
                         android:orientation="horizontal"
@@ -128,8 +126,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Payment"
-                            android:textSize="16sp"
+                            android:text="@string/payment"
+                            android:textSize="@dimen/size_text"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintLeft_toLeftOf="parent"
@@ -140,9 +138,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="end"
-                            android:text="Change"
+                            android:text="@string/change"
                             android:textColor="@color/colorPrimary"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/size_sub_title"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -152,12 +150,12 @@
                         android:id="@+id/btnAddPayment"
                         style="@style/buttonTheme"
                         android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="16dp"
+                        android:layout_height="@dimen/height_button"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="26dp"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="@dimen/margin_default"
                         android:layout_marginBottom="10dp"
-                        android:text="Please add credit card"
+                        android:text="@string/please_add_credit_card"
                         android:visibility="gone"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/layoutPayment" />
@@ -168,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:orientation="horizontal"
-                        android:padding="16dp"
+                        android:padding="@dimen/margin_default"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/layoutPayment">
 
@@ -176,15 +174,16 @@
                             android:layout_width="64dp"
                             android:layout_height="38dp"
                             android:background="@color/colorOnPrimary"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="5dp">
+                            app:cardCornerRadius="@dimen/radius_default"
+                            app:cardElevation="@dimen/elevation_default">
 
                             <ImageView
                                 android:id="@+id/imgLogoCard"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_mastercard" />
+                                android:contentDescription="@string/image" />
+
                         </androidx.cardview.widget.CardView>
 
                         <TextView
@@ -192,9 +191,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginStart="17dp"
-                            android:text="**** **** **** 3947"
-                            android:textSize="14sp" />
+                            android:layout_marginStart="@dimen/margin_default"
+                            android:textSize="@dimen/size_sub_title" />
 
                     </LinearLayout>
 
@@ -202,10 +200,10 @@
                         android:id="@+id/txtDeliveryMethod"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="@dimen/margin_default"
                         android:layout_marginTop="35dp"
-                        android:text="Delivery method"
-                        android:textSize="16sp"
+                        android:text="@string/delivery_method"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/itemPayment" />
@@ -236,16 +234,16 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
+                    android:layout_marginTop="@dimen/margin_default"
                     android:layout_marginEnd="19dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Order:"
+                        android:text="@string/order"
                         android:textColor="@color/grey3"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/size_sub_title"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -254,8 +252,8 @@
                         android:id="@+id/txtOrderPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="112$"
-                        android:textSize="16sp"
+                        android:text="@string/_0"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -267,16 +265,16 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="14dp"
                     android:layout_marginEnd="19dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Delivery:"
+                        android:text="@string/delivery"
                         android:textColor="@color/grey3"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/size_sub_title"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -285,8 +283,8 @@
                         android:id="@+id/txtDeliveryPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="15$"
-                        android:textSize="16sp"
+                        android:text="@string/_0"
+                        android:textSize="@dimen/size_text"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
@@ -298,14 +296,14 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="17dp"
                     android:layout_marginEnd="19dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Summary:"
+                        android:text="@string/summary"
                         android:textColor="@color/grey3"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -316,7 +314,7 @@
                         android:id="@+id/txtPriceTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="127$"
+                        android:text="@string/_0"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -329,12 +327,12 @@
                     android:id="@+id/btnSubmitOrder"
                     style="@style/buttonTheme"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_height="@dimen/height_button"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="26dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="@dimen/margin_default"
                     android:layout_marginBottom="10dp"
-                    android:text="SUBMIT ORDER" />
+                    android:text="@string/submit_order" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

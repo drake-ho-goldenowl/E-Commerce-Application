@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="14dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="@dimen/margin_default"
+        android:contentDescription="@string/image"
         android:src="@drawable/rectangle" />
 
     <androidx.core.widget.NestedScrollView
@@ -27,15 +28,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="What is you rate?"
-                android:textSize="18sp"
+                android:text="@string/what_is_you_rate"
+                android:textSize="@dimen/size_title"
                 android:textStyle="bold" />
 
             <RatingBar
                 android:id="@+id/ratingBar"
                 style="?android:attr/ratingBarStyleIndicator"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
+                android:layout_height="@dimen/size_logo"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="17dp"
                 android:isIndicator="false"
@@ -53,9 +54,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Please Choose Star"
+                android:text="@string/please_choose_star"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="@dimen/size_title"
                 android:visibility="gone" />
 
 
@@ -65,9 +66,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="35dp"
                 android:layout_marginBottom="18dp"
-                android:text="Please share your opinion \nabout the product"
+                android:text="@string/please_share_your_opinion_about_the_product"
                 android:textAlignment="center"
-                android:textSize="18sp"
+                android:textSize="@dimen/size_title"
                 android:textStyle="bold" />
 
             <TextView
@@ -75,32 +76,34 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Please Type Review"
+                android:text="@string/please_type_review"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
+                android:textSize="@dimen/size_title"
                 android:visibility="gone" />
 
             <EditText
                 android:id="@+id/edittextDescription"
                 android:layout_width="match_parent"
                 android:layout_height="154dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="@dimen/margin_default"
+                android:layout_marginEnd="@dimen/margin_default"
+                android:autofillHints="true"
                 android:background="@drawable/edit_txt_custom"
                 android:gravity="top"
-                android:hint="Your Review"
+                android:hint="@string/your_review"
+                android:inputType="text"
                 android:paddingStart="20dp"
                 android:paddingTop="14dp"
                 android:paddingEnd="20dp"
                 android:paddingBottom="20dp"
                 android:textColor="@color/grey3"
-                android:textSize="14sp" />
+                android:textSize="@dimen/size_sub_title" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewImageReview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/margin_default"
                 android:layout_marginTop="40dp"
                 android:layout_marginBottom="24dp"
                 android:paddingTop="6dp" />
@@ -114,11 +117,11 @@
         android:id="@+id/btnSendReview"
         style="@style/buttonTheme"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
+        android:layout_height="@dimen/height_button"
+        android:layout_marginStart="@dimen/margin_default"
         android:layout_marginTop="28dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/margin_default"
         android:layout_marginBottom="10dp"
-        android:text="SEND REVIEW" />
+        android:text="@string/send_review" />
 
 </LinearLayout>

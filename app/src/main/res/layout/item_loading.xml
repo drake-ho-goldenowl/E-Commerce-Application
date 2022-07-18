@@ -6,8 +6,8 @@
     android:background="@color/transparent">
 
     <ProgressBar
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="@dimen/size_progressbar"
+        android:layout_height="@dimen/size_progressbar"
         android:background="@color/colorOnPrimary"
         android:indeterminateTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"

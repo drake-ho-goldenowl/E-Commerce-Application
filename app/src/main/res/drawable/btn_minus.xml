@@ -11,5 +11,4 @@
     </item>
     <item android:drawable="@drawable/ic_minus"
         android:gravity="center"/>
-
 </layer-list>

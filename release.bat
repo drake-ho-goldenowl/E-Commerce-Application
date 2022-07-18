@@ -1,4 +1,4 @@
-git log  --pretty=oneline | tail -n 10 >> log.txt
+git log --oneline -5 > log.txt
 ./gradlew clean
 ./gradlew assembleRelease
 #./gradlew bundleRelease
