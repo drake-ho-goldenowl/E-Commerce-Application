@@ -6,6 +6,8 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
+import com.goldenowl.ecommerceapp.utilities.MAX
+import com.goldenowl.ecommerceapp.utilities.MIN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -21,8 +23,6 @@ class CheckoutViewModel @Inject constructor(
     private val userManager: UserManager,
 ) : BaseViewModel() {
     private val statusIdPayment = MutableStateFlow("")
-    val success: MutableLiveData<Boolean> = MutableLiveData(false)
-
     val bag = bagRepository.bagAndProduct
     val shippingAddress = shippingAddressRepository.address
 
@@ -60,19 +60,20 @@ class CheckoutViewModel @Inject constructor(
         total: Int,
         delivery: Delivery?,
         promotion: Promotion?
-    ) {
+    ): MutableLiveData<Boolean> {
         if (address == null) {
             toastMessage.postValue(ALERT_ADDRESS)
-            return
+            return MutableLiveData(false)
         }
         if (card == null) {
             toastMessage.postValue(ALERT_PAYMENT)
-            return
+            return MutableLiveData(false)
         }
         if (delivery == null) {
             toastMessage.postValue(ALERT_DELIVERY)
-            return
+            return MutableLiveData(false)
         }
+        isLoading.postValue(true)
         val listBag = getBag(bags)
         val numberCard = getNumberCard(card)
         var sale = 0
@@ -88,9 +89,7 @@ class CheckoutViewModel @Inject constructor(
             delivery,
             sale.toString(),
         )
-        setOrderOnFirebase(order)
-        bagRepository.removeAllFirebase()
-        success.postValue(true)
+        return orderRepository.setOrderFirebase(order)
     }
 
     private fun createOrder(
@@ -102,6 +101,7 @@ class CheckoutViewModel @Inject constructor(
         delivery: Delivery,
         promotion: String,
     ) = Order(
+        id = (MIN..MAX).random().toString(),
         products = product,
         total = total,
         status = 1,
@@ -162,8 +162,8 @@ class CheckoutViewModel @Inject constructor(
         return Pair(number, type)
     }
 
-    private fun setOrderOnFirebase(order: Order) {
-        orderRepository.setOrderFirebase(order)
+    fun removeAllBag(){
+        bagRepository.removeAllFirebase()
     }
 
     fun setIdAddressDefault() {

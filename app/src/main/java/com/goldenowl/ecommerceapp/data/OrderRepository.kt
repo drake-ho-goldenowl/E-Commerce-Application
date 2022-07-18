@@ -62,11 +62,16 @@ class OrderRepository @Inject constructor(
         return result.asFlow()
     }
 
-    fun setOrderFirebase(order: Order) {
+    fun setOrderFirebase(order: Order): MutableLiveData<Boolean> {
+        val result =  MutableLiveData(false)
         db.collection(USER_FIREBASE)
             .document(userManager.getAccessToken())
             .collection(ORDER_USER)
             .document(order.id)
             .set(order)
+            .addOnSuccessListener {
+                result.postValue(true)
+            }
+        return result
     }
 }

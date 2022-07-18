@@ -29,8 +29,7 @@ class FavoritesFragment : Fragment() {
         super.onCreate(savedInstanceState)
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.action_favoritesFragment_to_warningFragment)
-        }
-        else{
+        } else {
             viewModel.isLoading.postValue(true)
         }
         viewModel.fetchFavorites()
@@ -44,7 +43,7 @@ class FavoritesFragment : Fragment() {
         }, { buttonView, favoriteAndProduct ->
             viewModel.insertBag(
                 favoriteAndProduct.product.id,
-                favoriteAndProduct.product.colors[0].color.toString(),
+                favoriteAndProduct.favorite.color,
                 favoriteAndProduct.favorite.size,
             )
             buttonView.background = ContextCompat.getDrawable(
