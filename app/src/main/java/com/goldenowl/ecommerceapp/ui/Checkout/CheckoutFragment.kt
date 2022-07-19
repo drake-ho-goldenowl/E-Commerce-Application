@@ -63,7 +63,7 @@ class CheckoutFragment : BaseFragment() {
             bag.observe(viewLifecycleOwner) {
                 bags = it
                 totalOrder = viewModel.calculatorTotalOrder(it)
-                promotion?.let { promo ->
+                promotion.value?.let { promo ->
                     totalOrder = viewModel.calculatorTotalOrder(it, promo.salePercent)
                 }
                 setPrice()

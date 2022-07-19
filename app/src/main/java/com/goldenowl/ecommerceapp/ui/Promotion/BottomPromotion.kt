@@ -6,25 +6,23 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListPromotionAdapter
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutPromotionBinding
-import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_NAME_PROMOTION
-import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_SALE
-import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragment() {
+class BottomPromotion() : BottomSheetDialogFragment() {
     private val viewModel: PromotionViewModel by viewModels()
     private lateinit var binding: BottomLayoutPromotionBinding
     private lateinit var adapter: ListPromotionAdapter
-    private var selectPromotion: String = ""
-    private var salePercent: Long = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.fetchData()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,34 +30,29 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
         savedInstanceState: Bundle?
     ): View {
         binding = BottomLayoutPromotionBinding.inflate(inflater, container, false)
-        viewModel.fetchData()
-
-        if (!idPromotion.isNullOrBlank()) {
-            binding.editPromoCode.setText(idPromotion)
-            viewModel.getPromotion(idPromotion)
-        }
 
         adapter = ListPromotionAdapter {
-            selectPromotion = it.id
-            salePercent = it.salePercent
-            sendData(selectPromotion, salePercent)
+            viewModel.getPromotion(it.id)
             dismiss()
         }
-
-
-        viewModel.promotions.observe(viewLifecycleOwner) {
-            adapter.submitList(it)
-        }
-
-        viewModel.promotion.observe(viewLifecycleOwner) {
-            if (it != null) {
-                selectPromotion = it.id
-                salePercent = it.salePercent
-                binding.txtWrongCode.visibility = View.GONE
-            }
-        }
+        setupObserve()
         bind()
         return binding.root
+    }
+
+    private fun setupObserve() {
+        viewModel.apply {
+            promotions.observe(viewLifecycleOwner) {
+                adapter.submitList(it)
+            }
+
+            promotion.observe(viewLifecycleOwner) {
+                if (it.id.isNotBlank()) {
+                    binding.txtWrongCode.visibility = View.GONE
+                    binding.editPromoCode.setText(it.id)
+                }
+            }
+        }
     }
 
     fun bind() {
@@ -77,24 +70,27 @@ class BottomPromotion(private val idPromotion: String?) : BottomSheetDialogFragm
                 }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if (!s.isNullOrBlank()) {
-                        viewModel.getPromotion(s.toString())
-                        binding.txtWrongCode.visibility = View.VISIBLE
-                    }
                 }
 
                 override fun afterTextChanged(s: Editable?) {
+                    if (!s.isNullOrBlank()) {
+                        viewModel.promotions.value?.let {
+                            val list = it.filter { promotion -> promotion.id == s.toString() }
+                            println(list)
+                            if (list.isEmpty()) {
+                                binding.txtWrongCode.visibility = View.VISIBLE
+                            } else {
+                                if(viewModel.promotion.value?.id != s.toString()){
+                                    viewModel.getPromotion(s.toString())
+                                }
+                                binding.txtWrongCode.visibility = View.GONE
+                            }
+                        }
+                    }
                 }
 
             })
         }
-    }
-
-    private fun sendData(select: String, sale: Long) {
-        setFragmentResult(
-            REQUEST_KEY,
-            bundleOf(BUNDLE_KEY_NAME_PROMOTION to select, BUNDLE_KEY_SALE to sale)
-        )
     }
 
     companion object {

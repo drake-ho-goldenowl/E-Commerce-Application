@@ -25,6 +25,7 @@ class CheckoutViewModel @Inject constructor(
 
     val bag = bagRepository.bagAndProduct
     val shippingAddress = shippingAddressRepository.address
+    val promotion = promotionRepository.promotion
 
     init {
         bagRepository.fetchBagAndProduct()
