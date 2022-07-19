@@ -85,6 +85,8 @@ class FavoriteRepository @Inject constructor(
                             list.add(favorite.idProduct)
                         }
                         listIdProductFavorite.postValue(list.toList())
+                    } else {
+                        listIdProductFavorite.postValue(emptyList())
                     }
                 }
         }

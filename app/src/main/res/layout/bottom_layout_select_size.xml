@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/transparent"
+    android:background="@drawable/top_round_corner2"
     android:orientation="vertical">
 
     <ImageView
@@ -31,9 +31,10 @@
         android:layout_marginBottom="24dp"
         android:paddingTop="6dp" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
@@ -44,30 +45,33 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/txtColor"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:paddingStart="15dp"
-            android:text="Size info"
-            android:textSize="16sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="11dp"
-            android:src="@drawable/ic_baseline_keyboard_arrow_down"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="Select color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.divider.MaterialDivider
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewColor"
             android:layout_width="match_parent"
-            android:layout_height="0.4dp"
-            app:dividerColor="@color/grey3"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="10dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/txtColor" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <Button
         android:id="@+id/btnAddToCart"

@@ -167,10 +167,9 @@ class BagRepository @Inject constructor(
     }
 
 
-    private fun plusQuantity(bagAndProduct: BagAndProduct) {
-        val newBag = bagAndProduct.bag
-        newBag.quantity += 1
-        updateBagFirebase(newBag)
+    private fun plusQuantity(bag: Bag) {
+        bag.quantity += 1
+        updateBagFirebase(bag)
     }
 
     fun setButtonBag(context: Context, buttonView: View, favorite: Favorite) {

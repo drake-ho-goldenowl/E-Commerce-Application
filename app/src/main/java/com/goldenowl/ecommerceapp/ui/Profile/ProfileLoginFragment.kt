@@ -61,6 +61,7 @@ class ProfileLoginFragment : BaseFragment() {
 
     private fun bind() {
         binding.apply {
+            appBarLayout.topAppBar.title = getString(R.string.my_profile)
             viewModel.setupProfileUI(this@ProfileLoginFragment, txtName, txtEmail, imgAvatar)
             btnLogout.setOnClickListener {
                 viewModel.logOut()
@@ -77,7 +78,7 @@ class ProfileLoginFragment : BaseFragment() {
                 findNavController().navigate(R.id.paymentMethodFragment)
             }
             settingLayout.setOnClickListener {
-                findNavController().navigate(R.id.action_profileFragment_to_settingFragment)
+                findNavController().navigate(R.id.settingFragment)
             }
         }
         viewModel.isLoading.postValue(false)

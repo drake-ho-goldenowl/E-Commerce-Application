@@ -37,6 +37,11 @@
         <action
             android:id="@+id/action_bagFragment_to_checkoutFragment"
             app:destination="@id/checkoutFragment" />
+        <action
+            android:id="@+id/action_bagFragment_to_warningFragment"
+            app:destination="@id/warningFragment"
+            app:popUpTo="@id/bagFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
@@ -46,6 +51,11 @@
         <action
             android:id="@+id/action_favoritesFragment_to_productDetailFragment"
             app:destination="@id/productDetailFragment" />
+        <action
+            android:id="@+id/action_favoritesFragment_to_warningFragment"
+            app:destination="@id/warningFragment"
+            app:popUpTo="@id/favoritesFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -54,13 +64,14 @@
         tools:layout="@layout/fragment_profile" >
         <action
             android:id="@+id/action_profileFragment_to_profileNoLoginFragment"
-            app:destination="@id/profileNoLoginFragment" />
+            app:destination="@id/profileNoLoginFragment"
+            app:popUpTo="@id/profileFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_profileFragment_to_profileLoginFragment"
-            app:destination="@id/profileLoginFragment" />
-        <action
-            android:id="@+id/action_profileFragment_to_settingFragment"
-            app:destination="@id/settingFragment" />
+            app:destination="@id/profileLoginFragment"
+            app:popUpTo="@id/profileFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/profileLoginFragment"

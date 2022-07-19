@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentProfileNoLoginBinding
 import com.goldenowl.ecommerceapp.ui.Auth.AuthActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,6 +19,7 @@ class ProfileNoLoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileNoLoginBinding.inflate(inflater, container, false)
+        binding.appBarLayout.topAppBar.title = getString(R.string.my_profile)
 
         binding.profileNoLoginLayout.setOnClickListener {
             startActivity(Intent(activity, AuthActivity::class.java))

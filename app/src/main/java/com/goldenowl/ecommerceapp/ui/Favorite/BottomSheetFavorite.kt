@@ -8,6 +8,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
+import com.goldenowl.ecommerceapp.adapters.ListColorAdapter
 import com.goldenowl.ecommerceapp.adapters.ListSizeAdapter
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSelectSizeBinding
@@ -27,21 +28,32 @@ class BottomSheetFavorite(
     private var selectSize: String? = null
 
     private lateinit var binding: BottomLayoutSelectSizeBinding
-    private lateinit var adapter: ListSizeAdapter
+    private lateinit var adapterSize: ListSizeAdapter
+    private lateinit var adapterColor: ListColorAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val listSize = product.getAllSize()
-        adapter = ListSizeAdapter {
+        val listColor = product.getAllColor()
+        adapterSize = ListSizeAdapter {
             selectSize = it
         }
-        adapter.submitList(listSize)
-
+        adapterSize.submitList(listSize)
+        adapterColor = ListColorAdapter {
+            color = if (color == it) {
+                null
+            } else {
+                it
+            }
+        }
+        adapterColor.submitList(listColor)
         if (selectSizeInt != null) {
-            adapter.positionCurrent = selectSizeInt
+            adapterSize.positionCurrent = selectSizeInt
             selectSize = listSize[selectSizeInt]
         }
-        color = color ?: product.colors[0].color
+        if (!color.isNullOrBlank()) {
+            adapterColor.positionCurrent = listColor.indexOf(color)
+        }
     }
 
     override fun onCreateView(
@@ -74,14 +86,19 @@ class BottomSheetFavorite(
     fun bind() {
         binding.apply {
             recyclerViewSize.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
-            recyclerViewSize.adapter = adapter
+            recyclerViewSize.adapter = adapterSize
+
+            recyclerViewColor.layoutManager = GridLayoutManager(context, GRIDVIEW_SPAN_COUNT)
+            recyclerViewColor.adapter = adapterColor
 
             btnAddToCart.setOnClickListener {
-                if (!selectSize.isNullOrBlank()) {
+                if (selectSize.isNullOrBlank()) {
+                    viewModel.toastMessage.postValue(WARNING_SELECT_SIZE)
+                } else if (color.isNullOrBlank()) {
+                    viewModel.toastMessage.postValue(WARNING_SELECT_COLOR)
+                } else {
                     viewModel.insertFavorite(product.id, selectSize.toString(), color.toString())
                     sendData()
-                } else {
-                    viewModel.toastMessage.postValue(WARNING_SELECT_SIZE)
                 }
             }
         }
@@ -97,6 +114,5 @@ class BottomSheetFavorite(
     companion object {
         const val GRIDVIEW_SPAN_COUNT = 3
         const val TAG = "BOTTOM_SHEET_SIZE"
-        const val WARNING_SELECT_SIZE = "Please select size"
     }
 }
