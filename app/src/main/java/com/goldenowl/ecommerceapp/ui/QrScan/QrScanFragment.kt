@@ -110,9 +110,15 @@ class QrScanFragment : Fragment() {
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
             requireActivity().runOnUiThread {
-                handlerFragment.removeMessages(0)
                 if (it.text.isNotBlank()) {
-                    viewModel.checkProduct(it.text)
+                    handlerFragment.removeMessages(0)
+                    val newText = it.text.filter { it.isLetterOrDigit() }
+                    if (newText.isNotBlank()){
+                        viewModel.checkProduct(newText)
+                    }
+                    else{
+                        viewModel.statusCheckProduct.postValue(NULL)
+                    }
                 }
             }
         }

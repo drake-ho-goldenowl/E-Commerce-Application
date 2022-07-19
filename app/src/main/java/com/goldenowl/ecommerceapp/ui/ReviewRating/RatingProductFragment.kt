@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -48,7 +45,7 @@ class RatingProductFragment : BaseFragment() {
             val result = viewModel.getNameAndAvatarUser(userID)
             result.observe(viewLifecycleOwner) {
                 txtName.text = it.first
-                GlideDefault.show(requireContext(), it.second, imgAvatar,false)
+                GlideDefault.show(requireContext(), it.second, imgAvatar, false)
             }
         }, { review, txtHelpful, icLike, isHelpful ->
             if (isHelpful) {
@@ -57,13 +54,13 @@ class RatingProductFragment : BaseFragment() {
             } else {
                 viewModel.removeHelpful(review)
             }
-            setColorHelpful(isHelpful, txtHelpful, icLike)
+            viewModel.setColorHelpful(requireContext(), isHelpful, txtHelpful, icLike)
 
         }, { review, txtHelpful, icLike ->
             viewModel.checkHelpfulForUser(review)
                 .observe(viewLifecycleOwner) {
                     adapterReview.isHelpful = it
-                    setColorHelpful(it, txtHelpful, icLike)
+                    viewModel.setColorHelpful(requireContext(), it, txtHelpful, icLike)
                 }
         }, { recyclerView, review ->
 
@@ -83,29 +80,6 @@ class RatingProductFragment : BaseFragment() {
         return binding.root
     }
 
-    private fun setColorHelpful(isHelpful: Boolean, txtHelpful: TextView, icLike: ImageView) {
-        if (isHelpful) {
-            txtHelpful.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.colorPrimary
-                )
-            )
-            icLike.setImageDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_like2)
-            )
-        } else {
-            txtHelpful.setTextColor(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.black
-                )
-            )
-            icLike.setImageDrawable(
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_like)
-            )
-        }
-    }
 
     private fun setupObserve() {
         viewModel.apply {

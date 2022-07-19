@@ -1,10 +1,15 @@
 package com.goldenowl.ecommerceapp.ui.ReviewRating
 
+import android.content.Context
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
@@ -265,6 +270,53 @@ class ReviewRatingViewModel @Inject constructor(
     fun insertReview(review: Review) {
         setReviewOnFirebase(review)
         fetchRatingProduct(review.idProduct)
+    }
+
+    fun setColorHelpful(
+        context: Context,
+        isHelpful: Boolean,
+        txtHelpful: TextView,
+        icLike: ImageView
+    ) {
+        if (isHelpful) {
+            txtHelpful.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.colorPrimary
+                )
+            )
+            icLike.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_like2)
+            )
+        } else {
+            txtHelpful.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.black
+                )
+            )
+            icLike.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_like)
+            )
+        }
+    }
+
+
+    val reviews = MutableLiveData<List<Review>>(emptyList())
+
+    fun getAllReviewOfUser() {
+        if (userManager.isLogged()) {
+            db.collection(REVIEW_FIREBASE)
+                .whereEqualTo(ID_USER, userManager.getAccessToken())
+                .get()
+                .addOnSuccessListener { documents ->
+                    val list = mutableListOf<Review>()
+                    for (document in documents) {
+                        list.add(document.toObject())
+                    }
+                    reviews.postValue(list)
+                }
+        }
     }
 
     companion object {
