@@ -32,6 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewRatingViewModel @Inject constructor(
     private val productRepository: ProductRepository,
+    private val reviewRepository: ReviewRepository,
     private val userManager: UserManager,
     private val db: FirebaseFirestore
 ) :
@@ -301,38 +302,14 @@ class ReviewRatingViewModel @Inject constructor(
         }
     }
 
-
-    val reviews = MutableLiveData<List<Review>>(emptyList())
+    val reviews = reviewRepository.reviews
 
     fun getAllReviewOfUser() {
-        if (userManager.isLogged()) {
-            db.collection(REVIEW_FIREBASE)
-                .whereEqualTo(ID_USER, userManager.getAccessToken())
-                .get()
-                .addOnSuccessListener { documents ->
-                    val list = mutableListOf<Review>()
-                    for (document in documents) {
-                        list.add(document.toObject())
-                    }
-                    reviews.postValue(list)
-                }
-        }
+        reviewRepository.getAllReviewOfUser()
     }
 
     fun filterReview(filterReview: FilterReview, typeSort: TypeSort) {
-        if (userManager.isLogged()) {
-            db.collection(REVIEW_FIREBASE)
-                .whereEqualTo(ID_USER, userManager.getAccessToken())
-                .orderBy(filterReview.value,typeSort.value)
-                .get()
-                .addOnSuccessListener { documents ->
-                    val list = mutableListOf<Review>()
-                    for (document in documents) {
-                        list.add(document.toObject())
-                    }
-                    reviews.postValue(list)
-                }
-        }
+        reviewRepository.filterReview(filterReview, typeSort)
     }
 
     companion object {
@@ -341,6 +318,7 @@ class ReviewRatingViewModel @Inject constructor(
         const val ID_PRODUCT = "idProduct"
     }
 }
+
 enum class FilterReview(val value: String){
     DATE("createdTimer"),
     STAR("star")

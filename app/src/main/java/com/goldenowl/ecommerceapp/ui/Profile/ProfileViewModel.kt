@@ -2,10 +2,7 @@ package com.goldenowl.ecommerceapp.ui.Profile
 
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.goldenowl.ecommerceapp.data.OrderRepository
-import com.goldenowl.ecommerceapp.data.PaymentRepository
-import com.goldenowl.ecommerceapp.data.ShippingAddressRepository
-import com.goldenowl.ecommerceapp.data.UserManager
+import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import com.google.firebase.auth.FirebaseAuth
@@ -18,13 +15,14 @@ class ProfileViewModel @Inject constructor(
     private val orderRepository: OrderRepository,
     private val shippingAddressRepository: ShippingAddressRepository,
     private val paymentRepository: PaymentRepository,
+    private val reviewRepository: ReviewRepository,
     private val userManager: UserManager,
     private val firebaseAuth: FirebaseAuth
 ) : BaseViewModel() {
-    val totalAddress = shippingAddressRepository.countAddress()
+    val address = shippingAddressRepository.listAddress
     val payment = paymentRepository.card
-    val totalOrder = orderRepository.getSize()
-
+    val totalOrder = orderRepository.totalOrder
+    val reviews = reviewRepository.reviews
     fun setupProfileUI(
         fragment: Fragment,
         name: TextView,
@@ -34,13 +32,24 @@ class ProfileViewModel @Inject constructor(
         if (userManager.isLogged()) {
             name.text = userManager.getName()
             email.text = userManager.getEmail()
-
             GlideDefault.userImage(
                 fragment.requireContext(),
                 userManager.getAvatar(),
                 avatar
             )
         }
+    }
+
+    fun getAddress(){
+        shippingAddressRepository.fetchAddress()
+    }
+
+    fun getReviews(){
+        reviewRepository.getAllReviewOfUser()
+    }
+
+    fun getTotalOrder(){
+        orderRepository.getSize()
     }
 
     fun getPayment() {
