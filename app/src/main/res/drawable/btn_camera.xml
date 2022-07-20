@@ -11,5 +11,4 @@
     <item
         android:drawable="@drawable/ic_baseline_photo_camera"
         android:gravity="center" />
-
 </layer-list>

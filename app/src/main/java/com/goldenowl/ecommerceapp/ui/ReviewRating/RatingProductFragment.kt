@@ -48,7 +48,7 @@ class RatingProductFragment : BaseFragment() {
             val result = viewModel.getNameAndAvatarUser(userID)
             result.observe(viewLifecycleOwner) {
                 txtName.text = it.first
-                GlideDefault.show(requireContext(), it.second, imgAvatar,false)
+                GlideDefault.userImage(requireContext(), it.second, imgAvatar, false)
             }
         }, { review, txtHelpful, icLike, isHelpful ->
             if (isHelpful) {
@@ -164,7 +164,7 @@ class RatingProductFragment : BaseFragment() {
 
     fun bind() {
         binding.apply {
-            appBarLayout.MaterialToolbar.title = getString(R.string.ratingandreviews)
+            appBarLayout.MaterialToolbar.title = getString(R.string.rating_and_reviews)
             btnAddReview.setOnClickListener {
                 val bottomAddReview = BottomAddReview(idProduct)
                 bottomAddReview.show(parentFragmentManager, BottomAddReview.TAG)

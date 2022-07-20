@@ -29,7 +29,8 @@
                     android:src="@drawable/ic_arrow_back"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/button" />
 
                 <EditText
                     android:id="@+id/editTextSearch"
@@ -38,16 +39,18 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="15dp"
                     android:background="@drawable/edit_txt_custom2"
-                    android:hint="Search"
+                    android:hint="@string/search"
                     android:inputType="text"
                     android:maxLines="1"
                     android:paddingStart="10dp"
+                    android:paddingEnd="@dimen/size_icon"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toRightOf="@id/btnBack"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:autofillHints="true" />
 
                 <ImageView
                     android:id="@+id/btnQR"
@@ -57,7 +60,8 @@
                     android:src="@drawable/ic_qr_code"
                     app:layout_constraintBottom_toBottomOf="@id/editTextSearch"
                     app:layout_constraintRight_toRightOf="@id/editTextSearch"
-                    app:layout_constraintTop_toTopOf="@id/editTextSearch" />
+                    app:layout_constraintTop_toTopOf="@id/editTextSearch"
+                    android:contentDescription="@string/button" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
@@ -78,17 +82,17 @@
                     android:id="@+id/txtHistory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="17dp"
-                    android:text="HISTORY"
-                    android:textSize="16sp"
+                    android:text="@string/history"
+                    android:textSize="@dimen/size_text"
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
+                    android:layout_height="@dimen/height_divider"
                     android:layout_marginTop="12dp"
                     app:dividerColor="@color/grey3"
                     app:layout_constraintRight_toRightOf="parent"
@@ -98,7 +102,7 @@
                     android:id="@+id/recyclerViewHistory"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="13dp"
                     android:paddingBottom="29dp"
                     app:layout_constraintRight_toRightOf="parent"
@@ -116,10 +120,10 @@
                     android:id="@+id/txtCategory"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
+                    android:layout_marginStart="@dimen/margin_default"
                     android:layout_marginTop="12dp"
-                    android:text="CATEGORIES"
-                    android:textSize="16sp"
+                    android:text="@string/categories_2"
+                    android:textSize="@dimen/size_text"
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -140,10 +144,10 @@
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
                     android:padding="11sp"
-                    android:text="View All"
+                    android:text="@string/view_all"
                     android:textAllCaps="false"
                     android:textColor="@color/blue"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/size_text"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/recyclerViewCategory" />

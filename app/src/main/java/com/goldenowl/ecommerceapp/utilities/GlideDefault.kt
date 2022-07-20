@@ -38,15 +38,23 @@ internal object GlideDefault {
             .into(imageView)
     }
 
-    fun userImage(context: Context, url: String, imageView: ImageView) {
+    fun userImage(context: Context, url: String, imageView: ImageView, isSave: Boolean = true) {
         val circularProgressDrawable = createCircularProgress(context)
 
-        Glide.with(context)
-            .load(url)
-            .placeholder(circularProgressDrawable)
-            .error(R.drawable.ic_no_login)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(imageView)
+        if (isSave) {
+            Glide.with(context)
+                .load(url)
+                .placeholder(circularProgressDrawable)
+                .error(R.drawable.ic_no_login)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(imageView)
+        } else {
+            Glide.with(context)
+                .load(url)
+                .placeholder(circularProgressDrawable)
+                .error(R.drawable.ic_no_login)
+                .into(imageView)
+        }
     }
 
     private fun createCircularProgress(context: Context): CircularProgressDrawable {

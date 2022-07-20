@@ -10,7 +10,5 @@
         </shape>
     </item>
     <item android:drawable="@drawable/ic_plus"
-
         android:gravity="center"/>
-
 </layer-list>

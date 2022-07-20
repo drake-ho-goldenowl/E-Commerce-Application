@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:backgroundTint="@color/transparent"
+    android:background="@drawable/top_round_corner2"
     android:orientation="vertical">
 
     <ImageView
@@ -11,14 +11,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="14dp"
+        android:contentDescription="@string/image"
         android:src="@drawable/rectangle" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:text="Price"
+        android:layout_marginTop="@dimen/margin_default"
+        android:text="@string/price"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -26,50 +27,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="17dp"
-        android:padding="16dp"
-        android:text="Value range"
-        android:textSize="16sp" />
+        android:padding="@dimen/margin_default"
+        android:text="@string/value_range"
+        android:textSize="@dimen/size_text" />
 
 
     <com.google.android.material.slider.RangeSlider
         android:id="@+id/rangeSlider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:stepSize="1.0"
         android:valueFrom="0.0"
         android:valueTo="100.0"
-        android:stepSize="1.0"
-        android:layout_marginTop="20dp"
         app:values="@array/initial_slider_values" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/margin_default"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="48dp">
+        android:layout_marginEnd="@dimen/margin_default"
+        android:layout_marginBottom="48dp"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btnReset"
             style="@style/buttonTheme"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/height_button"
             android:layout_weight="1"
             android:fontFamily="@font/metropolis_bold"
-            android:textAllCaps="true"
-            android:text="Reset" />
+            android:text="@string/reset"
+            android:textAllCaps="true" />
 
         <Button
             android:id="@+id/btnConfirm"
             style="@style/buttonTheme"
             android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
+            android:layout_height="@dimen/height_button"
             android:layout_marginStart="10dp"
+            android:layout_weight="1"
             android:fontFamily="@font/metropolis_bold"
-            android:textAllCaps="true"
-            android:text="Confirm" />
+            android:text="@string/confirm"
+            android:textAllCaps="true" />
     </LinearLayout>
 
 

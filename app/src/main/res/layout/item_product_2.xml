@@ -9,10 +9,10 @@
         android:id="@+id/cardViewProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginEnd="@dimen/margin_default"
         android:layout_marginBottom="26dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="@dimen/radius_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -24,10 +24,10 @@
 
             <ImageView
                 android:id="@+id/imgProduct"
-                android:layout_width="104dp"
-                android:layout_height="104dp"
-                android:scaleType="centerCrop"
+                android:layout_width="@dimen/width_image"
+                android:layout_height="@dimen/height_image"
                 android:contentDescription="@string/image_product"
+                android:scaleType="centerCrop"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -39,8 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="11dp"
-                android:text="Pullover"
-                android:textSize="16sp"
+                android:textSize="@dimen/size_text"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -51,9 +50,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="4dp"
-                android:text="Mango"
                 android:textColor="@color/grey3"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toBottomOf="@id/txtName" />
 
@@ -61,12 +59,11 @@
                 android:id="@+id/ratingBar"
                 style="?android:attr/ratingBarStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="14dp"
+                android:layout_height="@dimen/height_rating_small"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="6dp"
                 android:numStars="5"
                 android:progressTint="@color/yellow"
-                android:rating="5"
                 android:secondaryProgressTint="@color/transparent"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
@@ -78,9 +75,8 @@
                 android:layout_marginStart="2.5dp"
                 android:layout_marginTop="6dp"
                 android:gravity="center"
-                android:text="(10)"
                 android:textColor="@color/grey3"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintLeft_toRightOf="@id/ratingBar"
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
 
@@ -91,8 +87,7 @@
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="9dp"
                 android:layout_marginBottom="12dp"
-                android:text="51$"
-                android:textSize="14sp"
+                android:textSize="@dimen/size_sub_title"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toBottomOf="@id/ratingBar" />
 
@@ -103,9 +98,8 @@
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="9dp"
                 android:layout_marginBottom="12dp"
-                android:text="12$"
                 android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
+                android:textSize="@dimen/size_sub_title"
                 app:layout_constraintLeft_toRightOf="@id/txtPrice"
                 app:layout_constraintTop_toBottomOf="@id/ratingBar" />
 
@@ -117,9 +111,8 @@
                 android:layout_marginTop="7dp"
                 android:background="@drawable/btn_custom"
                 android:gravity="center"
-                android:text="-15%"
                 android:textColor="@color/white"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_sub_title"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -130,12 +123,12 @@
 
     <ImageButton
         android:id="@+id/btnFavorite"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="@dimen/size_logo"
+        android:layout_height="@dimen/size_logo"
         android:layout_marginBottom="-10dp"
         android:background="@drawable/btn_favorite_no_active"
         android:button="@null"
-        android:elevation="5dp"
+        android:elevation="@dimen/elevation_default"
         app:layout_constraintBottom_toBottomOf="@+id/cardViewProduct"
         app:layout_constraintRight_toRightOf="@+id/cardViewProduct" />
 

@@ -25,10 +25,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/margin_default"
                 android:layout_marginTop="31dp"
-                android:text="Your payment cards"
-                android:textSize="16sp"
+                android:text="@string/your_payment_cards"
+                android:textSize="@dimen/size_text"
                 android:textStyle="bold" />
 
 
@@ -44,9 +44,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/margin_default"
             android:backgroundTint="@color/black"
-            android:elevation="4dp"
+            android:elevation="@dimen/elevation_default"
             android:tintMode="@color/white"
             app:borderWidth="0dp"
             app:fabSize="mini"

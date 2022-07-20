@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutChangePasswordBinding
 import com.goldenowl.ecommerceapp.ui.BaseBottomSheetDialog
 import com.goldenowl.ecommerceapp.utilities.Notification
@@ -94,7 +95,11 @@ class BottomSheetChangePassword : BaseBottomSheetDialog() {
 
             validChangePasswordLiveData.observe(viewLifecycleOwner) {
                 if (it) {
-                    Notification(requireContext()).notify("Notification", "Update password success")
+                    Notification(requireContext()).notify(
+                        getString(R.string.notification), getString(
+                            R.string.update_password_success
+                        )
+                    )
                     dismiss()
                 }
             }

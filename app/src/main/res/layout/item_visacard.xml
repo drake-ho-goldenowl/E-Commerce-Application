@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
+    android:layout_marginStart="@dimen/margin_default"
     android:layout_marginTop="29dp"
-    android:layout_marginEnd="15dp"
+    android:layout_marginEnd="@dimen/margin_default"
     android:layout_marginBottom="10dp"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="216dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="5dp">
+        app:cardCornerRadius="@dimen/radius_default"
+        app:cardElevation="@dimen/elevation_default">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layoutPayment"
@@ -27,6 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="19dp"
                 android:layout_marginEnd="25dp"
+                android:contentDescription="@string/image"
                 android:src="@drawable/ic_visa"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -36,6 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:contentDescription="@string/button"
                 android:src="@drawable/ic_close2"
                 app:layout_constraintRight_toRightOf="@+id/imgVisa"
                 app:layout_constraintTop_toBottomOf="@id/imgVisa" />
@@ -46,9 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="79dp"
-                android:text="* * * *  * * * *  * * * *  4546"
                 android:textColor="@color/white"
-                android:textSize="24sp"
+                android:textSize="@dimen/size_title_2"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
+                android:contentDescription="@string/image"
                 android:src="@drawable/ic_chip"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/txtNumberCard" />
@@ -67,9 +69,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:text="Card Holder Name"
+                android:text="@string/card_holder_name"
                 android:textColor="@color/white"
-                android:textSize="10dp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintBottom_toTopOf="@id/txtHolderName"
                 app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -79,9 +81,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginBottom="23dp"
-                android:text="Jennyfer Doe"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="@dimen/size_sub_title"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent" />
@@ -92,9 +93,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="45dp"
-                android:text="Expiry Date"
+                android:text="@string/expiry_date"
                 android:textColor="@color/white"
-                android:textSize="10dp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintBottom_toTopOf="@id/txtExpiryDate"
                 app:layout_constraintRight_toRightOf="parent" />
 
@@ -104,9 +105,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="45dp"
                 android:layout_marginBottom="23dp"
-                android:text="05/23"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="@dimen/size_sub_title"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="@id/txtExpiry" />
@@ -123,8 +123,8 @@
         android:layout_marginTop="25dp"
         android:backgroundTint="@color/black"
         android:buttonTint="@color/black"
-        android:text="Use as default payment method"
+        android:text="@string/use_as_default_payment_method"
         android:textColor="@color/black2"
-        android:textSize="14dp" />
+        android:textSize="@dimen/size_sub_title" />
 
 </LinearLayout>

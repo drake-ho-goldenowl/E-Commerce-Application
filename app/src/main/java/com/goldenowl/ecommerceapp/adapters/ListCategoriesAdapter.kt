@@ -11,8 +11,8 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.ItemCategoriesBinding
 
 
-class ListCategoriesAdater(private val onItemClicked: (String) -> Unit) :
-    ListAdapter<String, ListCategoriesAdater.ItemViewHolder>(DiffCallback) {
+class ListCategoriesAdapter(private val onItemClicked: (String) -> Unit) :
+    ListAdapter<String, ListCategoriesAdapter.ItemViewHolder>(DiffCallback) {
     var positionCurrent = -1
 
     class ItemViewHolder(

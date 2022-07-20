@@ -9,6 +9,7 @@
         android:layout_height="52dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
+        android:contentDescription="@string/button"
         android:src="@drawable/btn_camera" />
 
     <TextView
@@ -16,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:text="Add your photos"
+        android:text="@string/add_your_photos"
         android:textSize="11sp"
         android:textStyle="bold" />
 </LinearLayout>

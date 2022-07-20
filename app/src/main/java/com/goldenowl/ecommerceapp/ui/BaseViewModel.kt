@@ -2,10 +2,8 @@ package com.goldenowl.ecommerceapp.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.Source
 
 open class BaseViewModel : ViewModel() {
-    val source = Source.DEFAULT
     val toastMessage = MutableLiveData<String>()
     val isLoading = MutableLiveData(false)
     val dismiss = MutableLiveData(false)
@@ -21,7 +19,6 @@ open class BaseViewModel : ViewModel() {
         const val SALE_PERCENT = "salePercent"
         const val STATUS_ORDER = "status"
         const val ID_USER = "idUser"
-        const val IS_POPULAR = "isPopular"
 
         val statuses = listOf("Delivered", "Processing", "Cancelled")
         const val DELIVERED = 0

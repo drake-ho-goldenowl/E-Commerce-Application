@@ -8,11 +8,11 @@
         android:id="@+id/cardViewProduct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/margin_default"
+        android:layout_marginTop="@dimen/margin_default"
+        android:layout_marginEnd="@dimen/margin_default"
         android:layout_marginBottom="12dp"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="@dimen/radius_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -24,13 +24,12 @@
 
             <ImageView
                 android:id="@+id/imgProduct"
-                android:layout_width="104dp"
-                android:layout_height="104dp"
+                android:layout_width="@dimen/width_image"
+                android:layout_height="@dimen/height_image"
+                android:contentDescription="@string/image"
                 android:scaleType="centerCrop"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </ImageView>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/txtName"
@@ -38,8 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="11dp"
-                android:text="Pullover"
-                android:textSize="16sp"
+                android:textSize="@dimen/size_text"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -50,9 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="4dp"
-                android:text="Mango"
                 android:textColor="@color/grey3"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toBottomOf="@id/txtName" />
 
@@ -62,9 +59,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="9dp"
-                android:text="Color: "
+                android:text="@string/color_2"
                 android:textColor="@color/grey3"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
 
@@ -74,8 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
-                android:text="Blue"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/txtColor"
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
@@ -86,9 +82,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="87dp"
                 android:layout_marginTop="9dp"
-                android:text="Size: "
+                android:text="@string/size_2"
                 android:textColor="@color/grey3"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct"
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
 
@@ -97,8 +93,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="9dp"
-                android:text="L"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/txtSize"
                 app:layout_constraintTop_toBottomOf="@id/txtBrandName" />
@@ -111,9 +106,9 @@
                 android:layout_marginStart="11dp"
                 android:layout_marginTop="13dp"
                 android:layout_marginBottom="15dp"
-                android:text="Units: "
+                android:text="@string/units"
                 android:textColor="@color/grey3"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/imgProduct" />
 
@@ -123,8 +118,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
-                android:text="1"
-                android:textSize="11sp"
+                android:textSize="@dimen/size_text_small"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/txtUnit"
                 app:layout_constraintLeft_toRightOf="@id/txtColor" />
@@ -134,8 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
-                android:text="51$"
-                android:textSize="14sp"
+                android:textSize="@dimen/size_sub_title"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/txtUnit"
                 app:layout_constraintRight_toRightOf="parent" />

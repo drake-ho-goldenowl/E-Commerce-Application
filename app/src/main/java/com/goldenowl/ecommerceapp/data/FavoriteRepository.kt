@@ -22,7 +22,7 @@ class FavoriteRepository @Inject constructor(
     private val userManager: UserManager,
 ) {
     val favoriteAndProduct = MutableLiveData<MutableList<FavoriteAndProduct>>()
-    val listIdProductFavorite = MutableLiveData<List<String>>()
+    private val listIdProductFavorite = MutableLiveData<List<String>>()
     fun fetchFavoriteAndProduct() {
         if (userManager.isLogged()) {
             db.collection(USER_FIREBASE)
