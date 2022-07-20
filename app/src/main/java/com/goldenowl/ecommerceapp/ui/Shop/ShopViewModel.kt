@@ -28,13 +28,13 @@ class ShopViewModel @Inject constructor(
 ) :
     BaseViewModel() {
     private val statusIdProduct = MutableStateFlow("")
-    private val statusFilter = MutableStateFlow(Pair("", ""))
+    private var statusFilter = Pair("", "")
     val product: LiveData<Product> = statusIdProduct.flatMapLatest {
         productRepository.getProduct(it)
     }.asLiveData()
     val statusSort = MutableLiveData(0)
     val allCategory = productRepository.getAllCategory().asLiveData()
-    var loadMore = MutableLiveData(true)
+    val loadMore = MutableLiveData(true)
     val products = MutableLiveData<List<Product>>()
     val btnFavorite = MutableLiveData<View>()
     var query: Query? = null
@@ -52,7 +52,7 @@ class ShopViewModel @Inject constructor(
 
     fun loadMore(list: List<Product>) {
         isLoading.postValue(true)
-        statusFilter.value.apply {
+        statusFilter.apply {
             if (this.first.isNotBlank() && this.second.isNotBlank()) {
                 loadMoreCategoryAndSearch(this.second, this.first, list)
             } else if (this.first.isNotBlank()) {
@@ -88,7 +88,7 @@ class ShopViewModel @Inject constructor(
         val queryBase = db.collection(PRODUCT_FIREBASE)
             .orderBy(CREATED_DATE, Query.Direction.DESCENDING)
             .limit(LIMIT.toLong())
-        loadMoreBase(list, queryBase,search)
+        loadMoreBase(list, queryBase, search)
     }
 
     private fun loadMoreCategoryAndSearch(search: String, category: String, list: List<Product>) {
@@ -96,7 +96,7 @@ class ShopViewModel @Inject constructor(
             .whereEqualTo(CATEGORY_NAME, category)
             .orderBy(CREATED_DATE, Query.Direction.DESCENDING)
             .limit(LIMIT.toLong())
-        loadMoreBase(list, queryBase,search)
+        loadMoreBase(list, queryBase, search)
     }
 
     private fun loadMoreSaleProduct(list: List<Product>) {
@@ -107,7 +107,7 @@ class ShopViewModel @Inject constructor(
         loadMoreBase(list, queryBase)
     }
 
-    private fun loadMoreBase(list: List<Product>, queryBase: Query,search : String = "") {
+    private fun loadMoreBase(list: List<Product>, queryBase: Query, search: String = "") {
         if (query == null) {
             query = queryBase
         }
@@ -119,15 +119,14 @@ class ShopViewModel @Inject constructor(
                         loadMore.postValue(true)
                         temp.addAll(list)
                         for (document in documents) {
-                            if(search.isNotBlank()){
+                            if (search.isNotBlank()) {
                                 val product = document.toObject<Product>()
                                 if (product.title.lowercase().contains(search.lowercase())) {
-                                    if(!temp.contains(product)){
+                                    if (!temp.contains(product)) {
                                         temp.add(product)
                                     }
                                 }
-                            }
-                            else{
+                            } else {
                                 temp.add(document.toObject())
                             }
                         }
@@ -164,10 +163,8 @@ class ShopViewModel @Inject constructor(
             }
             3 -> products.sortedBy {
                 val sale = it.salePercent ?: 0
-                val price = it.colors[0].sizes[0].price - (sale.toFloat() / 100 * it.colors[0].sizes[0].price)
-                println(it.salePercent.toString() + "     " + sale)
-                println("------------------------------------------------")
-                println(price)
+                val price =
+                    it.colors[0].sizes[0].price - (sale.toFloat() / 100 * it.colors[0].sizes[0].price)
                 price
             }
             else -> {
@@ -181,16 +178,32 @@ class ShopViewModel @Inject constructor(
         }
     }
 
+    fun relatedProduct(category: String): MutableLiveData<List<Product>> {
+        val result = MutableLiveData<List<Product>>(emptyList())
+        db.collection(PRODUCT_FIREBASE)
+            .whereEqualTo(CATEGORY_NAME, category)
+            .limit(LIMIT.toLong())
+            .get()
+            .addOnSuccessListener { documents ->
+                val list = mutableListOf<Product>()
+                for (document in documents){
+                    list.add(document.toObject())
+                }
+                result.postValue(list)
+            }
+        return result
+    }
+
     fun setCategory(category: String) {
-        statusFilter.value = Pair(category, statusFilter.value.second)
+        statusFilter = Pair(category, statusFilter.second)
     }
 
     fun getCategory(): String {
-        return statusFilter.value.first
+        return statusFilter.first
     }
 
     fun setSearch(search: String) {
-        statusFilter.value = Pair(statusFilter.value.first, search)
+        statusFilter = Pair(statusFilter.first, search)
     }
 
     fun setSort(select: Int) {
