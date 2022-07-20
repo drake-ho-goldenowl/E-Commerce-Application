@@ -75,9 +75,7 @@ class ProductDetailFragment : BaseFragment() {
     fun changePrice() {
         val product = viewModel.product.value
         product?.let {
-            if (selectColor != null && selectSize != null) {
-                binding.txtPrice.text = "\$${it.colors[selectColor!!].sizes[selectSize!!].price}"
-            }
+            binding.txtPrice.text = "\$${it.colors[selectColor].sizes[selectSize].price}"
         }
     }
 
@@ -100,8 +98,7 @@ class ProductDetailFragment : BaseFragment() {
             }
 
             products.observe(viewLifecycleOwner) {
-                adapterRelated.submitList(it.filter { product -> product.id != idProduct })
-                binding.txtNumberRelated.text = "${it.size - 1} items"
+
             }
 
             isLoading.observe(viewLifecycleOwner) {
@@ -160,7 +157,7 @@ class ProductDetailFragment : BaseFragment() {
 
 
             //Spinner Size
-            var adapterSize = SpinnerAdapter(requireContext(), sizes)
+            val adapterSize = SpinnerAdapter(requireContext(), sizes)
             spinnerSize.adapter = adapterSize
             spinnerSize.setSelection(0)
             spinnerSize.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -227,6 +224,10 @@ class ProductDetailFragment : BaseFragment() {
                         idProduct = idProduct
                     )
                 findNavController().navigate(action)
+            }
+            viewModel.relatedProduct(product.categoryName).observe(viewLifecycleOwner) {
+                adapterRelated.submitList(it.filter { product -> product.id != idProduct })
+                binding.txtNumberRelated.text = "${it.size - 1} items"
             }
             viewModel.isLoading.postValue(false)
         }
