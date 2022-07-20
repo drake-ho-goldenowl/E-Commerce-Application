@@ -74,19 +74,11 @@ class ReviewRatingViewModel @Inject constructor(
                 }
 
                 listRating.postValue(list)
+                val totalRating = Product().getTotalRating(list)
+                val average = Product().getAverageRating(list)
                 db.collection(PRODUCT_FIREBASE)
                     .document(idProduct)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        val productNew = document.toObject<Product>()
-                        productNew?.let {
-                            productNew.numberReviews = productNew.getTotalRating(list)
-                            productNew.reviewStars = productNew.getAverageRating(list)
-                            db.collection(PRODUCT_FIREBASE)
-                                .document(idProduct)
-                                .set(productNew)
-                        }
-                    }
+                    .update(NUMBER_REVIEWS, totalRating, REVIEW_STARS, average)
             }
     }
 

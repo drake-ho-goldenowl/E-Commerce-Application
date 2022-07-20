@@ -41,7 +41,7 @@
                     android:layout_width="@dimen/size_progressbar"
                     android:layout_height="@dimen/size_progressbar"
                     android:layout_gravity="center"
-                    android:background="@color/colorOnPrimary"
+                    android:background="@color/transparent"
                     android:indeterminateTint="@color/colorPrimary" />
 
             </LinearLayout>
