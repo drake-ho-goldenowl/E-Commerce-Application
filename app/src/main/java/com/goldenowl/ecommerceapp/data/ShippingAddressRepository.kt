@@ -31,21 +31,6 @@ class ShippingAddressRepository @Inject constructor(
         }
     }
 
-    fun countAddress(): MutableLiveData<Int> {
-        val result = MutableLiveData(0)
-        if (userManager.isLogged()) {
-            db.collection(USER_FIREBASE)
-                .document(userManager.getAccessToken())
-                .collection(ADDRESS_USER)
-                .get()
-                .addOnSuccessListener { documents ->
-                    result.postValue(documents.size())
-                }
-
-        }
-        return result
-    }
-
     fun getAddress(idAddress: String) {
         db.collection(USER_FIREBASE)
             .document(userManager.getAccessToken())

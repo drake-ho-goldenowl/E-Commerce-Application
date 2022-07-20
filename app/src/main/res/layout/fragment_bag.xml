@@ -41,7 +41,7 @@
             android:id="@+id/layoutCheckout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_layout_bag"
-            android:background="@color/colorOnPrimary"
+            android:background="@color/grey2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">

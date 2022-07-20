@@ -16,6 +16,8 @@ class OrderRepository @Inject constructor(
     private val userManager: UserManager,
     private val db: FirebaseFirestore
 ) {
+    val totalOrder = MutableLiveData(0)
+
     fun getOrderStatus(status: Int): MutableLiveData<List<Order>> {
         val result = MutableLiveData<List<Order>>()
         db.collection(USER_FIREBASE)
@@ -33,18 +35,16 @@ class OrderRepository @Inject constructor(
         return result
     }
 
-    fun getSize(): MutableLiveData<Int> {
-        val result = MutableLiveData<Int>()
+    fun getSize() {
         if (userManager.isLogged()) {
             db.collection(USER_FIREBASE)
                 .document(userManager.getAccessToken())
                 .collection(ORDER_USER)
                 .get()
                 .addOnSuccessListener { documents ->
-                    result.postValue(documents.size())
+                    totalOrder.postValue(documents.size())
                 }
         }
-        return result
     }
 
     fun getOrder(idOrder: String): Flow<Order> {
