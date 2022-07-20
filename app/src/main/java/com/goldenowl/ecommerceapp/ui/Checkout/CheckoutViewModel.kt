@@ -25,6 +25,7 @@ class CheckoutViewModel @Inject constructor(
     private val statusIdPayment = MutableStateFlow("")
     val bag = bagRepository.bagAndProduct
     val shippingAddress = shippingAddressRepository.address
+    val promotion = promotionRepository.promotion
 
     init {
         bagRepository.fetchBagAndProduct()

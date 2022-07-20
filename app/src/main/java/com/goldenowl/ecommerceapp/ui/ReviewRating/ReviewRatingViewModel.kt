@@ -319,9 +319,29 @@ class ReviewRatingViewModel @Inject constructor(
         }
     }
 
+    fun filterReview(filterReview: FilterReview, typeSort: TypeSort) {
+        if (userManager.isLogged()) {
+            db.collection(REVIEW_FIREBASE)
+                .whereEqualTo(ID_USER, userManager.getAccessToken())
+                .orderBy(filterReview.value,typeSort.value)
+                .get()
+                .addOnSuccessListener { documents ->
+                    val list = mutableListOf<Review>()
+                    for (document in documents) {
+                        list.add(document.toObject())
+                    }
+                    reviews.postValue(list)
+                }
+        }
+    }
+
     companion object {
         const val TAG = "REVIEW_RATING_VIEW_MODEL"
         const val HELPFUL = "helpful"
         const val ID_PRODUCT = "idProduct"
     }
+}
+enum class FilterReview(val value: String){
+    DATE("createdTimer"),
+    STAR("star")
 }

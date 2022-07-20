@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.goldenowl.ecommerceapp.data.Order
 import com.goldenowl.ecommerceapp.databinding.ItemOrderBinding
-import java.text.SimpleDateFormat
+import com.goldenowl.ecommerceapp.utilities.DateFormat
 import kotlin.math.roundToInt
 
 class ListOrderAdapter(
@@ -28,9 +28,9 @@ class ListOrderAdapter(
                 order.apply {
                     txtIdOrder.text = "Order №$id"
                     txtTrackingNumber.text = trackingNumber
-                    val simpleDate = SimpleDateFormat("MM-dd-yyyy")
+
                     timeCreated.let {
-                        txtTimeCreated.text = simpleDate.format(it).toString()
+                        txtTimeCreated.text = DateFormat.default.format(it).toString()
                     }
 
                     txtTotalAmount.text = "${total.roundToInt()}\$"

@@ -10,13 +10,15 @@ import javax.inject.Inject
 @HiltViewModel
 class BagViewModel @Inject constructor(
     private val favoriteRepository: FavoriteRepository,
+    private val promotionRepository: PromotionRepository,
     private val userManager: UserManager,
     private val bagRepository: BagRepository,
 ) :
     BaseViewModel() {
     val bagAndProduct = bagRepository.bagAndProduct
     val totalPrice = MutableLiveData(0)
-    val sale = MutableLiveData(0L)
+    val promotion = promotionRepository.promotion
+    val isRemoveButton = MutableLiveData(false)
 
     fun fetchBag() {
          bagRepository.fetchBagAndProduct()
@@ -46,7 +48,9 @@ class BagViewModel @Inject constructor(
             if (old.product.salePercent != null) {
                 salePercent = old.product.salePercent
             }
-            val price = size.price * (100 - salePercent) / 100
+            val salePromotion = promotion.value?.salePercent ?: 0
+            var price = size.price * (100 - salePercent) / 100
+            price -= (price * salePromotion / 100)
             if (isPlus) {
                 val total = totalPrice.value?.plus(price) ?: 0
                 totalPrice.postValue(total.toInt())
@@ -89,5 +93,14 @@ class BagViewModel @Inject constructor(
 
     fun isLogged(): Boolean {
         return userManager.isLogged()
+    }
+
+    fun getPromotion(id: String){
+        if (id.isNotBlank()){
+            promotionRepository.getPromotion(id)
+        }
+        else{
+            promotionRepository.promotion.postValue(Promotion())
+        }
     }
 }

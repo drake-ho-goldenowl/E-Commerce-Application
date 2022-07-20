@@ -10,7 +10,7 @@ open class BaseFragment : Fragment() {
     private val loadingDialog = LoadingDialog(this)
 
     fun toastMessage(string: String) {
-        if(string.isNotBlank()){
+        if (string.isNotBlank()) {
             Toast.makeText(
                 activity,
                 string,
@@ -38,8 +38,6 @@ open class BaseFragment : Fragment() {
         const val BUNDLE_KEY_MIN = "bundle_min"
         const val BUNDLE_KEY_MAX = "bundle_max"
         const val BUNDLE_KEY_IS_FAVORITE = "bundle_is_favorite"
-        const val BUNDLE_KEY_NAME_PROMOTION = "bundle_name_promotion"
-        const val BUNDLE_KEY_SALE = "bundle_sale"
         const val BUNDLE_KEY_NAME_COUNTRY = "bundle_name_country"
 
         const val GRIDVIEW_SPAN_COUNT = 2

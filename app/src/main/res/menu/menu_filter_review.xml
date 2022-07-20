@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/sortDateAsc"
+        android:title="Sort by create date ascending" />
+    <item
+        android:id="@+id/sortDateDes"
+        android:title="Sort by create date descending" />
+    <item
+        android:id="@+id/sortStarAsc"
+        android:title="Sort by star ascending" />
+    <item
+        android:id="@+id/sortStarDes"
+        android:title="Sort by star descending" />
+</menu>
