@@ -77,6 +77,12 @@ class ProfileLoginFragment : BaseFragment() {
             paymentLayout.setOnClickListener {
                 findNavController().navigate(R.id.paymentMethodFragment)
             }
+            promocodesLayout.setOnClickListener {
+                findNavController().navigate(R.id.promoListFragment)
+            }
+            myReviewLayout.setOnClickListener {
+                findNavController().navigate(R.id.reviewListFragment)
+            }
             settingLayout.setOnClickListener {
                 findNavController().navigate(R.id.settingFragment)
             }

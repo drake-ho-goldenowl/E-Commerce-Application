@@ -221,4 +221,14 @@
         android:name="com.goldenowl.ecommerceapp.ui.QrScan.AllowCameraFragment"
         android:label="fragment_allow_camera"
         tools:layout="@layout/fragment_allow_camera" />
+    <fragment
+        android:id="@+id/promoListFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.Promotion.PromoListFragment"
+        android:label="fragment_promo_list"
+        tools:layout="@layout/fragment_promo_list" />
+    <fragment
+        android:id="@+id/reviewListFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.ReviewRating.ReviewListFragment"
+        android:label="fragment_review_list"
+        tools:layout="@layout/fragment_review_list" />
 </navigation>
