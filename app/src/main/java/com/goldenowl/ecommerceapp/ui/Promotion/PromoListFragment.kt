@@ -38,6 +38,7 @@ class PromoListFragment : BaseFragment() {
     private fun setupObserve() {
         viewModel.apply {
             promotions.observe(viewLifecycleOwner) {
+                binding.nestedScrollView.scrollTo(0,0)
                 adapter.submitList(it)
             }
         }
@@ -62,7 +63,7 @@ class PromoListFragment : BaseFragment() {
 
     private fun showMenu(v: View) {
         val popup = PopupMenu(context, v)
-        popup.menuInflater.inflate(R.menu.menu_filter_review, popup.menu)
+        popup.menuInflater.inflate(R.menu.menu_filter_promo, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
@@ -76,12 +77,12 @@ class PromoListFragment : BaseFragment() {
                     viewModel.filterPromotion(FilterPromotion.DATE, TypeSort.DESCENDING)
                     false
                 }
-                R.id.sortStarAsc -> {
+                R.id.sortPercentAsc -> {
                     binding.appBarLayout.txtNameFilter.text = txtFilter[2]
                     viewModel.filterPromotion(FilterPromotion.PERCENT, TypeSort.ASCENDING)
                     false
                 }
-                R.id.sortStarDes -> {
+                R.id.sortPercentDes -> {
                     binding.appBarLayout.txtNameFilter.text = txtFilter[3]
                     viewModel.filterPromotion(FilterPromotion.PERCENT, TypeSort.DESCENDING)
                     false

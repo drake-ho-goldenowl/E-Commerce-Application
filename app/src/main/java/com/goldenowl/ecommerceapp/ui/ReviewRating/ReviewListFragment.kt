@@ -25,7 +25,6 @@ class ReviewListFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getAllReviewOfUser()
-        viewModel.isLoading.postValue(true)
     }
 
     override fun onCreateView(
@@ -53,11 +52,8 @@ class ReviewListFragment : BaseFragment() {
     private fun setupObserve() {
         viewModel.apply {
             reviews.observe(viewLifecycleOwner) {
+                binding.nestedScrollView.scrollTo(0,0)
                 adapterReview.submitList(it)
-                isLoading.postValue(false)
-            }
-            isLoading.observe(viewLifecycleOwner) {
-                setLoading(it)
             }
         }
     }

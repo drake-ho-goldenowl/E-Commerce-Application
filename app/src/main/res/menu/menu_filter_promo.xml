@@ -7,9 +7,9 @@
         android:id="@+id/sortDateDes"
         android:title="Sort by end date descending" />
     <item
-        android:id="@+id/sortStarAsc"
+        android:id="@+id/sortPercentAsc"
         android:title="Sort by percent ascending" />
     <item
-        android:id="@+id/sortStarDes"
+        android:id="@+id/sortPercentDes"
         android:title="Sort by percent descending" />
 </menu>
