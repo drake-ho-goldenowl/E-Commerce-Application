@@ -172,6 +172,8 @@
     <string name="notification">Notification</string>
     <string name="order_success">Order Success</string>
     <string name="update_password_success">Update password success</string>
+    <string name="review_list">Review List</string>
+    <string name="promo_list">Promo List</string>
     <array name="initial_slider_values">
         <item>20.0</item>
         <item>70.0</item>

@@ -60,7 +60,7 @@ class ReviewListFragment : BaseFragment() {
 
     private fun bind() {
         binding.apply {
-            appBarLayout.MaterialToolbar.title = "Review List"
+            appBarLayout.MaterialToolbar.title = getString(R.string.review_list)
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }

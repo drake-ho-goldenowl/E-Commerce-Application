@@ -15,8 +15,8 @@
         app:collapsedTitleTextAppearance="@style/CollapsedAppBar"
         app:collapsedTitleTextColor="@color/black"
         app:contentScrim="@color/colorOnPrimary"
-        app:expandedTitleMarginBottom="8dp"
-        app:expandedTitleMarginStart="14dp"
+        app:expandedTitleMarginBottom="@dimen/margin_bottom_title_tool_bar"
+        app:expandedTitleMarginStart="@dimen/margin_start_title_tool_bar"
         app:expandedTitleTextAppearance="@style/TextAppearance.App.Headline4"
         app:expandedTitleTextColor="@color/black"
         app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -26,7 +26,7 @@
             android:id="@+id/MaterialToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:contentInsetEnd="48dp"
+            app:contentInsetEnd="@dimen/content_inset"
             app:contentInsetStartWithNavigation="0dp"
             app:layout_collapseMode="pin"
             app:navigationIcon="@drawable/ic_arrow_back"
@@ -59,7 +59,8 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_filter_list" />
+                    android:src="@drawable/ic_baseline_filter_list"
+                    android:contentDescription="@string/button" />
 
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

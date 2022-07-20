@@ -28,6 +28,7 @@ class PromoListFragment : BaseFragment() {
         binding = FragmentPromoListBinding.inflate(inflater, container, false)
         adapter = ListPromotionAdapter {
             viewModel.getPromotion(it.id)
+            findNavController().popBackStack(R.id.profileLoginFragment,true)
             findNavController().navigate(R.id.bagFragment)
         }
         setupObserve()
@@ -46,7 +47,7 @@ class PromoListFragment : BaseFragment() {
 
     private fun bind() {
         binding.apply {
-            appBarLayout.MaterialToolbar.title = "Promo List"
+            appBarLayout.MaterialToolbar.title = getString(R.string.promo_list)
             appBarLayout.MaterialToolbar.setNavigationOnClickListener {
                 findNavController().navigateUp()
             }
