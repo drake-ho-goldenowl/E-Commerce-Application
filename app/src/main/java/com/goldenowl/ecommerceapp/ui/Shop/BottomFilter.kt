@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutFilterBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_MAX
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_MIN
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.text.NumberFormat
 import java.util.*
@@ -63,8 +66,5 @@ class BottomFilter(private var min: Float = 30F, private var max: Float = 50F) :
 
     companion object {
         const val TAG = "BOTTOM_FILTER"
-        const val REQUEST_KEY = "request_key"
-        const val BUNDLE_KEY_MIN = "bundle_min"
-        const val BUNDLE_KEY_MAX = "bundle_max"
     }
 }
