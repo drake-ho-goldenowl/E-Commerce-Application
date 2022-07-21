@@ -16,7 +16,6 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath 'com.google.gms:google-services:4.3.13'
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.42'
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -27,37 +26,18 @@ plugins {
     id 'org.jetbrains.kotlin.android' version '1.7.10' apply false
 }
 
-def getVersionName = { ->
-    try {
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'rev-list', '--first-parent', '--count', 'main'
-            standardOutput = stdout
-        }
-        return Integer.parseInt(stdout.toString().trim())
-    }
-    catch (ignored) {
-        return 1;
-    }
+static def getVersionName() {
+    def result = "git rev-list --first-parent --count main".execute().text.trim() //unix
+    if (result.empty) result = "1"
+    return result.toInteger()
 }
 
-def getVersionCode = { ->
-    try {
-        def stdout = new ByteArrayOutputStream()
-        exec {
-            commandLine 'git', 'rev-list', '--count', 'HEAD'
-            standardOutput = stdout
-        }
-        var result = Integer.parseInt(stdout.toString().trim())
-        if (result == 0) {
-            result = 1
-        }
-        return result
-    }
-    catch (ignored) {
-        return 1;
-    }
+static def getVersionCode() {
+    def result = "git rev-list HEAD --count".execute().text.trim() //unix
+    if (result.empty) result = "1"
+    return result.toInteger()
 }
+
 ext {
     versionCode = getVersionCode()
     versionName = getVersionName()
