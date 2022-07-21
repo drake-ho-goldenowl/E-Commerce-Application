@@ -1,10 +1,15 @@
 package com.goldenowl.ecommerceapp.ui.ReviewRating
 
+import android.content.Context
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.data.*
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
@@ -27,6 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewRatingViewModel @Inject constructor(
     private val productRepository: ProductRepository,
+    private val reviewRepository: ReviewRepository,
     private val userManager: UserManager,
     private val db: FirebaseFirestore
 ) :
@@ -267,9 +273,53 @@ class ReviewRatingViewModel @Inject constructor(
         fetchRatingProduct(review.idProduct)
     }
 
+    fun setColorHelpful(
+        context: Context,
+        isHelpful: Boolean,
+        txtHelpful: TextView,
+        icLike: ImageView
+    ) {
+        if (isHelpful) {
+            txtHelpful.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.colorPrimary
+                )
+            )
+            icLike.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_like2)
+            )
+        } else {
+            txtHelpful.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.black
+                )
+            )
+            icLike.setImageDrawable(
+                ContextCompat.getDrawable(context, R.drawable.ic_like)
+            )
+        }
+    }
+
+    val reviews = reviewRepository.reviews
+
+    fun getAllReviewOfUser() {
+        reviewRepository.getAllReviewOfUser()
+    }
+
+    fun filterReview(filterReview: FilterReview, typeSort: TypeSort) {
+        reviewRepository.filterReview(filterReview, typeSort)
+    }
+
     companion object {
         const val TAG = "REVIEW_RATING_VIEW_MODEL"
         const val HELPFUL = "helpful"
         const val ID_PRODUCT = "idProduct"
     }
+}
+
+enum class FilterReview(val value: String){
+    DATE("createdTimer"),
+    STAR("star")
 }

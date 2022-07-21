@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/sortDateAsc"
+        android:title="Sort by end date ascending" />
+    <item
+        android:id="@+id/sortDateDes"
+        android:title="Sort by end date descending" />
+    <item
+        android:id="@+id/sortPercentAsc"
+        android:title="Sort by percent ascending" />
+    <item
+        android:id="@+id/sortPercentDes"
+        android:title="Sort by percent descending" />
+</menu>

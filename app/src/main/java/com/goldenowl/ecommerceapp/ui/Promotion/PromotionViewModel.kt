@@ -1,6 +1,7 @@
 package com.goldenowl.ecommerceapp.ui.Promotion
 
 import com.goldenowl.ecommerceapp.data.PromotionRepository
+import com.goldenowl.ecommerceapp.data.TypeSort
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -23,4 +24,13 @@ class PromotionViewModel @Inject constructor(
     fun getPromotion(id: String) {
         promotionRepository.getPromotion(id)
     }
+
+    fun filterPromotion(filterPromotion: FilterPromotion, typeSort: TypeSort) {
+        promotionRepository.filterPromotion(filterPromotion,typeSort)
+    }
+}
+
+enum class FilterPromotion(val value: String){
+    DATE("endDate"),
+    PERCENT("salePercent")
 }

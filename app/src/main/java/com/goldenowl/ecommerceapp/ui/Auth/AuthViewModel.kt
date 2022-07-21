@@ -14,6 +14,7 @@ import com.goldenowl.ecommerceapp.data.UserManager
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.ui.OnSignInStartedListener
 import com.goldenowl.ecommerceapp.utilities.BLOCK_DEVICE
+import com.goldenowl.ecommerceapp.utilities.DateFormat
 import com.goldenowl.ecommerceapp.utilities.Hash
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,7 +26,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -126,14 +126,12 @@ class AuthViewModel @Inject constructor(
                     user?.let {
                         userLiveData.postValue(user)
                         val dob = Date()
-                        val format = SimpleDateFormat("dd/MM/yyyy")
-
                         val account = User(
                             name,
                             email,
                             Hash.hashSHA256(password),
                             user.uid,
-                            format.format(dob),
+                            DateFormat.dob.format(dob),
                             ""
                         )
                         userManager.addAccount(account)
@@ -277,13 +275,12 @@ class AuthViewModel @Inject constructor(
 
     private fun createNewUserManagerForLoginSocial(user: FirebaseUser) {
         val dob = Date()
-        val format = SimpleDateFormat("dd/MM/yyyy")
         val account = User(
             user.displayName.toString(),
             user.email.toString(),
             "",
             user.uid,
-            format.format(dob),
+            DateFormat.dob.format(dob),
             user.photoUrl.toString()
         )
         userManager.addAccount(account)

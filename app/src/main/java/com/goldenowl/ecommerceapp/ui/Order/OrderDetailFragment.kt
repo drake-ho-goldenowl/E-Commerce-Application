@@ -14,8 +14,8 @@ import com.goldenowl.ecommerceapp.data.Order
 import com.goldenowl.ecommerceapp.data.ProductOrder
 import com.goldenowl.ecommerceapp.databinding.FragmentOrderDetailBinding
 import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
+import com.goldenowl.ecommerceapp.utilities.DateFormat
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
 class OrderDetailFragment : Fragment() {
@@ -67,9 +67,8 @@ class OrderDetailFragment : Fragment() {
             order.apply {
                 txtIdOrder.text = "Order №$id"
                 txtTrackingNumber.text = trackingNumber
-                val simpleDate = SimpleDateFormat("MM-dd-yyyy")
                 timeCreated.let {
-                    txtTimeCreated.text = simpleDate.format(it).toString()
+                    txtTimeCreated.text = DateFormat.default.format(it).toString()
                 }
 
                 viewModel.setUIStatus(requireContext(), txtStatus, status)
