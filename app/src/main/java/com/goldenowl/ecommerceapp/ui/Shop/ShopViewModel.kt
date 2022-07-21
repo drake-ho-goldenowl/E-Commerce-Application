@@ -8,6 +8,7 @@ import androidx.lifecycle.asLiveData
 import com.goldenowl.ecommerceapp.data.FavoriteRepository
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.data.ProductRepository
+import com.goldenowl.ecommerceapp.data.TypeSort
 import com.goldenowl.ecommerceapp.ui.BaseViewModel
 import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.SALE
@@ -67,7 +68,7 @@ class ShopViewModel @Inject constructor(
 
     private fun loadMoreAll(list: List<Product>) {
         val queryBase = db.collection(PRODUCT_FIREBASE)
-            .orderBy(CREATED_DATE, Query.Direction.DESCENDING)
+            .orderBy(CREATED_DATE, TypeSort.DESCENDING.value)
             .limit(LIMIT.toLong())
         loadMoreBase(list, queryBase)
     }
@@ -78,7 +79,7 @@ class ShopViewModel @Inject constructor(
         } else {
             val queryBase = db.collection(PRODUCT_FIREBASE)
                 .whereEqualTo(CATEGORY_NAME, category)
-                .orderBy(CREATED_DATE, Query.Direction.DESCENDING)
+                .orderBy(CREATED_DATE, TypeSort.DESCENDING.value)
                 .limit(LIMIT.toLong())
             loadMoreBase(list, queryBase)
         }
@@ -86,7 +87,7 @@ class ShopViewModel @Inject constructor(
 
     private fun loadMoreSearch(search: String, list: List<Product>) {
         val queryBase = db.collection(PRODUCT_FIREBASE)
-            .orderBy(CREATED_DATE, Query.Direction.DESCENDING)
+            .orderBy(CREATED_DATE, TypeSort.DESCENDING.value)
             .limit(LIMIT.toLong())
         loadMoreBase(list, queryBase, search)
     }
@@ -94,7 +95,7 @@ class ShopViewModel @Inject constructor(
     private fun loadMoreCategoryAndSearch(search: String, category: String, list: List<Product>) {
         val queryBase = db.collection(PRODUCT_FIREBASE)
             .whereEqualTo(CATEGORY_NAME, category)
-            .orderBy(CREATED_DATE, Query.Direction.DESCENDING)
+            .orderBy(CREATED_DATE, TypeSort.DESCENDING.value)
             .limit(LIMIT.toLong())
         loadMoreBase(list, queryBase, search)
     }
@@ -186,7 +187,7 @@ class ShopViewModel @Inject constructor(
             .get()
             .addOnSuccessListener { documents ->
                 val list = mutableListOf<Product>()
-                for (document in documents){
+                for (document in documents) {
                     list.add(document.toObject())
                 }
                 result.postValue(list)
