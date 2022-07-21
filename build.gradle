@@ -1,6 +1,24 @@
     // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
 
+    def getVersionName = {
+        def result = "git rev-list --first-parent --count main".execute().text.trim() //unix
+        if(result.empty) result = "PowerShell -Command git rev-list --first-parent --count main".execute().text.trim() //windows
+        if(result.empty) {
+            result = "1"
+        }
+        return result.toInteger()
+    }
+
+    def getVersionCode = {
+        def result = "git rev-list --count HEAD ^main".execute().text.trim() //unix
+        if(result.empty) result = "PowerShell -Command git rev-list --count HEAD ^main".execute().text.trim() //windows
+        if(result.empty) {
+            result = "1"
+        }
+        return result.toInteger()
+    }
+
     ext {
         kotlinVersion = '1.7.10'
         appCompatVersion = "1.4.0"
@@ -8,6 +26,8 @@ buildscript {
         materialVersion = "1.4.0"
         navigationVersion = '2.4.1'
         constraintLayoutVersion = "2.1.2"
+        versionCode = getVersionCode()
+        versionName = getVersionName()
     }
 
     repositories {
