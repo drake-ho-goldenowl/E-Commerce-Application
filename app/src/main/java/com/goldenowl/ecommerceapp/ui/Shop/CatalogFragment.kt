@@ -125,7 +125,6 @@ class CatalogFragment : BaseFragment() {
                 if (it.isNotEmpty()) {
                     listProduct = it
                     isLoading.postValue(false)
-                    binding.nestedScrollView.scrollTo(0,1)
                     submitList(it)
                 }
                 else{
