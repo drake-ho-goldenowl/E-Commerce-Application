@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
@@ -62,6 +63,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx:24.2.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.0.1'
     implementation 'com.google.firebase:firebase-messaging-ktx:23.0.6'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.11'
     def nav_version = "2.5.0"
     def fragment_version = "1.5.0"
     // Kotlin
