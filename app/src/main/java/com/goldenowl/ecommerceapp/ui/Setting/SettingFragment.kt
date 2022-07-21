@@ -16,6 +16,7 @@ import com.goldenowl.ecommerceapp.databinding.FragmentSettingBinding
 import com.goldenowl.ecommerceapp.ui.ChangePassword.BottomSheetChangePassword
 import com.goldenowl.ecommerceapp.ui.General.DatePickerFragment
 import com.goldenowl.ecommerceapp.utilities.GlideDefault
+import com.goldenowl.ecommerceapp.utilities.REQUEST_PICK_IMAGE
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -118,7 +119,7 @@ class SettingFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             if (data == null || data.data == null) {
                 return
             }
@@ -142,10 +143,5 @@ class SettingFragment : Fragment() {
                 txtLayoutFullName.isErrorEnabled = false
             }
         }
-
-    }
-
-    companion object {
-        const val PICK_IMAGE_REQUEST = 456
     }
 }

@@ -2,6 +2,8 @@ package com.goldenowl.ecommerceapp.utilities
 
 const val IS_FIRST = "IS_FIRST"
 const val REQUEST_SIGN_IN = 101
+const val REQUEST_PICK_IMAGE = 102
+const val REQUEST_CAMERA = 103
 const val USER_FIREBASE = "users"
 const val PRODUCT_FIREBASE = "products"
 const val FAVORITE_FIREBASE = "favorites"
