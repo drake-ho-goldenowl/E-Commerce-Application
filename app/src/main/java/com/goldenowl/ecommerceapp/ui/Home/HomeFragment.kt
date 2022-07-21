@@ -118,52 +118,54 @@ class HomeFragment : BaseFragment() {
         binding.apply {
             nestedScrollView.viewTreeObserver?.addOnScrollChangedListener {
                 nestedScrollView.apply {
-                    val view = getChildAt(0)
                     if (view != null) {
-                        val diff = view.bottom - (height + scrollY)
-                        if (diff <= 0) {
-                            if (viewModel.loadMore.value == true) {
-                                viewModel.isLoading.postValue(true)
-                                viewModel.loadMore.postValue(false)
-                                if (product.size < category.size + 2) {
-                                    viewModel.apply {
-                                        if (product.isEmpty()) {
-                                            getSaleProduct().observe(viewLifecycleOwner) {
-                                                if (it.isNotEmpty()) {
-                                                    product[SALE] = it
-                                                    adapter.submitList(product.keys.toList())
-                                                    viewModel.isLoading.postValue(false)
-                                                    viewModel.loadMore.postValue(true)
-                                                }
-                                            }
-                                        } else if (product.size == 1 && checkSale.value == false) {
-                                            getNewProduct().observe(viewLifecycleOwner) { list ->
-                                                if (list.isNotEmpty()) {
-                                                    product[NEW] = list
-                                                    adapter.submitList(product.keys.toList())
-                                                    viewModel.isLoading.postValue(false)
-                                                    viewModel.loadMore.postValue(true)
-                                                }
-                                            }
-                                        } else {
-                                            val index = product.size - 2
-                                            if (index >= 0) {
-                                                getProductWithCategory(this@HomeFragment.category[index])
-                                                    .observe(viewLifecycleOwner) {
-                                                        if (it.isNotEmpty()) {
-                                                            product[this@HomeFragment.category[index]] =
-                                                                it
-                                                            adapter.submitList(product.keys.toList())
-                                                            viewModel.isLoading.postValue(false)
-                                                            viewModel.loadMore.postValue(true)
-                                                        }
+                        val view = getChildAt(0)
+                        if (view != null) {
+                            val diff = view.bottom - (height + scrollY)
+                            if (diff <= 0) {
+                                if (viewModel.loadMore.value == true) {
+                                    viewModel.isLoading.postValue(true)
+                                    viewModel.loadMore.postValue(false)
+                                    if (product.size < category.size + 2) {
+                                        viewModel.apply {
+                                            if (product.isEmpty()) {
+                                                getSaleProduct().observe(viewLifecycleOwner) {
+                                                    if (it.isNotEmpty()) {
+                                                        product[SALE] = it
+                                                        adapter.submitList(product.keys.toList())
+                                                        viewModel.isLoading.postValue(false)
+                                                        viewModel.loadMore.postValue(true)
                                                     }
+                                                }
+                                            } else if (product.size == 1 && checkSale.value == false) {
+                                                getNewProduct().observe(viewLifecycleOwner) { list ->
+                                                    if (list.isNotEmpty()) {
+                                                        product[NEW] = list
+                                                        adapter.submitList(product.keys.toList())
+                                                        viewModel.isLoading.postValue(false)
+                                                        viewModel.loadMore.postValue(true)
+                                                    }
+                                                }
+                                            } else {
+                                                val index = product.size - 2
+                                                if (index >= 0) {
+                                                    getProductWithCategory(this@HomeFragment.category[index])
+                                                        .observe(viewLifecycleOwner) {
+                                                            if (it.isNotEmpty()) {
+                                                                product[this@HomeFragment.category[index]] =
+                                                                    it
+                                                                adapter.submitList(product.keys.toList())
+                                                                viewModel.isLoading.postValue(false)
+                                                                viewModel.loadMore.postValue(true)
+                                                            }
+                                                        }
+                                                }
                                             }
                                         }
+                                    } else {
+                                        viewModel.isLoading.postValue(false)
+                                        viewModel.loadMore.postValue(false)
                                     }
-                                } else {
-                                    viewModel.isLoading.postValue(false)
-                                    viewModel.loadMore.postValue(false)
                                 }
                             }
                         }
