@@ -42,6 +42,8 @@ jobs:
         run: ./gradlew assembleRelease
     
       - run: git log --oneline -5 > log.txt
+      - run: git rev-list --first-parent --count main
+      - run: git rev-list HEAD --count
 
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
