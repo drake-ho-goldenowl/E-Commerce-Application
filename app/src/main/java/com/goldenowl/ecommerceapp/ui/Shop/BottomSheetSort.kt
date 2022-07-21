@@ -11,6 +11,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutSortBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_NAME
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_KEY_POSITION
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class BottomSheetSort(private val select: Int) : BottomSheetDialogFragment() {
@@ -71,8 +74,5 @@ class BottomSheetSort(private val select: Int) : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "BottomSheetSort"
-        const val REQUEST_KEY = "request_key"
-        const val BUNDLE_KEY_NAME = "bundle_name"
-        const val BUNDLE_KEY_POSITION = "bundle_position"
     }
 }

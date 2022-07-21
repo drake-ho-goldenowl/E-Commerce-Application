@@ -45,7 +45,7 @@ class CatalogFragment : BaseFragment() {
             viewModel.isLoading.postValue(true)
         }
         viewModel.setSort(DEFAULT_SORT)
-        viewModel.lastVisible = ""
+        viewModel.query = null
         if (nameTitle.isNullOrBlank()) {
             viewModel.setCategory("")
         } else {
@@ -127,6 +127,9 @@ class CatalogFragment : BaseFragment() {
                     isLoading.postValue(false)
                     submitList(it)
                 }
+                else{
+                    loadMoreProduct()
+                }
             }
             isLoading.observe(viewLifecycleOwner) {
                 if (it) {
@@ -136,13 +139,13 @@ class CatalogFragment : BaseFragment() {
                 }
             }
             statusSort.observe(viewLifecycleOwner) {
-                if (listProduct.isNotEmpty() && it >= 0) {
+                if (it == 1) {
+                    binding.appBarLayout.btnSort.text = getString(R.string.newest)
+                } else if (listProduct.isNotEmpty() && it >= 0) {
                     val list = filterSort(listProduct)
                     listProduct = list
                     submitList(listProduct)
                     binding.nestedScrollView.scrollTo(0, 0)
-                } else {
-                    binding.appBarLayout.btnSort.text = getString(R.string.sort)
                 }
             }
         }
@@ -165,12 +168,7 @@ class CatalogFragment : BaseFragment() {
                     val view = getChildAt(0)
                     val diff = view.bottom - (height + scrollY)
                     if (diff <= 0) {
-                        if (viewModel.loadMore.value == true) {
-                            viewModel.loadMore(listProduct)
-                            viewModel.setSort(DEFAULT_SORT)
-                        } else {
-                            viewModel.isLoading.postValue(false)
-                        }
+                        loadMoreProduct()
                     }
                 }
             }
@@ -234,6 +232,15 @@ class CatalogFragment : BaseFragment() {
         }
     }
 
+    private fun loadMoreProduct(){
+        if (viewModel.loadMore.value == true) {
+            viewModel.loadMore(listProduct)
+            viewModel.setSort(DEFAULT_SORT)
+        } else {
+            viewModel.isLoading.postValue(false)
+        }
+    }
+
     private fun submitList(list: List<Product>) {
         adapterProduct.submitList(list)
         adapterProductGrid.submitList(list)
@@ -278,6 +285,6 @@ class CatalogFragment : BaseFragment() {
     }
 
     companion object {
-        const val DEFAULT_SORT = -1
+        const val DEFAULT_SORT = 1
     }
 }
