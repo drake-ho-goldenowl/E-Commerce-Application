@@ -26,6 +26,9 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          
+      - run: git rev-list --first-parent --count main
+      - run: git rev-list HEAD --count
         
       - uses: actions/setup-java@v3
         with:
@@ -42,8 +45,6 @@ jobs:
         run: ./gradlew assembleRelease
     
       - run: git log --oneline -5 > log.txt
-      - run: git rev-list --first-parent --count main
-      - run: git rev-list HEAD --count
 
       - name: upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
