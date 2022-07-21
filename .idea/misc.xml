@@ -158,6 +158,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_3.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_4.xml" value="0.335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_5.xml" value="0.1" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_6.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_auth.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_filter.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_action_bar_filter_2.xml" value="0.5" />
@@ -244,6 +245,8 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/mipmap-anydpi-v26/ic_app_round.xml" value="0.173" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.153" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/xml/file_path.xml" value="0.1" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/xml/file_paths.xml" value="0.12395833333333334" />
       </map>
     </option>
   </component>
