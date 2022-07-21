@@ -27,9 +27,6 @@ jobs:
         with:
           fetch-depth: 0
           
-      - run: git rev-list --first-parent --count main
-      - run: git rev-list HEAD --count
-        
       - uses: actions/setup-java@v3
         with:
           distribution: temurin
@@ -37,7 +34,9 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-
+        with:
+          gradle-version: 7.3.3
+          
       - name: Make Gradle executable
         run: chmod +x ./gradlew
       
