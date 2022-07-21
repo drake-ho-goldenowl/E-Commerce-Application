@@ -1,19 +1,35 @@
     // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    def getVersionName = {
-        def result = "git rev-list --first-parent --count main".execute().text.trim() //unix
-        if(result.empty) {
-            result = "1"
+    def getVersionName = { ->
+        try {
+            def stdout = new ByteArrayOutputStream()
+            exec {
+                commandLine 'git', 'rev-list', '--first-parent', '--count', 'main'
+                standardOutput = stdout
+            }
+            return Integer.parseInt(stdout.toString().trim())
         }
-        return result.toInteger()
+        catch (ignored) {
+            return 1;
+        }
     }
 
-    def getVersionCode = {
-        def result = "git rev-list --count HEAD ^main".execute().text.trim() //unix
-        if(result.empty) {
-            result = "1"
+    def getVersionCode = { ->
+        try {
+            def stdout = new ByteArrayOutputStream()
+            exec {
+                commandLine 'git', 'rev-list', '--count', 'HEAD'
+                standardOutput = stdout
+            }
+            var result = Integer.parseInt(stdout.toString().trim())
+            if (result == 0) {
+                result = 1
+            }
+            return result
         }
-        return result.toInteger()
+        catch (ignored) {
+            return 1;
+        }
     }
 
     ext {
