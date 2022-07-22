@@ -14,7 +14,7 @@ import com.goldenowl.ecommerceapp.utilities.GlideDefault
 
 class ListImageReview(
     private val isUri: Boolean,
-    private val onItemClicked: (String) -> Unit,
+    private val onItemClicked: (Int) -> Unit,
     private val onItemAddImageClicked: () -> Unit,
 ) :
     RecyclerView.Adapter<ListImageReviewViewHolder>() {
@@ -49,6 +49,9 @@ class ListImageReview(
         when (holder) {
             is ListImageReviewViewHolder.ItemViewHolder -> {
                 holder.bind(dataSet[position])
+                holder.itemView.setOnClickListener {
+                    onItemClicked(position)
+                }
             }
             is ListImageReviewViewHolder.AddImageViewHolder -> {
                 holder.itemView.setOnClickListener {

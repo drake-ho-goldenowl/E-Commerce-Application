@@ -4,7 +4,11 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.goldenowl.ecommerceapp.ui.Shop.ViewPageImageProduct
 
-class ImageProductAdapter(fragment: Fragment, listImage: List<String>) :
+class ImageProductAdapter(
+    private val fragment: Fragment,
+    private val listImage: List<String>,
+    private val onClickImage: (Int) -> Unit
+) :
     FragmentStateAdapter(fragment) {
     private val listImageNew = if (listImage.size == 1) {
         listImage
@@ -17,6 +21,6 @@ class ImageProductAdapter(fragment: Fragment, listImage: List<String>) :
     }
 
     override fun createFragment(position: Int): Fragment {
-        return ViewPageImageProduct(listImageNew[position])
+        return ViewPageImageProduct(listImageNew[position], position - 1, onClickImage)
     }
 }

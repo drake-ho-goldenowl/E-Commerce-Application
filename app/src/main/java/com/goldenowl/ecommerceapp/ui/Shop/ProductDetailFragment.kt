@@ -118,7 +118,12 @@ class ProductDetailFragment : BaseFragment() {
             viewPagerImageProduct.apply {
                 if (NetworkHelper.isNetworkAvailable(requireContext())) {
                     val adapterImage =
-                        ImageProductAdapter(this@ProductDetailFragment, product.images)
+                        ImageProductAdapter(this@ProductDetailFragment, product.images) {
+                            touchImage(
+                                product.images,
+                                it
+                            )
+                        }
                     adapter = adapterImage
                     setCurrentItem(1, false)
                     registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -134,7 +139,12 @@ class ProductDetailFragment : BaseFragment() {
                     })
                 } else {
                     val images = listOf(product.images[0])
-                    val adapterImage = ImageProductAdapter(this@ProductDetailFragment, images)
+                    val adapterImage = ImageProductAdapter(this@ProductDetailFragment, images) {
+                        touchImage(
+                            product.images,
+                            it
+                        )
+                    }
                     adapter = adapterImage
                 }
 

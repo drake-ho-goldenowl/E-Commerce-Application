@@ -8,18 +8,18 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentSettingBinding
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import com.goldenowl.ecommerceapp.ui.ChangePassword.BottomSheetChangePassword
 import com.goldenowl.ecommerceapp.ui.General.DatePickerFragment
 import com.goldenowl.ecommerceapp.utilities.GlideDefault
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SettingFragment : Fragment() {
+class SettingFragment : BaseFragment() {
     private val viewModel: SettingViewModel by viewModels()
     private lateinit var binding: FragmentSettingBinding
 
@@ -43,8 +43,11 @@ class SettingFragment : Fragment() {
             GlideDefault.userImage(
                 requireContext(),
                 viewModel.userManager.getAvatar(),
-                binding.imgAvatar
+                imgAvatar
             )
+            imgAvatar.setOnClickListener {
+                touchImage(listOf(viewModel.userManager.getAvatar()))
+            }
 
             if (viewModel.checkLoginWithFbOrGoogle()) {
                 txtChange.visibility = View.GONE

@@ -175,6 +175,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_fourth_intro.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_home.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_intro_page.xml" value="0.27314814814814814" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_large_image.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_no_internet.xml" value="0.1" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/fragment_order_detail.xml" value="0.375" />
@@ -228,6 +229,7 @@
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_spinner.xml" value="0.2682291666666667" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_view_pager_home.xml" value="0.26927083333333335" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_view_pager_image_product.xml" value="0.26927083333333335" />
+        <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_view_pager_image_touch.xml" value="0.2682291666666667" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_view_pager_list_order.xml" value="0.2638888888888889" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_view_pager_order.xml" value="0.2682291666666667" />
         <entry key="..\:/code/ECommerceApplication/app/src/main/res/layout/item_visacard.xml" value="0.5" />

@@ -79,7 +79,6 @@ dependencies {
     kapt "androidx.room:room-compiler:2.4.2"
     implementation "androidx.room:room-ktx:2.4.2"
 
-    implementation 'com.google.code.gson:gson:2.9.0'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.0"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.0"
@@ -105,4 +104,10 @@ dependencies {
 
     //Scan QR code
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.9.0'
+
+    //ImageView Touch
+    implementation 'com.github.MikeOrtiz:TouchImageView:1.4.1'
 }

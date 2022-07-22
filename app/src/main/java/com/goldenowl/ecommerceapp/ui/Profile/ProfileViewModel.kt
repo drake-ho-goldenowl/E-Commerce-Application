@@ -62,4 +62,8 @@ class ProfileViewModel @Inject constructor(
         firebaseAuth.signOut()
         userManager.logOut()
     }
+
+    fun getAvatar(): String {
+        return userManager.getAvatar()
+    }
 }

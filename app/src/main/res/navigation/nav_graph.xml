@@ -228,4 +228,9 @@
         android:name="com.goldenowl.ecommerceapp.ui.ReviewRating.ReviewListFragment"
         android:label="fragment_review_list"
         tools:layout="@layout/fragment_review_list" />
+    <fragment
+        android:id="@+id/largeImageFragment"
+        android:name="com.goldenowl.ecommerceapp.ui.LargeImage.LargeImageFragment"
+        android:label="fragment_large_image"
+        tools:layout="@layout/fragment_large_image" />
 </navigation>

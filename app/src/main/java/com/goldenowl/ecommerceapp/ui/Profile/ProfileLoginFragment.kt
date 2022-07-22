@@ -93,6 +93,9 @@ class ProfileLoginFragment : BaseFragment() {
         binding.apply {
             appBarLayout.topAppBar.title = getString(R.string.my_profile)
             setDefault()
+            imgAvatar.setOnClickListener {
+                touchImage(listOf(viewModel.getAvatar()))
+            }
             btnLogout.setOnClickListener {
                 viewModel.logOut()
                 startActivity(Intent(activity, AuthActivity::class.java))

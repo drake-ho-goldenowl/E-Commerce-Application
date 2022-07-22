@@ -1,7 +1,10 @@
 package com.goldenowl.ecommerceapp.ui
 
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,10 +30,21 @@ open class BaseFragment : Fragment() {
         }
     }
 
+    fun touchImage(images: List<String>,position: Int = 0){
+        findNavController().navigate(
+            R.id.largeImageFragment,
+            bundleOf(
+                URL_IMAGE to images.joinToString("`"),
+                BUNDLE_KEY_POSITION to position
+            )
+        )
+    }
+
     companion object {
         const val ID_PRODUCT = "idProduct"
         const val ID_ADDRESS = "idAddress"
         const val ID_PROMOTION = "idPromotion"
+        const val URL_IMAGE= "urlImage"
 
         const val REQUEST_KEY = "request_key"
         const val BUNDLE_KEY_NAME = "bundle_name"

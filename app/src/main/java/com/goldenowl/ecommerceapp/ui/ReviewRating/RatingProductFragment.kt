@@ -64,7 +64,12 @@ class RatingProductFragment : BaseFragment() {
                 }
         }, { recyclerView, review ->
 
-            val adapter = ListImageReview(false, {}, {})
+            val adapter = ListImageReview(false, {
+                touchImage(
+                    review.listImage,
+                    it
+                )
+            }, {})
             adapter.dataSet = review.listImage
             adapter.notifyDataSetChanged()
 
