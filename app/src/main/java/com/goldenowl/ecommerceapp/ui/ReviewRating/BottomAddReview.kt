@@ -11,12 +11,16 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.adapters.ListImageReview
 import com.goldenowl.ecommerceapp.databinding.BottomLayoutAddYourReviewBinding
 import com.goldenowl.ecommerceapp.ui.BaseBottomSheetDialog
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.BUNDLE_DISMISS
+import com.goldenowl.ecommerceapp.ui.BaseFragment.Companion.REQUEST_KEY
 import com.goldenowl.ecommerceapp.ui.General.DialogChooseImage
 import com.goldenowl.ecommerceapp.ui.General.Permission
 import com.goldenowl.ecommerceapp.utilities.FileUtil
@@ -33,7 +37,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class BottomAddReview(private val idProduct: String) : BaseBottomSheetDialog() {
     private lateinit var binding: BottomLayoutAddYourReviewBinding
-    private val viewModel: ReviewRatingViewModel by activityViewModels()
+    private val viewModel: ReviewRatingViewModel by viewModels()
     private var starVote: Long = 0
     private var description: String = ""
     private val listImage: MutableSet<String> = mutableSetOf()
@@ -148,6 +152,7 @@ class BottomAddReview(private val idProduct: String) : BaseBottomSheetDialog() {
         viewModel.apply {
             dismiss.observe(viewLifecycleOwner) {
                 if (it) {
+                    sendData()
                     dismiss()
                 }
             }
@@ -180,15 +185,14 @@ class BottomAddReview(private val idProduct: String) : BaseBottomSheetDialog() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            REQUEST_PICK_IMAGE -> {
-                selectCompressor(data)
-            }
-            REQUEST_CAMERA -> {
-                selectCompressor(data, true)
-            }
-            Activity.RESULT_OK -> {
-                selectCompressor(data, true)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_PICK_IMAGE -> {
+                    selectCompressor(data)
+                }
+                REQUEST_CAMERA -> {
+                    selectCompressor(data, true)
+                }
             }
         }
     }
@@ -226,11 +230,17 @@ class BottomAddReview(private val idProduct: String) : BaseBottomSheetDialog() {
                     adapter.dataSet = listImage.toList()
                     adapter.notifyDataSetChanged()
                 }
-
             }
         }
-        requireContext().contentResolver.delete(filePath, null, null)
     }
+
+    private fun sendData() {
+        setFragmentResult(
+            REQUEST_KEY,
+            bundleOf(BUNDLE_DISMISS to true)
+        )
+    }
+
 
     companion object {
         const val TAG = "BOTTOM_ADD_REVIEW"

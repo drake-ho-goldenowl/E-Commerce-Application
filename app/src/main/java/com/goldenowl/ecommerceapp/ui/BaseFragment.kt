@@ -37,6 +37,7 @@ open class BaseFragment : Fragment() {
         const val BUNDLE_KEY_POSITION = "bundle_position"
         const val BUNDLE_KEY_MIN = "bundle_min"
         const val BUNDLE_KEY_MAX = "bundle_max"
+        const val BUNDLE_DISMISS = "dismiss"
         const val BUNDLE_KEY_IS_FAVORITE = "bundle_is_favorite"
         const val BUNDLE_KEY_NAME_COUNTRY = "bundle_name_country"
 

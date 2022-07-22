@@ -74,12 +74,6 @@ class BottomSheetFavorite(
                 toastMessage(str)
                 toastMessage.postValue("")
             }
-
-            dismiss.observe(viewLifecycleOwner) {
-                if (it) {
-                    dismiss()
-                }
-            }
         }
     }
 
@@ -98,7 +92,13 @@ class BottomSheetFavorite(
                     viewModel.toastMessage.postValue(WARNING_SELECT_COLOR)
                 } else {
                     viewModel.insertFavorite(product.id, selectSize.toString(), color.toString())
-                    sendData()
+                        .observe(viewLifecycleOwner) {
+                            setLoading(!it)
+                            if (it) {
+                                dismiss()
+                                sendData()
+                            }
+                        }
                 }
             }
         }

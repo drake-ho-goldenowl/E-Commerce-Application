@@ -5,7 +5,9 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.goldenowl.ecommerceapp.R
-import com.goldenowl.ecommerceapp.ui.BaseViewModel
+import com.goldenowl.ecommerceapp.ui.BaseViewModel.Companion.COLOR
+import com.goldenowl.ecommerceapp.ui.BaseViewModel.Companion.ID_PRODUCT
+import com.goldenowl.ecommerceapp.ui.BaseViewModel.Companion.SIZE
 import com.goldenowl.ecommerceapp.utilities.BAG_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.PRODUCT_FIREBASE
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
@@ -21,10 +23,16 @@ import kotlin.math.roundToInt
 class BagRepository @Inject constructor(
     private val db: FirebaseFirestore,
     private val userManager: UserManager,
-) {
+) : BaseRepository() {
     val bagAndProduct = MutableLiveData<MutableList<BagAndProduct>>()
     private val bags = MutableLiveData<List<Bag>>()
+
+    init {
+        fetchBagAndProduct()
+    }
+
     fun fetchBagAndProduct() {
+        isSuccess.postValue(false)
         if (userManager.isLogged()) {
             db.collection(USER_FIREBASE)
                 .document(userManager.getAccessToken())
@@ -34,6 +42,7 @@ class BagRepository @Inject constructor(
                     if (documents.size() == 0) {
                         bags.postValue(emptyList())
                         bagAndProduct.postValue(mutableListOf())
+                        isSuccess.postValue(true)
                     } else {
                         val list = mutableListOf<BagAndProduct>()
                         val listBag = mutableListOf<Bag>()
@@ -45,9 +54,9 @@ class BagRepository @Inject constructor(
                                         list.add(BagAndProduct(bag, it))
                                     }
                                     bagAndProduct.postValue(list)
-
                                 }
                             listBag.add(bag)
+                            isSuccess.postValue(true)
                         }
                         bags.postValue(listBag)
                     }
@@ -75,7 +84,13 @@ class BagRepository @Inject constructor(
         }
     }
 
-    fun insertBag(idProduct: String, color: String, size: String, quantity: Long = 1) {
+    fun insertBag(
+        idProduct: String,
+        color: String,
+        size: String,
+        quantity: Long = 1
+    ): MutableLiveData<Boolean> {
+        val isFinish = MutableLiveData(false)
         val bag = Bag(
             id = Date().time.toString(),
             idProduct = idProduct,
@@ -83,7 +98,31 @@ class BagRepository @Inject constructor(
             size = size,
             quantity = quantity,
         )
-        checkExist(bag)
+        db.collection(USER_FIREBASE).document(userManager.getAccessToken())
+            .collection(BAG_FIREBASE)
+            .whereEqualTo(SIZE, bag.size)
+            .whereEqualTo(COLOR, bag.color)
+            .whereEqualTo(ID_PRODUCT, bag.idProduct)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.size() > 0) {
+                    for (document in documents) {
+                        plusQuantity(document.toObject())
+                    }
+                    isFinish.postValue(true)
+                } else {
+                    db.collection(USER_FIREBASE)
+                        .document(userManager.getAccessToken())
+                        .collection(BAG_FIREBASE)
+                        .document(bag.id)
+                        .set(bag)
+                        .addOnSuccessListener {
+                            isFinish.postValue(true)
+                            fetchBagAndProduct()
+                        }
+                }
+            }
+        return isFinish
     }
 
     fun removeBagFirebase(bag: Bag) {
@@ -95,7 +134,6 @@ class BagRepository @Inject constructor(
             .addOnSuccessListener {
                 fetchBagAndProduct()
             }
-
     }
 
     fun removeAllFirebase() {
@@ -108,6 +146,7 @@ class BagRepository @Inject constructor(
                     document.reference.delete()
                         .addOnSuccessListener {
                             bagAndProduct.postValue(mutableListOf())
+                            bags.postValue(mutableListOf())
                         }
 
                 }
@@ -123,25 +162,6 @@ class BagRepository @Inject constructor(
             .addOnSuccessListener {
                 if (isFetch) {
                     fetchBagAndProduct()
-                }
-            }
-    }
-
-
-    private fun checkExist(bag: Bag) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken())
-            .collection(BAG_FIREBASE)
-            .whereEqualTo(BaseViewModel.SIZE, bag.size)
-            .whereEqualTo(BaseViewModel.COLOR, bag.color)
-            .whereEqualTo(BaseViewModel.ID_PRODUCT, bag.idProduct)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents.size() > 0) {
-                    for (document in documents) {
-                        plusQuantity(document.toObject())
-                    }
-                } else {
-                    updateBagFirebase(bag)
                 }
             }
     }

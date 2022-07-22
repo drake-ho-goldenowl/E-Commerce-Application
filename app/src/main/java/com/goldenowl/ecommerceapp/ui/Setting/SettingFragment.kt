@@ -2,7 +2,10 @@ package com.goldenowl.ecommerceapp.ui.Setting
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -15,7 +18,12 @@ import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.databinding.FragmentSettingBinding
 import com.goldenowl.ecommerceapp.ui.ChangePassword.BottomSheetChangePassword
 import com.goldenowl.ecommerceapp.ui.General.DatePickerFragment
+import com.goldenowl.ecommerceapp.ui.General.DialogChooseImage
+import com.goldenowl.ecommerceapp.ui.General.Permission
+import com.goldenowl.ecommerceapp.ui.ReviewRating.BottomAddReview
+import com.goldenowl.ecommerceapp.utilities.FileUtil
 import com.goldenowl.ecommerceapp.utilities.GlideDefault
+import com.goldenowl.ecommerceapp.utilities.REQUEST_CAMERA
 import com.goldenowl.ecommerceapp.utilities.REQUEST_PICK_IMAGE
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,6 +31,24 @@ import dagger.hilt.android.AndroidEntryPoint
 class SettingFragment : Fragment() {
     private val viewModel: SettingViewModel by viewModels()
     private lateinit var binding: FragmentSettingBinding
+    private lateinit var requestStore: Permission
+    private lateinit var requestCamera: Permission
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requestStore = Permission(this, {
+            val pickPhoto = Intent(
+                Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            )
+            startActivityForResult(pickPhoto, REQUEST_PICK_IMAGE);
+        }, {})
+
+        requestCamera = Permission(this, {
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(takePictureIntent, REQUEST_CAMERA)
+        }, {})
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,9 +121,7 @@ class SettingFragment : Fragment() {
 
             })
             txtChangeAvatar.setOnClickListener {
-                val intent = Intent(Intent.ACTION_PICK)
-                intent.type = "image/*"
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 456)
+                DialogChooseImage(this@SettingFragment, requestCamera, requestStore).show()
             }
             txtChange.setOnClickListener {
                 val modalBottomSheet = BottomSheetChangePassword()
@@ -119,19 +143,47 @@ class SettingFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            if (data == null || data.data == null) {
-                return
+        if (resultCode == Activity.RESULT_OK){
+            when (requestCode) {
+                REQUEST_PICK_IMAGE -> {
+                    selectCompressor(data)
+                }
+                REQUEST_CAMERA -> {
+                    selectCompressor(data, true)
+                }
             }
-            val filePath = data.data
-            binding.imgAvatar.setImageURI(filePath)
-            viewModel.uploadImage(filePath, viewModel.userManager.getAccessToken())
-            GlideDefault.userImage(
-                requireContext(),
-                data.data.toString(),
-                binding.imgAvatar
-            )
         }
+    }
+
+    private fun selectCompressor(data: Intent?, isCamera: Boolean = false) {
+        if (data == null) {
+            return
+        }
+        if (isCamera) {
+            data.extras?.let { it ->
+                FileUtil.getImageUri(
+                    requireContext(),
+                    it.get(BottomAddReview.DATA) as Bitmap
+                )?.let {
+                    loadImage(it)
+                }
+            }
+        } else {
+            val filePath = data.data
+            filePath?.let {
+                loadImage(it)
+            }
+        }
+    }
+
+    private fun loadImage(filePath: Uri) {
+        binding.imgAvatar.setImageURI(filePath)
+        viewModel.uploadImage(filePath, viewModel.userManager.getAccessToken())
+        GlideDefault.userImage(
+            requireContext(),
+            filePath.toString(),
+            binding.imgAvatar
+        )
     }
 
     private fun alertName(alert: String) {

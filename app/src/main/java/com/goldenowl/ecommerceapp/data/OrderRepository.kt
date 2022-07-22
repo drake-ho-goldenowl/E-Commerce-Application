@@ -3,6 +3,7 @@ package com.goldenowl.ecommerceapp.data
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asFlow
 import com.goldenowl.ecommerceapp.ui.BaseViewModel.Companion.STATUS_ORDER
+import com.goldenowl.ecommerceapp.ui.BaseViewModel.Companion.TIME_CREATE
 import com.goldenowl.ecommerceapp.utilities.ORDER_USER
 import com.goldenowl.ecommerceapp.utilities.USER_FIREBASE
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,6 +25,7 @@ class OrderRepository @Inject constructor(
             .document(userManager.getAccessToken())
             .collection(ORDER_USER)
             .whereEqualTo(STATUS_ORDER, status)
+            .orderBy(TIME_CREATE, TypeSort.DESCENDING.value)
             .get()
             .addOnSuccessListener { documents ->
                 val list = mutableSetOf<Order>()
@@ -63,7 +65,7 @@ class OrderRepository @Inject constructor(
     }
 
     fun setOrderFirebase(order: Order): MutableLiveData<Boolean> {
-        val result =  MutableLiveData(false)
+        val result = MutableLiveData(false)
         db.collection(USER_FIREBASE)
             .document(userManager.getAccessToken())
             .collection(ORDER_USER)

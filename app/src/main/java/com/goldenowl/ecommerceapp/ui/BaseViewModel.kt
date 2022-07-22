@@ -16,6 +16,7 @@ open class BaseViewModel : ViewModel() {
         const val LIMIT = 4
         const val CATEGORY_NAME = "categoryName"
         const val CREATED_DATE = "createdDate"
+        const val TIME_CREATE = "timeCreated"
         const val SALE_PERCENT = "salePercent"
         const val STATUS_ORDER = "status"
         const val ID_USER = "idUser"
