@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
+import com.goldenowl.ecommerceapp.data.BagRepository
 import com.goldenowl.ecommerceapp.data.FavoriteRepository
 import com.goldenowl.ecommerceapp.data.Product
 import com.goldenowl.ecommerceapp.data.ProductRepository
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val productRepository: ProductRepository,
     private val favoriteRepository: FavoriteRepository,
+    private val bagRepository: BagRepository,
     private val db: FirebaseFirestore,
 ) : BaseViewModel() {
     val category = productRepository.getAllCategory().asLiveData()
@@ -27,7 +29,8 @@ class HomeViewModel @Inject constructor(
     val checkSale = MutableLiveData(false)
 
     init {
-        favoriteRepository.getListIdProductFavorite()
+        favoriteRepository.fetchFavoriteAndProduct()
+        bagRepository.fetchBagAndProduct()
     }
 
     fun getProductWithCategory(category: String): MutableLiveData<List<Product>> {

@@ -24,13 +24,9 @@ class FavoriteRepository @Inject constructor(
     val favoriteAndProduct = MutableLiveData<MutableList<FavoriteAndProduct>>()
     private val listIdProductFavorite = MutableLiveData<List<String>>()
 
-    init {
-        fetchFavoriteAndProduct()
-    }
-
-    private fun fetchFavoriteAndProduct() {
-        isSuccess.postValue(false)
+    fun fetchFavoriteAndProduct() {
         if (userManager.isLogged()) {
+            isSuccess.postValue(false)
             db.collection(USER_FIREBASE)
                 .document(userManager.getAccessToken())
                 .collection(FAVORITE_FIREBASE)

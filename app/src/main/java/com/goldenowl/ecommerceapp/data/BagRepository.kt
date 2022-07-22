@@ -27,13 +27,9 @@ class BagRepository @Inject constructor(
     val bagAndProduct = MutableLiveData<MutableList<BagAndProduct>>()
     private val bags = MutableLiveData<List<Bag>>()
 
-    init {
-        fetchBagAndProduct()
-    }
-
     fun fetchBagAndProduct() {
-        isSuccess.postValue(false)
         if (userManager.isLogged()) {
+            isSuccess.postValue(false)
             db.collection(USER_FIREBASE)
                 .document(userManager.getAccessToken())
                 .collection(BAG_FIREBASE)
@@ -56,9 +52,9 @@ class BagRepository @Inject constructor(
                                     bagAndProduct.postValue(list)
                                 }
                             listBag.add(bag)
-                            isSuccess.postValue(true)
                         }
                         bags.postValue(listBag)
+                        isSuccess.postValue(true)
                     }
                 }
         }
