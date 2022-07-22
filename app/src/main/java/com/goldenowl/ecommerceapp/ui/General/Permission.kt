@@ -28,11 +28,11 @@ class Permission(
             ) == PackageManager.PERMISSION_GRANTED -> {
                 grantedOnClick()
             }
-            fragment.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+            fragment.shouldShowRequestPermissionRationale(typePermission.value) -> {
                 rationaleOnClick()
             }
             else -> {
-                request.launch(Manifest.permission.CAMERA)
+                request.launch(typePermission.value)
             }
         }
     }
