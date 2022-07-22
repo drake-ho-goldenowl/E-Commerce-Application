@@ -79,6 +79,7 @@ class ReviewRatingViewModel @Inject constructor(
                 db.collection(PRODUCT_FIREBASE)
                     .document(idProduct)
                     .update(NUMBER_REVIEWS, totalRating, REVIEW_STARS, average)
+                isLoading.postValue(false)
             }
     }
 
@@ -99,6 +100,7 @@ class ReviewRatingViewModel @Inject constructor(
     }
 
     fun setIdProduct(idProduct: String) {
+        isLoading.postValue(true)
         statusIdProduct.value = idProduct
     }
 

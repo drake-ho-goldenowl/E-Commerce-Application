@@ -5,7 +5,7 @@ import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 open class BaseBottomSheetDialog : BottomSheetDialogFragment() {
-    val loadingDialog = LoadingDialog(this)
+    private val loadingDialog = LoadingDialog(this)
 
     fun toastMessage(string: String) {
         if (string.isNotBlank()) {

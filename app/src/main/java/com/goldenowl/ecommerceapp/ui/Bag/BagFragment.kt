@@ -25,10 +25,7 @@ class BagFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.action_bagFragment_to_warningFragment)
-        } else {
-            viewModel.isLoading.postValue(true)
         }
-        viewModel.fetchBag()
         adapterBag = ListBagAdapter({
             val action = BagFragmentDirections.actionBagFragmentToProductDetailFragment(
                 idProduct = it.product.id
@@ -80,7 +77,10 @@ class BagFragment : BaseFragment() {
                 } else {
                     viewModel.isRemoveButton.postValue(false)
                 }
-                viewModel.fetchBag()
+                bagAndProduct.value?.let { list ->
+                    val sale = promotion.value?.salePercent ?: 0
+                    calculatorTotal(list, sale)
+                }
             }
 
             isRemoveButton.observe(viewLifecycleOwner) {
@@ -89,6 +89,10 @@ class BagFragment : BaseFragment() {
 
             isLoading.observe(viewLifecycleOwner) {
                 setLoading(it)
+            }
+
+            isSuccess.observe(viewLifecycleOwner){
+                isLoading.postValue(!it)
             }
         }
     }

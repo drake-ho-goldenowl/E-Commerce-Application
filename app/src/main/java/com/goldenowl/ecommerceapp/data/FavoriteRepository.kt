@@ -20,11 +20,13 @@ import javax.inject.Singleton
 class FavoriteRepository @Inject constructor(
     private val db: FirebaseFirestore,
     private val userManager: UserManager,
-) {
+) : BaseRepository() {
     val favoriteAndProduct = MutableLiveData<MutableList<FavoriteAndProduct>>()
     private val listIdProductFavorite = MutableLiveData<List<String>>()
+
     fun fetchFavoriteAndProduct() {
         if (userManager.isLogged()) {
+            isSuccess.postValue(false)
             db.collection(USER_FIREBASE)
                 .document(userManager.getAccessToken())
                 .collection(FAVORITE_FIREBASE)
@@ -32,6 +34,7 @@ class FavoriteRepository @Inject constructor(
                 .addOnSuccessListener { documents ->
                     if (documents.size() == 0) {
                         favoriteAndProduct.postValue(mutableListOf())
+                        isSuccess.postValue(true)
                     } else {
                         val list = mutableListOf<FavoriteAndProduct>()
                         for (document in documents) {
@@ -42,6 +45,7 @@ class FavoriteRepository @Inject constructor(
                                         list.add(FavoriteAndProduct(favorite, it))
                                     }
                                     favoriteAndProduct.postValue(list)
+                                    isSuccess.postValue(true)
                                 }
                         }
                     }
@@ -51,14 +55,37 @@ class FavoriteRepository @Inject constructor(
     }
 
 
-    fun insertFavorite(idProduct: String, color: String, size: String) {
+    fun insertFavorite(idProduct: String, color: String, size: String): MutableLiveData<Boolean> {
+        val isFinish = MutableLiveData(false)
         val favorite = Favorite(
             id = Date().time.toString(),
             idProduct = idProduct,
             color = color,
             size = size,
         )
-        checkExist(favorite)
+        db.collection(USER_FIREBASE)
+            .document(userManager.getAccessToken())
+            .collection(FAVORITE_FIREBASE)
+            .whereEqualTo(BaseViewModel.SIZE, favorite.size)
+            .whereEqualTo(BaseViewModel.COLOR, favorite.color)
+            .whereEqualTo(BaseViewModel.ID_PRODUCT, favorite.idProduct)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents.size() == 0) {
+                    db.collection(USER_FIREBASE)
+                        .document(userManager.getAccessToken())
+                        .collection(FAVORITE_FIREBASE)
+                        .document(favorite.id)
+                        .set(favorite)
+                        .addOnSuccessListener {
+                            fetchFavoriteAndProduct()
+                            isFinish.postValue(true)
+                        }
+                } else {
+                    isFinish.postValue(true)
+                }
+            }
+        return isFinish
     }
 
     fun removeFavoriteFirebase(favorite: Favorite) {
@@ -90,32 +117,6 @@ class FavoriteRepository @Inject constructor(
                     }
                 }
         }
-    }
-
-    private fun updateFavoriteFirebase(favorite: Favorite) {
-        db.collection(USER_FIREBASE)
-            .document(userManager.getAccessToken())
-            .collection(FAVORITE_FIREBASE)
-            .document(favorite.id)
-            .set(favorite)
-            .addOnSuccessListener {
-                fetchFavoriteAndProduct()
-            }
-    }
-
-
-    private fun checkExist(favorite: Favorite) {
-        db.collection(USER_FIREBASE).document(userManager.getAccessToken())
-            .collection(FAVORITE_FIREBASE)
-            .whereEqualTo(BaseViewModel.SIZE, favorite.size)
-            .whereEqualTo(BaseViewModel.COLOR, favorite.color)
-            .whereEqualTo(BaseViewModel.ID_PRODUCT, favorite.idProduct)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents.size() == 0) {
-                    updateFavoriteFirebase(favorite)
-                }
-            }
     }
 
     fun setButtonFavorite(context: Context, buttonView: View, idProduct: String) {

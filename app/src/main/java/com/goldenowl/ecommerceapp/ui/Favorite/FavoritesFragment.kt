@@ -6,33 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.goldenowl.ecommerceapp.R
 import com.goldenowl.ecommerceapp.adapters.ListFavoriteAdapter
-import com.goldenowl.ecommerceapp.data.FavoriteAndProduct
 import com.goldenowl.ecommerceapp.databinding.FragmentFavoritesBinding
-import com.goldenowl.ecommerceapp.ui.General.LoadingDialog
+import com.goldenowl.ecommerceapp.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FavoritesFragment : Fragment() {
-    private val viewModel: FavoriteViewModel by viewModels()
+class FavoritesFragment : BaseFragment() {
+    private val viewModel: FavoriteViewModel by activityViewModels()
     private lateinit var adapterFavorite: ListFavoriteAdapter
     private lateinit var binding: FragmentFavoritesBinding
-    private var allFavorites: List<FavoriteAndProduct> = emptyList()
-    private val loadingDialog = LoadingDialog(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (!viewModel.isLogged()) {
             findNavController().navigate(R.id.action_favoritesFragment_to_warningFragment)
-        } else {
-            viewModel.isLoading.postValue(true)
         }
-        viewModel.fetchFavorites()
         adapterFavorite = ListFavoriteAdapter({
             viewModel.removeFavorite(it.favorite)
         }, {
@@ -53,8 +46,6 @@ class FavoritesFragment : Fragment() {
         }, { view, favorite ->
             viewModel.setButtonBag(requireContext(), view, favorite)
         })
-        adapterFavorite.submitList(allFavorites)
-
     }
 
     override fun onCreateView(
@@ -87,12 +78,16 @@ class FavoritesFragment : Fragment() {
 
                             override fun onQueryTextChange(newText: String?): Boolean {
                                 if (!newText.isNullOrEmpty()) {
-                                    adapterFavorite.submitList(allFavorites.filter { favorite ->
-                                        favorite.product.title.lowercase()
-                                            .contains(newText.lowercase())
-                                    })
+                                    viewModel.favoriteAndProducts.value?.let { list ->
+                                        adapterFavorite.submitList(list.filter { favorite ->
+                                            favorite.product.title.lowercase()
+                                                .contains(newText.lowercase())
+                                        })
+                                    }
                                 } else {
-                                    adapterFavorite.submitList(allFavorites)
+                                    adapterFavorite.submitList(
+                                        viewModel.favoriteAndProducts.value ?: emptyList()
+                                    )
                                 }
                                 return true
                             }
@@ -110,19 +105,15 @@ class FavoritesFragment : Fragment() {
     private fun observeSetup() {
         viewModel.apply {
             favoriteAndProducts.observe(viewLifecycleOwner) {
-                if (allFavorites != it) {
-                    allFavorites = it
-                    adapterFavorite.submitList(it)
-                }
-                isLoading.postValue(false)
+                adapterFavorite.submitList(it)
             }
 
             isLoading.observe(viewLifecycleOwner) {
-                if (it) {
-                    loadingDialog.startLoading()
-                } else {
-                    loadingDialog.dismiss()
-                }
+                setLoading(it)
+            }
+
+            isSuccess.observe(viewLifecycleOwner){
+                isLoading.postValue(!it)
             }
         }
 

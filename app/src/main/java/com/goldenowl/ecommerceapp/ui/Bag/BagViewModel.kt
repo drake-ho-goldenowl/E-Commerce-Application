@@ -19,18 +19,13 @@ class BagViewModel @Inject constructor(
     val totalPrice = MutableLiveData(0)
     val promotion = promotionRepository.promotion
     val isRemoveButton = MutableLiveData(false)
+    val isSuccess = bagRepository.isSuccess
 
-    fun fetchBag() {
-         bagRepository.fetchBagAndProduct()
-    }
-
-    fun insertBag(idProduct: String, color: String, size: String) {
-        bagRepository.insertBag(idProduct, color, size)
-        dismiss.postValue(true)
+    fun insertBag(idProduct: String, color: String, size: String): MutableLiveData<Boolean> {
+        return bagRepository.insertBag(idProduct, color, size)
     }
 
     fun removeBagFirebase(bag: Bag) {
-        isLoading.postValue(true)
         bagRepository.removeBagFirebase(bag)
     }
 

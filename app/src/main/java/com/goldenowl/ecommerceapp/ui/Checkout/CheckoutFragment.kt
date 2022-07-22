@@ -134,6 +134,9 @@ class CheckoutFragment : BaseFragment() {
                 setPrice()
             }
             deliveryAdapter.submitList(listDelivery)
+            deliveryAdapter.positionCurrent = listDelivery.indexOf(delivery)
+            deliveryAdapter.notifyDataSetChanged()
+
             recyclerViewDelivery.adapter = deliveryAdapter
             recyclerViewDelivery.layoutManager = LinearLayoutManager(
                 context,

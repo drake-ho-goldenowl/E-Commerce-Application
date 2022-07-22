@@ -7,12 +7,15 @@ import android.os.Handler
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.goldenowl.ecommerceapp.R
+import javax.inject.Singleton
 
+@Singleton
 class LoadingDialog(private val fragment: Fragment) {
     private lateinit var isDialog: AlertDialog
     private val handlerFragment = Handler()
 
     fun startLoading() {
+        dismiss()
         val inflater = fragment.layoutInflater
         val dialogView = inflater.inflate(R.layout.item_loading, null)
 

@@ -65,11 +65,6 @@ class BottomSheetCart(
 
     private fun setupObserve() {
         viewModel.apply {
-            dismiss.observe(viewLifecycleOwner) {
-                if (it) {
-                    dismiss()
-                }
-            }
             toastMessage.observe(viewLifecycleOwner) { str ->
                 toastMessage(str)
                 toastMessage.postValue("")
@@ -96,8 +91,13 @@ class BottomSheetCart(
                         product.id,
                         selectColor.toString(),
                         selectSize.toString(),
-                    )
-                    viewModel.toastMessage.postValue(ADD_BAG_SUCCESS)
+                    ).observe(viewLifecycleOwner){
+                        setLoading(!it)
+                        if(it){
+                            viewModel.toastMessage.postValue(ADD_BAG_SUCCESS)
+                            dismiss()
+                        }
+                    }
                 }
             }
 
